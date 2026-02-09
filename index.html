@@ -1,125 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MyCollection</title>
 
 <style>
-body{background:#0f0f23;color:#fff;font-family:Arial}
-.sidebar{width:220px;position:fixed;height:100%;background:#1a1a2e;padding:20px}
-.main{margin-left:240px;padding:20px}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f0f23;
+  color:#fff;
+}
+.sidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  width:220px;
+  height:100vh;
+  background:#1a1a2e;
+  padding:20px;
+}
+.sidebar div{
+  margin:15px 0;
+  cursor:pointer;
+}
+.main{
+  margin-left:240px;
+  padding:20px;
+}
 .section{display:none}
 .section.active{display:block}
-.card{background:#16213e;padding:15px;margin:10px;border-radius:8px}
-button{padding:10px;background:#00f5ff;border:none;cursor:pointer}
+.card{
+  background:#16213e;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+}
+input,button{
+  display:block;
+  margin:8px 0;
+  padding:8px;
+}
+button{
+  background:#00f5ff;
+  border:none;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-<h2>🚀 MyCollection</h2>
-<div onclick="showSection('dash')">Dashboard</div>
-<div onclick="showSection('gad')">Gadgets</div>
-<div onclick="showSection('gam')">Games</div>
+  <h2>🚀 MyCollection</h2>
+  <div onclick="showSection('dashboard')">Dashboard</div>
+  <div onclick="showSection('gadgets')">Gadgets</div>
+  <div onclick="showSection('games')">Games</div>
 </div>
 
 <div class="main">
 
-<div id="dash" class="section active">
-<h2>Dashboard</h2>
-<div>Total Gadgets: <span id="totalG">0</span></div>
-<div>Total Games: <span id="totalGa">0</span></div>
+<div id="dashboard" class="section active">
+  <h2>Dashboard</h2>
+  <div>Total Gadgets: <span id="statGadgets">0</span></div>
+  <div>Total Games: <span id="statGames">0</span></div>
 </div>
 
-<div id="gad" class="section">
-<h2>Gadgets</h2>
-<input id="gName" placeholder="Name">
-<input id="gPrice" type="number" placeholder="Price">
-<button onclick="addGadget()">Add</button>
-<div id="gadList"></div>
+<div id="gadgets" class="section">
+  <h2>Gadgets</h2>
+  <input id="gName" placeholder="Gadget name">
+  <input id="gPrice" type="number" placeholder="Price">
+  <button onclick="addGadget()">Add Gadget</button>
+  <div id="gadgetList"></div>
 </div>
 
-<div id="gam" class="section">
-<h2>Games</h2>
-<input id="gmTitle" placeholder="Title">
-<input id="gmBuy" type="number" placeholder="Buy">
-<input id="gmSell" type="number" placeholder="Sell">
-<button onclick="addGame()">Add</button>
-<div id="gamList"></div>
+<div id="games" class="section">
+  <h2>Games</h2>
+  <input id="gmTitle" placeholder="Game title">
+  <input id="gmBuy" type="number" placeholder="Buy price">
+  <input id="gmSell" type="number" placeholder="Sell price (optional)">
+  <button onclick="addGame()">Add Game</button>
+  <div id="gameList"></div>
 </div>
 
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
- apiKey:"AIzaSyAJtyDC0fI_AzGcKxVHBvF-Focs4doWxMM",
- authDomain:"tech-tracker-87dbc.firebaseapp.com",
- projectId:"tech-tracker-87dbc"
+  apiKey: "AIzaSyAJtyDC0fI_AzGcKxVHBvF-Focs4doWxMM",
+  authDomain: "tech-tracker-87dbc.firebaseapp.com",
+  projectId: "tech-tracker-87dbc"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-let gadgets=[];
-let games=[];
+let gadgets = [];
+let games = [];
 
-window.showSection=function(s){
- document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
- document.getElementById(s).classList.add("active");
+window.showSection = function(id){
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 };
 
-window.addGadget=async function(){
- let name=document.getElementById("gName").value;
- let price=Number(document.getElementById("gPrice").value);
- if(!name||!price)return;
+window.addGadget = async function(){
+  const name = document.getElementById("gName").value;
+  const price = Number(document.getElementById("gPrice").value);
+  if(!name || isNaN(price)) return;
 
- let obj={name,price};
- await addDoc(collection(db,"gadgets"),obj);
- gadgets.push(obj);
- render();
+  const obj = { name, price };
+  await addDoc(collection(db,"gadgets"), obj);
+  gadgets.push(obj);
+  render();
 };
 
-window.addGame=async function(){
- let title=document.getElementById("gmTitle").value;
- let buy=Number(document.getElementById("gmBuy").value);
- let sellRaw=document.getElementById("gmSell").value;
- let sell=sellRaw?Number(sellRaw):null;
- if(!title||!buy)return;
+window.addGame = async function(){
+  const title = document.getElementById("gmTitle").value;
+  const buy = Number(document.getElementById("gmBuy").value);
+  const sellRaw = document.getElementById("gmSell").value;
+  const sell = sellRaw ? Number(sellRaw) : null;
+  if(!title || isNaN(buy)) return;
 
- let obj={title,buy,sell};
- await addDoc(collection(db,"games"),obj);
- games.push(obj);
- render();
+  const obj = { title, buy, sell };
+  await addDoc(collection(db,"games"), obj);
+  games.push(obj);
+  render();
 };
 
-async function load(){
- let g=await getDocs(collection(db,"gadgets"));
- g.forEach(d=>gadgets.push(d.data()));
+async function loadData(){
+  const gSnap = await getDocs(collection(db,"gadgets"));
+  gSnap.forEach(d => gadgets.push(d.data()));
 
- let gm=await getDocs(collection(db,"games"));
- gm.forEach(d=>games.push(d.data()));
+  const gmSnap = await getDocs(collection(db,"games"));
+  gmSnap.forEach(d => games.push(d.data()));
 
- render();
+  render();
 }
 
 function render(){
- document.getElementById("gadList").innerHTML=
- gadgets.map(x=>`<div class="card">${x.name} ₹${x.price}</div>`).join("");
+  document.getElementById("gadgetList").innerHTML =
+    gadgets.map(g => `<div class="card">${g.name} – ₹${g.price}</div>`).join("");
 
- document.getElementById("gamList").innerHTML=
- games.map(x=>`<div class="card">${x.title} ₹${x.buy}</div>`).join("");
+  document.getElementById("gameList").innerHTML =
+    games.map(g => `<div class="card">${g.title} – ₹${g.buy}</div>`).join("");
 
- document.getElementById("totalG").textContent=gadgets.length;
- document.getElementById("totalGa").textContent=games.length;
+  document.getElementById("statGadgets").textContent = gadgets.length;
+  document.getElementById("statGames").textContent = games.length;
 }
 
-load();
-
+loadData();
 </script>
 
 </body>
