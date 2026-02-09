@@ -1,207 +1,839 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tech & Games Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tech & Games Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background:#0f172a;
-    color:white;
-    padding:20px;
-}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 0;
+        }
 
-h1 {
-    color:#22d3ee;
-}
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #1a1a2e;
+            padding: 30px 20px;
+            border-right: 1px solid #2a2a3e;
+        }
 
-.container {
-    display:flex;
-    gap:40px;
-    flex-wrap:wrap;
-}
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #00f5ff, #ff00e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-.card {
-    background:#1e293b;
-    padding:20px;
-    border-radius:12px;
-    width:400px;
-}
+        .nav-item {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
 
-input, select, button {
-    width:100%;
-    padding:8px;
-    margin-top:8px;
-    border-radius:6px;
-    border:none;
-}
+        .nav-item:hover {
+            background: #2a2a3e;
+        }
 
-button {
-    background:#22d3ee;
-    font-weight:bold;
-    cursor:pointer;
-}
+        .nav-item.active {
+            background: linear-gradient(45deg, #00f5ff22, #ff00e522);
+            border-left: 3px solid #00f5ff;
+        }
 
-.item {
-    background:#334155;
-    padding:10px;
-    margin-top:10px;
-    border-radius:6px;
-}
-</style>
+        .main-content {
+            margin-left: 250px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00f5ff, #ff00e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 16px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #2a2a3e;
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #00f5ff, #ff00e5);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00f5ff;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .add-card {
+            background: #1a1a2e;
+            border: 2px dashed #2a2a3e;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .add-card h2 {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: #00f5ff;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            background: #16213e;
+            border: 1px solid #2a2a3e;
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #00f5ff;
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+            grid-column: 1 / -1;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00f5ff, #ff00e5);
+            border: none;
+            padding: 14px 30px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #2a2a3e;
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 245, 255, 0.2);
+            border-color: #00f5ff44;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .item-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00f5ff;
+            margin-bottom: 5px;
+        }
+
+        .item-category {
+            display: inline-block;
+            background: #ff00e533;
+            color: #ff00e5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .delete-icon {
+            background: #ff4444;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .delete-icon:hover {
+            background: #ff0000;
+            transform: rotate(90deg);
+        }
+
+        .item-info {
+            display: grid;
+            gap: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2a3e;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .info-value {
+            color: #e0e0e0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .price-tag {
+            color: #00ff88;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .profit-positive {
+            color: #00ff88;
+        }
+
+        .profit-negative {
+            color: #ff4444;
+        }
+
+        .status-owned {
+            background: #00ff8833;
+            color: #00ff88;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-sold {
+            background: #ffaa0033;
+            color: #ffaa00;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            background: #1a1a2e;
+            border: 1px solid #2a2a3e;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .filter-chip:hover {
+            border-color: #00f5ff;
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(45deg, #00f5ff22, #ff00e522);
+            border-color: #00f5ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-
 <body>
+    <div class="sidebar">
+        <div class="logo">🚀 MyCollection</div>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <span>📊</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('gadgets')">
+            <span>📱</span> Gadgets
+        </div>
+        <div class="nav-item" onclick="showSection('games')">
+            <span>🎮</span> Games
+        </div>
+    </div>
 
-<h1>Tech & Game Tracker</h1>
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section active">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <p>Your complete tech and gaming collection overview</p>
+            </div>
 
-<div class="container">
+            <div class="dashboard-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Total Gadgets</div>
+                    <div class="stat-value" id="dash-total-gadgets">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Gadgets Value</div>
+                    <div class="stat-value" id="dash-gadgets-value">₹0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Game Collection</div>
+                    <div class="stat-value" id="dash-total-games">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Games Profit/Loss</div>
+                    <div class="stat-value" id="dash-games-profit">₹0</div>
+                </div>
+            </div>
 
-<!-- GADGET SECTION -->
-<div class="card">
-<h2>Add Gadget Expense</h2>
+            <h2 style="color: #00f5ff; margin-bottom: 20px; font-size: 24px;">Recent Additions</h2>
+            <div class="items-grid" id="recent-items"></div>
+        </div>
 
-<input id="gadgetName" placeholder="Gadget Name">
-<input id="gadgetPrice" type="number" placeholder="Price">
-<button onclick="addGadget()">Save Gadget</button>
+        <!-- Gadgets Section -->
+        <div id="gadgets" class="section">
+            <div class="header">
+                <h1>Gadgets Collection</h1>
+                <p>Track all your tech purchases and expenses</p>
+            </div>
 
-<h3>Saved Gadgets</h3>
-<div id="gadgetList"></div>
-</div>
+            <div class="add-card">
+                <h2>➕ Add New Gadget</h2>
+                <form id="gadget-form">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Gadget Name</label>
+                            <input type="text" id="g-name" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Category</label>
+                            <select id="g-category">
+                                <option>📱 Phone</option>
+                                <option>💻 Laptop</option>
+                                <option>⌚ Smartwatch</option>
+                                <option>🎧 Audio</option>
+                                <option>📷 Camera</option>
+                                <option>🎮 Gaming</option>
+                                <option>⚡ Accessories</option>
+                                <option>🔧 Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Price (₹)</label>
+                            <input type="number" id="g-price" required min="0" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label>Purchase Date</label>
+                            <input type="date" id="g-date" required>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Notes (Optional)</label>
+                            <textarea id="g-notes" placeholder="Where you bought it, warranty info, etc..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add to Collection</button>
+                </form>
+            </div>
 
+            <div class="items-grid" id="gadgets-list"></div>
+        </div>
 
-<!-- GAME SECTION -->
-<div class="card">
-<h2>Add Game Disc</h2>
+        <!-- Games Section -->
+        <div id="games" class="section">
+            <div class="header">
+                <h1>Games Collection</h1>
+                <p>Manage your game discs and track buy/sell transactions</p>
+            </div>
 
-<input id="gameTitle" placeholder="Game Title">
-<input id="buyPrice" type="number" placeholder="Buy Price">
-<input id="sellPrice" type="number" placeholder="Sell Price (optional)">
-<button onclick="addGame()">Save Game</button>
+            <div class="add-card">
+                <h2>➕ Add New Game</h2>
+                <form id="game-form">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Game Title</label>
+                            <input type="text" id="gm-title" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Platform</label>
+                            <select id="gm-platform">
+                                <option>PlayStation 5</option>
+                                <option>PlayStation 4</option>
+                                <option>Xbox Series X/S</option>
+                                <option>Xbox One</option>
+                                <option>Nintendo Switch</option>
+                                <option>PC</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Buy Price (₹)</label>
+                            <input type="number" id="gm-buy-price" required min="0" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label>Buy Date</label>
+                            <input type="date" id="gm-buy-date" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Condition</label>
+                            <select id="gm-condition">
+                                <option>New/Sealed</option>
+                                <option>Like New</option>
+                                <option>Good</option>
+                                <option>Fair</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Sell Price (₹) - Optional</label>
+                            <input type="number" id="gm-sell-price" min="0" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label>Sell Date - Optional</label>
+                            <input type="date" id="gm-sell-date">
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Notes (Optional)</label>
+                            <textarea id="gm-notes" placeholder="Special editions, DLC included, etc..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Add to Collection</button>
+                </form>
+            </div>
 
-<h3>Saved Games</h3>
-<div id="gameList"></div>
-</div>
+            <div class="filter-bar">
+                <div class="filter-chip active" onclick="filterGames('all')">All Games</div>
+                <div class="filter-chip" onclick="filterGames('owned')">Currently Owned</div>
+                <div class="filter-chip" onclick="filterGames('sold')">Sold</div>
+            </div>
 
-</div>
+            <div class="items-grid" id="games-list"></div>
+        </div>
+    </div>
 
+    <script>
+        let gadgets = [];
+        let games = [];
+        let currentFilter = 'all';
 
-<!-- Firebase Scripts -->
-<script type="module">
+        async function loadData() {
+            try {
+                const gData = await window.storage.get('gadgets-v2');
+                const gmData = await window.storage.get('games-v2');
+                
+                if (gData?.value) gadgets = JSON.parse(gData.value);
+                if (gmData?.value) games = JSON.parse(gmData.value);
+                
+                updateAll();
+            } catch (e) {
+                console.log('Starting fresh');
+            }
+        }
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        async function saveData() {
+            try {
+                await window.storage.set('gadgets-v2', JSON.stringify(gadgets));
+                await window.storage.set('games-v2', JSON.stringify(games));
+            } catch (e) {
+                console.error('Save error:', e);
+            }
+        }
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAJtyDC0fI_AzGcKxVHBvF-Focs4doWxMM",
-  authDomain: "tech-tracker-87dbc.firebaseapp.com",
-  projectId: "tech-tracker-87dbc",
-  storageBucket: "tech-tracker-87dbc.firebasestorage.app",
-  messagingSenderId: "446800872416",
-  appId: "1:446800872416:web:8d094886bf870c9669a185"
-};
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(section).classList.add('active');
+            event.target.classList.add('active');
+        }
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        // Gadget handling
+        document.getElementById('gadget-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            gadgets.push({
+                id: Date.now(),
+                name: document.getElementById('g-name').value,
+                category: document.getElementById('g-category').value,
+                price: parseFloat(document.getElementById('g-price').value),
+                date: document.getElementById('g-date').value,
+                notes: document.getElementById('g-notes').value
+            });
 
-let gadgets = [];
-let games = [];
-let currentFilter = 'all';
+            await saveData();
+            updateAll();
+            e.target.reset();
+            document.getElementById('g-date').valueAsDate = new Date();
+        });
 
-async function loadData() {
+        function renderGadgets() {
+            const container = document.getElementById('gadgets-list');
+            
+            if (gadgets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📱</div>
+                        <p>No gadgets yet. Add your first one above!</p>
+                    </div>
+                `;
+                return;
+            }
 
-    gadgets = [];
-    games = [];
+            container.innerHTML = gadgets.map(g => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">${g.name}</div>
+                            <span class="item-category">${g.category}</span>
+                        </div>
+                        <button class="delete-icon" onclick="deleteGadget(${g.id})">×</button>
+                    </div>
+                    <div class="item-info">
+                        <div class="info-row">
+                            <span class="info-label">Price</span>
+                            <span class="price-tag">₹${g.price.toFixed(2)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Purchased</span>
+                            <span class="info-value">${new Date(g.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                        </div>
+                        ${g.notes ? `
+                        <div class="info-row">
+                            <span class="info-label">Notes</span>
+                            <span class="info-value">${g.notes}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
-    const gSnap = await getDocs(collection(db, "gadgets"));
-    gSnap.forEach(d => gadgets.push({firebaseId:d.id, ...d.data()}));
+        async function deleteGadget(id) {
+            if (confirm('Delete this gadget?')) {
+                gadgets = gadgets.filter(g => g.id !== id);
+                await saveData();
+                updateAll();
+            }
+        }
 
-    const gmSnap = await getDocs(collection(db, "games"));
-    gmSnap.forEach(d => games.push({firebaseId:d.id, ...d.data()}));
+        // Game handling
+        document.getElementById('game-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const sellPrice = document.getElementById('gm-sell-price').value;
+            const sellDate = document.getElementById('gm-sell-date').value;
 
-    updateAll();
-}
+            games.push({
+                id: Date.now(),
+                title: document.getElementById('gm-title').value,
+                platform: document.getElementById('gm-platform').value,
+                buyPrice: parseFloat(document.getElementById('gm-buy-price').value),
+                buyDate: document.getElementById('gm-buy-date').value,
+                condition: document.getElementById('gm-condition').value,
+                sellPrice: sellPrice ? parseFloat(sellPrice) : null,
+                sellDate: sellDate || null,
+                notes: document.getElementById('gm-notes').value,
+                status: (sellPrice && sellDate) ? 'sold' : 'owned'
+            });
 
-async function saveGadget(gadget) {
-    await addDoc(collection(db, "gadgets"), gadget);
-    loadData();
-}
+            await saveData();
+            updateAll();
+            e.target.reset();
+            document.getElementById('gm-buy-date').valueAsDate = new Date();
+        });
 
-async function saveGame(game) {
-    await addDoc(collection(db, "games"), game);
-    loadData();
-}
+        function filterGames(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGames();
+        }
 
-async function deleteGadget(id) {
-    if(confirm("Delete this gadget?")) {
-        const item = gadgets.find(g=>g.id===id);
-        await deleteDoc(doc(db,"gadgets",item.firebaseId));
+        function renderGames() {
+            const container = document.getElementById('games-list');
+            let filtered = games;
+
+            if (currentFilter === 'owned') filtered = games.filter(g => g.status === 'owned');
+            if (currentFilter === 'sold') filtered = games.filter(g => g.status === 'sold');
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎮</div>
+                        <p>No games in this category yet!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(g => {
+                const profit = g.sellPrice ? g.sellPrice - g.buyPrice : 0;
+                const profitClass = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : '';
+                
+                return `
+                    <div class="item-card">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title">${g.title}</div>
+                                <span class="item-category">${g.platform}</span>
+                            </div>
+                            <button class="delete-icon" onclick="deleteGame(${g.id})">×</button>
+                        </div>
+                        <div class="item-info">
+                            <div class="info-row">
+                                <span class="info-label">Status</span>
+                                <span class="status-${g.status}">${g.status.toUpperCase()}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Condition</span>
+                                <span class="info-value">${g.condition}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Buy Price</span>
+                                <span class="info-value">₹${g.buyPrice.toFixed(2)}</span>
+                            </div>
+                            ${g.sellPrice ? `
+                            <div class="info-row">
+                                <span class="info-label">Sell Price</span>
+                                <span class="info-value">₹${g.sellPrice.toFixed(2)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Profit/Loss</span>
+                                <span class="info-value ${profitClass}">₹${profit.toFixed(2)}</span>
+                            </div>
+                            ` : ''}
+                            <div class="info-row">
+                                <span class="info-label">Bought</span>
+                                <span class="info-value">${new Date(g.buyDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                            </div>
+                            ${g.notes ? `
+                            <div class="info-row">
+                                <span class="info-label">Notes</span>
+                                <span class="info-value">${g.notes}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function deleteGame(id) {
+            if (confirm('Delete this game?')) {
+                games = games.filter(g => g.id !== id);
+                await saveData();
+                updateAll();
+            }
+        }
+
+        function updateDashboard() {
+            const totalGadgets = gadgets.length;
+            const gadgetsValue = gadgets.reduce((sum, g) => sum + g.price, 0);
+            const totalGames = games.length;
+            const gamesProfit = games
+                .filter(g => g.sellPrice)
+                .reduce((sum, g) => sum + (g.sellPrice - g.buyPrice), 0);
+
+            document.getElementById('dash-total-gadgets').textContent = totalGadgets;
+            document.getElementById('dash-gadgets-value').textContent = `₹${gadgetsValue.toFixed(0)}`;
+            document.getElementById('dash-total-games').textContent = totalGames;
+            document.getElementById('dash-games-profit').textContent = `₹${gamesProfit.toFixed(0)}`;
+
+            // Recent items
+            const recent = [...gadgets, ...games]
+                .sort((a, b) => b.id - a.id)
+                .slice(0, 6);
+
+            const recentContainer = document.getElementById('recent-items');
+            if (recent.length === 0) {
+                recentContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🚀</div>
+                        <p>Start adding gadgets and games to build your collection!</p>
+                    </div>
+                `;
+            } else {
+                recentContainer.innerHTML = recent.map(item => {
+                    if (item.title) {
+                        return `
+                            <div class="item-card">
+                                <div class="item-title">${item.title}</div>
+                                <span class="item-category">🎮 ${item.platform}</span>
+                                <div style="margin-top: 15px;">
+                                    <div class="info-label">Buy Price</div>
+                                    <div class="price-tag">₹${item.buyPrice.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="item-card">
+                                <div class="item-title">${item.name}</div>
+                                <span class="item-category">${item.category}</span>
+                                <div style="margin-top: 15px;">
+                                    <div class="info-label">Price</div>
+                                    <div class="price-tag">₹${item.price.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }).join('');
+            }
+        }
+
+        function updateAll() {
+            renderGadgets();
+            renderGames();
+            updateDashboard();
+        }
+
+        // Initialize
+        document.getElementById('g-date').valueAsDate = new Date();
+        document.getElementById('gm-buy-date').valueAsDate = new Date();
         loadData();
-    }
-}
-
-async function deleteGame(id) {
-    if(confirm("Delete this game?")) {
-        const item = games.find(g=>g.id===id);
-        await deleteDoc(doc(db,"games",item.firebaseId));
-        loadData();
-    }
-}
-
-
-// ---------------- Forms ----------------
-
-document.getElementById('gadget-form').addEventListener('submit', async (e)=>{
-
-    e.preventDefault();
-
-    const gadget = {
-        id: Date.now(),
-        name: g-name.value,
-        category: g-category.value,
-        price: parseFloat(g-price.value),
-        date: g-date.value,
-        notes: g-notes.value
-    };
-
-    await saveGadget(gadget);
-    e.target.reset();
-    g-date.valueAsDate = new Date();
-});
-
-
-document.getElementById('game-form').addEventListener('submit', async (e)=>{
-
-    e.preventDefault();
-
-    const sellPrice = gm-sell-price.value;
-    const sellDate = gm-sell-date.value;
-
-    const game = {
-        id: Date.now(),
-        title: gm-title.value,
-        platform: gm-platform.value,
-        buyPrice: parseFloat(gm-buy-price.value),
-        buyDate: gm-buy-date.value,
-        condition: gm-condition.value,
-        sellPrice: sellPrice ? parseFloat(sellPrice) : null,
-        sellDate: sellDate || null,
-        notes: gm-notes.value,
-        status: (sellPrice && sellDate) ? 'sold' : 'owned'
-    };
-
-    await saveGame(game);
-    e.target.reset();
-    gm-buy-date.valueAsDate = new Date();
-});
-
-
-// ---------- YOUR EXISTING RENDER LOGIC ----------
-/* KEEP EVERYTHING BELOW SAME */
-
-</script>
-
+    </script>
 </body>
 </html>
