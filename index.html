@@ -103,18 +103,44 @@ window.showSection = function(section){
 };
 
 window.addGadget = async function(){
-    const g={id:Date.now(),name:g-name.value,price:+g-price.value};
-    const ref=await addDoc(collection(db,"gadgets"),g);
-    g.firebaseId=ref.id;
+
+    const name = document.getElementById("g-name").value;
+    const price = Number(document.getElementById("g-price").value);
+
+    if (!name || isNaN(price)) return;
+
+    const g = {
+        id: Date.now(),
+        name,
+        price
+    };
+
+    const ref = await addDoc(collection(db,"gadgets"), g);
+    g.firebaseId = ref.id;
+
     gadgets.push(g);
     render();
 };
 
 window.addGame = async function(){
-    const g={id:Date.now(),title:gm-title.value,buy:+gm-buy-price.value,sell:+gm-sell-price.value||null};
-    const ref=await addDoc(collection(db,"games"),g);
-    g.firebaseId=ref.id;
-    games.push(g);
+
+    const title = document.getElementById("gm-title").value;
+    const buy = Number(document.getElementById("gm-buy-price").value);
+    const sellRaw = document.getElementById("gm-sell-price").value;
+
+    if (!title || isNaN(buy)) return;
+
+    const game = {
+        id: Date.now(),
+        title,
+        buy,
+        sell: sellRaw ? Number(sellRaw) : null
+    };
+
+    const ref = await addDoc(collection(db,"games"), game);
+    game.firebaseId = ref.id;
+
+    games.push(game);
     render();
 };
 
@@ -126,17 +152,26 @@ async function loadData(){
 }
 
 function render(){
-    document.getElementById("gadgets-list").innerHTML=gadgets.map(g=>`
-        <div class="item-card">${g.name} – ₹${g.price}</div>
-    `).join("");
 
-    document.getElementById("games-list").innerHTML=games.map(g=>`
-        <div class="item-card">${g.title} – ₹${g.buy}</div>
-    `).join("");
+    // Gadgets list
+    document.getElementById("gadgets-list").innerHTML =
+        gadgets.map(g => `
+            <div class="item-card">${g.name} – ₹${g.price}</div>
+        `).join("");
 
-    dash-total-gadgets.textContent=gadgets.length;
-    dash-gadgets-value.textContent="₹"+gadgets.reduce((a,b)=>a+b.price,0);
-    dash-total-games.textContent=games.length;
+    // Games list
+    document.getElementById("games-list").innerHTML =
+        games.map(g => `
+            <div class="item-card">${g.title} – ₹${g.buy}</div>
+        `).join("");
+
+    // Dashboard stats
+    document.getElementById("dash-total-gadgets").textContent = gadgets.length;
+
+    document.getElementById("dash-gadgets-value").textContent =
+        "₹" + gadgets.reduce((sum, g) => sum + g.price, 0);
+
+    document.getElementById("dash-total-games").textContent = games.length;
 }
 
 loadData();
