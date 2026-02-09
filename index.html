@@ -92,7 +92,7 @@ button {
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAJtyDC0fI_AzGcKxVHBvF-Focs4doWxMM",
@@ -100,92 +100,106 @@ const firebaseConfig = {
   projectId: "tech-tracker-87dbc",
   storageBucket: "tech-tracker-87dbc.firebasestorage.app",
   messagingSenderId: "446800872416",
-  appId: "1:446800872416:web:8d094886bf870c9669a185",
-  measurementId: "G-GSWW5KLR2H"
+  appId: "1:446800872416:web:8d094886bf870c9669a185"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+let gadgets = [];
+let games = [];
+let currentFilter = 'all';
 
-async function addGadget() {
+async function loadData() {
 
-    const name = document.getElementById("gadgetName").value;
-    const price = document.getElementById("gadgetPrice").value;
+    gadgets = [];
+    games = [];
 
-    await addDoc(collection(db,"gadgets"), {
-        name,
-        price,
-        date:new Date().toISOString()
-    });
+    const gSnap = await getDocs(collection(db, "gadgets"));
+    gSnap.forEach(d => gadgets.push({firebaseId:d.id, ...d.data()}));
 
-    loadGadgets();
+    const gmSnap = await getDocs(collection(db, "games"));
+    gmSnap.forEach(d => games.push({firebaseId:d.id, ...d.data()}));
+
+    updateAll();
+}
+
+async function saveGadget(gadget) {
+    await addDoc(collection(db, "gadgets"), gadget);
+    loadData();
+}
+
+async function saveGame(game) {
+    await addDoc(collection(db, "games"), game);
+    loadData();
+}
+
+async function deleteGadget(id) {
+    if(confirm("Delete this gadget?")) {
+        const item = gadgets.find(g=>g.id===id);
+        await deleteDoc(doc(db,"gadgets",item.firebaseId));
+        loadData();
+    }
+}
+
+async function deleteGame(id) {
+    if(confirm("Delete this game?")) {
+        const item = games.find(g=>g.id===id);
+        await deleteDoc(doc(db,"games",item.firebaseId));
+        loadData();
+    }
 }
 
 
-async function addGame() {
+// ---------------- Forms ----------------
 
-    const title = document.getElementById("gameTitle").value;
-    const buyPrice = document.getElementById("buyPrice").value;
-    const sellPrice = document.getElementById("sellPrice").value;
+document.getElementById('gadget-form').addEventListener('submit', async (e)=>{
 
-    await addDoc(collection(db,"games"), {
-        title,
-        buyPrice,
-        sellPrice,
-        date:new Date().toISOString()
-    });
+    e.preventDefault();
 
-    loadGames();
-}
+    const gadget = {
+        id: Date.now(),
+        name: g-name.value,
+        category: g-category.value,
+        price: parseFloat(g-price.value),
+        date: g-date.value,
+        notes: g-notes.value
+    };
 
-
-async function loadGadgets() {
-
-    const querySnapshot = await getDocs(collection(db,"gadgets"));
-    const list = document.getElementById("gadgetList");
-
-    list.innerHTML="";
-
-    querySnapshot.forEach(doc => {
-
-        const g = doc.data();
-
-        list.innerHTML += `
-        <div class="item">
-            ${g.name} - ₹${g.price}
-        </div>`;
-    });
-
-}
+    await saveGadget(gadget);
+    e.target.reset();
+    g-date.valueAsDate = new Date();
+});
 
 
-async function loadGames() {
+document.getElementById('game-form').addEventListener('submit', async (e)=>{
 
-    const querySnapshot = await getDocs(collection(db,"games"));
-    const list = document.getElementById("gameList");
+    e.preventDefault();
 
-    list.innerHTML="";
+    const sellPrice = gm-sell-price.value;
+    const sellDate = gm-sell-date.value;
 
-    querySnapshot.forEach(doc => {
+    const game = {
+        id: Date.now(),
+        title: gm-title.value,
+        platform: gm-platform.value,
+        buyPrice: parseFloat(gm-buy-price.value),
+        buyDate: gm-buy-date.value,
+        condition: gm-condition.value,
+        sellPrice: sellPrice ? parseFloat(sellPrice) : null,
+        sellDate: sellDate || null,
+        notes: gm-notes.value,
+        status: (sellPrice && sellDate) ? 'sold' : 'owned'
+    };
 
-        const g = doc.data();
-
-        let profit = g.sellPrice ? g.sellPrice - g.buyPrice : "Not sold";
-
-        list.innerHTML += `
-        <div class="item">
-            ${g.title}<br>
-            Buy ₹${g.buyPrice} | Sell ₹${g.sellPrice || "-"}<br>
-            Profit: ${profit}
-        </div>`;
-    });
-
-}
+    await saveGame(game);
+    e.target.reset();
+    gm-buy-date.valueAsDate = new Date();
+});
 
 
-loadGadgets();
-loadGames();
+// ---------- YOUR EXISTING RENDER LOGIC ----------
+/* KEEP EVERYTHING BELOW SAME */
 
 </script>
 
