@@ -1424,10 +1424,13 @@
 
     <!-- Firebase SDK -->
     <script type="module">
+        console.log('🚀 Script started loading...');
+        
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        // Updated: Fixed syntax errors - Feb 2026
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        console.log('✅ Firebase modules imported');
 
         // Firebase configuration
         const firebaseConfig = {
@@ -1440,7 +1443,7 @@
             measurementId: "G-GSWW5KLR2H"
         };
 
-        console.log('Initializing Firebase...');
+        console.log('🔧 Initializing Firebase...');
         
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -1448,16 +1451,17 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
         
-        console.log('Firebase initialized successfully');
+        console.log('✅ Firebase initialized');
         
-        // Fallback timeout - if loading screen doesn't hide after 5 seconds, force hide it
+        // Emergency fallback timeout
         setTimeout(() => {
             const loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen && loadingScreen.style.display !== 'none') {
-                console.warn('Loading screen timeout - forcing hide');
+                console.warn('⚠️ Loading screen timeout - forcing hide');
                 loadingScreen.style.display = 'none';
-                if (!currentUser) {
-                    document.getElementById('loginScreen').style.display = 'flex';
+                const loginScreen = document.getElementById('loginScreen');
+                if (loginScreen) {
+                    loginScreen.style.display = 'flex';
                 }
             }
         }, 5000);
