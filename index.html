@@ -2626,17 +2626,27 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
             };
 
             try {
-                if (window.editingDigitalId) {
-                    await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', window.editingDigitalId));
-                    await addDoc(collection(db, 'digitalPurchases'), digital);
-                    window.editingDigitalId = null;
-                    document.querySelector('#digital-form .btn').textContent = 'Add Purchase';
+               if (window.editingDigitalId) {
+
+                await updateDoc(
+                doc(db, 'users', currentUserUID, 'digitalPurchases', window.editingDigitalId),
+                digital
+                );
+
+                window.editingDigitalId = null;
+                document.querySelector('#digital-form .btn').textContent = 'Add Purchase';
+
                 } else {
-                    await addDoc(collection(db, 'digitalPurchases'), digital);
-                }
-                await loadData();
-                e.target.reset();
-                document.getElementById('d-date').valueAsDate = new Date();
+
+                await addDoc(
+            collection(db, 'users', currentUserUID, 'digitalPurchases'),
+            digital
+            );
+            }
+
+            await loadData();
+            e.target.reset();
+            document.getElementById('d-date').valueAsDate = new Date();
             } catch (error) {
                 console.error('Error adding digital purchase:', error);
                 alert('Error adding purchase. Please try again.');
