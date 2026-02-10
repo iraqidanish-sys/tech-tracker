@@ -1697,7 +1697,9 @@
                 .map(row => row.join('\t'))
                 .join('\n');
 
-            const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+            // Add UTF-8 BOM for proper emoji/unicode support
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1713,7 +1715,9 @@
             
             const tsv = [headers, exampleRow].map(row => row.join('\t')).join('\n');
             
-            const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+            // Add UTF-8 BOM for proper emoji/unicode support
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1732,7 +1736,11 @@
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
-                    const text = e.target.result;
+                    let text = e.target.result;
+                    // Remove BOM if present
+                    if (text.charCodeAt(0) === 0xFEFF) {
+                        text = text.slice(1);
+                    }
                     const lines = text.split('\n').filter(line => line.trim());
                     
                     // Detect delimiter (tab or comma)
@@ -1782,7 +1790,7 @@
                     alert('Error importing file. Please check the file format.');
                 }
             };
-            reader.readAsText(file);
+            reader.readAsText(file, 'UTF-8');
         };
 
         // TSV/CSV Export for Games
@@ -1810,7 +1818,9 @@
                 .map(row => row.join('\t'))
                 .join('\n');
 
-            const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+            // Add UTF-8 BOM for proper emoji/unicode support
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1826,7 +1836,9 @@
             
             const tsv = [headers, exampleRow].map(row => row.join('\t')).join('\n');
             
-            const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+            // Add UTF-8 BOM for proper emoji/unicode support
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1845,7 +1857,11 @@
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
-                    const text = e.target.result;
+                    let text = e.target.result;
+                    // Remove BOM if present
+                    if (text.charCodeAt(0) === 0xFEFF) {
+                        text = text.slice(1);
+                    }
                     const lines = text.split('\n').filter(line => line.trim());
                     
                     // Detect delimiter (tab or comma)
@@ -1897,7 +1913,7 @@
                     alert('Error importing file. Please check the file format.');
                 }
             };
-            reader.readAsText(file);
+            reader.readAsText(file, 'UTF-8');
         };
 
         // TSV/CSV Export for Digital Purchases
@@ -1922,7 +1938,9 @@
                 .map(row => row.join('\t'))
                 .join('\n');
 
-            const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+            // Add UTF-8 BOM for proper emoji/unicode support
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1938,7 +1956,9 @@
             
             const tsv = [headers, exampleRow].map(row => row.join('\t')).join('\n');
             
-            const blob = new Blob([tsv], { type: 'text/tab-separated-values' });
+            // Add UTF-8 BOM for proper emoji/unicode support
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -1957,7 +1977,11 @@
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
-                    const text = e.target.result;
+                    let text = e.target.result;
+                    // Remove BOM if present
+                    if (text.charCodeAt(0) === 0xFEFF) {
+                        text = text.slice(1);
+                    }
                     const lines = text.split('\n').filter(line => line.trim());
                     
                     // Detect delimiter (tab or comma)
@@ -2004,7 +2028,7 @@
                     alert('Error importing file. Please check the file format.');
                 }
             };
-            reader.readAsText(file);
+            reader.readAsText(file, 'UTF-8');
         };
 
         // Initialize
