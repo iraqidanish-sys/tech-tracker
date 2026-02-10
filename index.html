@@ -291,6 +291,22 @@
             transform: rotate(90deg);
         }
 
+        .edit-icon {
+            background: #00f5ff;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .edit-icon:hover {
+            background: #00d4e0;
+            transform: scale(1.1);
+        }
+
         .item-info {
             display: grid;
             gap: 12px;
@@ -561,7 +577,7 @@
                     <div class="stat-value" id="dash-total-games">0</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">Games Profit/Loss</div>
+                    <div class="stat-label">Total Profit/Loss</div>
                     <div class="stat-value" id="dash-games-profit">₹0</div>
                 </div>
             </div>
@@ -609,6 +625,14 @@
                         <div class="input-group">
                             <label>Purchase Date</label>
                             <input type="date" id="g-date" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Sell Price (₹) - Optional</label>
+                            <input type="number" id="g-sell-price" min="0" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label>Sell Date - Optional</label>
+                            <input type="date" id="g-sell-date">
                         </div>
                     </div>
                     <div class="input-row">
@@ -813,17 +837,32 @@
         document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const sellPrice = document.getElementById('g-sell-price').value;
+            const sellDate = document.getElementById('g-sell-date').value;
+
             const gadget = {
                 name: document.getElementById('g-name').value,
                 category: document.getElementById('g-category').value,
                 price: parseFloat(document.getElementById('g-price').value),
                 date: document.getElementById('g-date').value,
+                sellPrice: sellPrice ? parseFloat(sellPrice) : null,
+                sellDate: sellDate || null,
                 notes: document.getElementById('g-notes').value,
+                status: (sellPrice && sellDate) ? 'sold' : 'owned',
                 timestamp: Date.now()
             };
 
             try {
-                await addDoc(collection(db, 'gadgets'), gadget);
+                if (window.editingGadgetId) {
+                    // Update existing gadget
+                    await deleteDoc(doc(db, 'gadgets', window.editingGadgetId));
+                    await addDoc(collection(db, 'gadgets'), gadget);
+                    window.editingGadgetId = null;
+                    document.querySelector('#gadget-form .btn').textContent = 'Add to Collection';
+                } else {
+                    // Add new gadget
+                    await addDoc(collection(db, 'gadgets'), gadget);
+                }
                 await loadData();
                 e.target.reset();
                 document.getElementById('g-date').valueAsDate = new Date();
@@ -847,24 +886,48 @@
                 return;
             }
 
-            container.innerHTML = gadgets.map(g => `
+            container.innerHTML = gadgets.map(g => {
+                const profit = g.sellPrice ? g.sellPrice - g.price : 0;
+                const profitClass = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : '';
+                
+                return `
                 <div class="item-card">
                     <div class="item-header">
                         <div>
                             <div class="item-title">${g.name}</div>
                             <span class="item-category">${g.category}</span>
+                            ${g.status === 'sold' ? '<span class="status-sold" style="margin-left: 5px;">SOLD</span>' : '<span class="status-owned" style="margin-left: 5px;">OWNED</span>'}
                         </div>
-                        <button class="delete-icon" onclick="window.deleteGadget('${g.firestoreId}', '${g.name}')">×</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="edit-icon" onclick="window.editGadget('${g.firestoreId}')" title="Edit">✏️</button>
+                            <button class="delete-icon" onclick="window.deleteGadget('${g.firestoreId}', '${g.name}')">×</button>
+                        </div>
                     </div>
                     <div class="item-info">
                         <div class="info-row">
-                            <span class="info-label">Price</span>
-                            <span class="price-tag">₹${g.price.toFixed(2)}</span>
+                            <span class="info-label">Buy Price</span>
+                            <span class="info-value">₹${g.price.toFixed(2)}</span>
                         </div>
+                        ${g.sellPrice ? `
+                        <div class="info-row">
+                            <span class="info-label">Sell Price</span>
+                            <span class="info-value">₹${g.sellPrice.toFixed(2)}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Profit/Loss</span>
+                            <span class="info-value ${profitClass}">₹${profit.toFixed(2)}</span>
+                        </div>
+                        ` : ''}
                         <div class="info-row">
                             <span class="info-label">Purchased</span>
                             <span class="info-value">${new Date(g.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
                         </div>
+                        ${g.sellDate ? `
+                        <div class="info-row">
+                            <span class="info-label">Sold</span>
+                            <span class="info-value">${new Date(g.sellDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                        </div>
+                        ` : ''}
                         ${g.notes ? `
                         <div class="info-row">
                             <span class="info-label">Notes</span>
@@ -873,7 +936,8 @@
                         ` : ''}
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // Delete gadget with confirmation
@@ -891,6 +955,30 @@
                     alert('Error deleting gadget. Please try again.');
                 }
             };
+        };
+
+        // Edit gadget
+        window.editGadget = function(firestoreId) {
+            const gadget = gadgets.find(g => g.firestoreId === firestoreId);
+            if (!gadget) return;
+
+            // Populate form
+            document.getElementById('g-name').value = gadget.name;
+            document.getElementById('g-category').value = gadget.category;
+            document.getElementById('g-price').value = gadget.price;
+            document.getElementById('g-date').value = gadget.date;
+            document.getElementById('g-sell-price').value = gadget.sellPrice || '';
+            document.getElementById('g-sell-date').value = gadget.sellDate || '';
+            document.getElementById('g-notes').value = gadget.notes || '';
+
+            // Store editing ID
+            window.editingGadgetId = firestoreId;
+            
+            // Change button text
+            document.querySelector('#gadget-form .btn').textContent = 'Update Gadget';
+
+            // Scroll to form
+            document.getElementById('gadgets').scrollIntoView({ behavior: 'smooth' });
         };
 
         // Game form handler
@@ -915,7 +1003,16 @@
             };
 
             try {
-                await addDoc(collection(db, 'games'), game);
+                if (window.editingGameId) {
+                    // Update existing game
+                    await deleteDoc(doc(db, 'games', window.editingGameId));
+                    await addDoc(collection(db, 'games'), game);
+                    window.editingGameId = null;
+                    document.querySelector('#game-form .btn').textContent = 'Add to Collection';
+                } else {
+                    // Add new game
+                    await addDoc(collection(db, 'games'), game);
+                }
                 await loadData();
                 e.target.reset();
                 document.getElementById('gm-buy-date').valueAsDate = new Date();
@@ -963,7 +1060,10 @@
                                 <span class="item-category">${g.platform}</span>
                                 ${g.genre ? `<span class="item-category" style="margin-left: 5px;">${g.genre}</span>` : ''}
                             </div>
-                            <button class="delete-icon" onclick="window.deleteGame('${g.firestoreId}', '${g.title}')">×</button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="edit-icon" onclick="window.editGame('${g.firestoreId}')" title="Edit">✏️</button>
+                                <button class="delete-icon" onclick="window.deleteGame('${g.firestoreId}', '${g.title}')">×</button>
+                            </div>
                         </div>
                         <div class="item-info">
                             <div class="info-row">
@@ -992,6 +1092,12 @@
                                 <span class="info-label">Bought</span>
                                 <span class="info-value">${new Date(g.buyDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
                             </div>
+                            ${g.sellDate ? `
+                            <div class="info-row">
+                                <span class="info-label">Sold</span>
+                                <span class="info-value">${new Date(g.sellDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                            </div>
+                            ` : ''}
                             ${g.notes ? `
                             <div class="info-row">
                                 <span class="info-label">Notes</span>
@@ -1021,6 +1127,32 @@
             };
         };
 
+        // Edit game
+        window.editGame = function(firestoreId) {
+            const game = games.find(g => g.firestoreId === firestoreId);
+            if (!game) return;
+
+            // Populate form
+            document.getElementById('gm-title').value = game.title;
+            document.getElementById('gm-platform').value = game.platform;
+            document.getElementById('gm-genre').value = game.genre || '🎯 Action';
+            document.getElementById('gm-buy-price').value = game.buyPrice;
+            document.getElementById('gm-buy-date').value = game.buyDate;
+            document.getElementById('gm-condition').value = game.condition;
+            document.getElementById('gm-sell-price').value = game.sellPrice || '';
+            document.getElementById('gm-sell-date').value = game.sellDate || '';
+            document.getElementById('gm-notes').value = game.notes || '';
+
+            // Store editing ID
+            window.editingGameId = firestoreId;
+            
+            // Change button text
+            document.querySelector('#game-form .btn').textContent = 'Update Game';
+
+            // Scroll to form
+            document.getElementById('games').scrollIntoView({ behavior: 'smooth' });
+        };
+
         // Modal functions
         window.closeDeleteModal = function() {
             document.getElementById('deleteModal').classList.remove('active');
@@ -1038,6 +1170,10 @@
         function updateDashboard() {
             const totalGadgets = gadgets.length;
             const gadgetsValue = gadgets.reduce((sum, g) => sum + g.price, 0);
+            const gadgetsProfit = gadgets
+                .filter(g => g.sellPrice)
+                .reduce((sum, g) => sum + (g.sellPrice - g.price), 0);
+            
             const totalGames = games.length;
             const gamesProfit = games
                 .filter(g => g.sellPrice)
@@ -1046,7 +1182,10 @@
             document.getElementById('dash-total-gadgets').textContent = totalGadgets;
             document.getElementById('dash-gadgets-value').textContent = `₹${gadgetsValue.toFixed(0)}`;
             document.getElementById('dash-total-games').textContent = totalGames;
-            document.getElementById('dash-games-profit').textContent = `₹${gamesProfit.toFixed(0)}`;
+            
+            // Update games profit to show combined profit/loss
+            const totalProfit = gadgetsProfit + gamesProfit;
+            document.getElementById('dash-games-profit').textContent = `₹${totalProfit.toFixed(0)}`;
 
             // Recent items
             const recent = [...gadgets, ...games]
