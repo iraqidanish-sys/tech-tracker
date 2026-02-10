@@ -624,6 +624,13 @@
         .custom-select-option.selected {
             background: rgba(0, 245, 255, 0.1);
         }
+
+        /* Hide original select when custom dropdown exists */
+        .custom-select-wrapper select {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -1040,9 +1047,11 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
                         <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Platform Name</label>
-                        <select id="icon-platform-name" style="width: 100%; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                            <option value="">Select a platform...</option>
-                        </select>
+                        <div class="custom-select-wrapper" id="icon-platform-select-wrapper">
+                            <select id="icon-platform-name" style="width: 100%; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
+                                <option value="">Select a platform...</option>
+                            </select>
+                        </div>
                         <p style="font-size: 11px; color: #666; margin-top: 5px;">Choose from your existing game platforms</p>
                     </div>
                     <div>
@@ -1474,6 +1483,96 @@
             if (gamePlatforms.includes(currentValue)) {
                 select.value = currentValue;
             }
+            
+            // Create visual custom dropdown
+            createCustomIconPlatformDropdown();
+        }
+
+        function createCustomIconPlatformDropdown() {
+            const wrapper = document.getElementById('icon-platform-select-wrapper');
+            const select = document.getElementById('icon-platform-name');
+            if (!wrapper || !select) return;
+
+            // Remove existing custom dropdown if any
+            const existing = wrapper.querySelector('.custom-select-trigger');
+            if (existing) {
+                existing.remove();
+                wrapper.querySelector('.custom-select-options')?.remove();
+            }
+
+            // Get current value
+            const currentValue = select.value;
+            const currentIcon = currentValue ? getCustomIconForPlatform(currentValue) : null;
+            const displayText = currentValue ? removeEmojiFromText(currentValue) : 'Select a platform...';
+
+            // Create trigger
+            const trigger = document.createElement('div');
+            trigger.className = 'custom-select-trigger';
+            trigger.innerHTML = (currentIcon && currentValue)
+                ? '<img src="' + currentIcon.iconUrl + '" class="custom-select-icon" alt="' + currentValue + '">' + displayText + '<span class="custom-select-arrow">▼</span>'
+                : displayText + '<span class="custom-select-arrow">▼</span>';
+
+            // Create options container
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'custom-select-options';
+
+            // Add empty option
+            const emptyOption = document.createElement('div');
+            emptyOption.className = 'custom-select-option';
+            if (!currentValue) emptyOption.classList.add('selected');
+            emptyOption.textContent = 'Select a platform...';
+            emptyOption.onclick = () => {
+                select.value = '';
+                trigger.innerHTML = 'Select a platform...<span class="custom-select-arrow">▼</span>';
+                optionsContainer.classList.remove('active');
+                trigger.classList.remove('active');
+                document.querySelectorAll('.custom-select-option').forEach(opt => opt.classList.remove('selected'));
+                emptyOption.classList.add('selected');
+            };
+            optionsContainer.appendChild(emptyOption);
+
+            gamePlatforms.forEach(platform => {
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
+                if (platform === currentValue) option.classList.add('selected');
+                
+                const icon = getCustomIconForPlatform(platform);
+                const text = removeEmojiFromText(platform);
+                
+                option.innerHTML = icon 
+                    ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text
+                    : text;
+                
+                option.onclick = () => {
+                    select.value = platform;
+                    trigger.innerHTML = icon 
+                        ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text + '<span class="custom-select-arrow">▼</span>'
+                        : text + '<span class="custom-select-arrow">▼</span>';
+                    optionsContainer.classList.remove('active');
+                    trigger.classList.remove('active');
+                    document.querySelectorAll('.custom-select-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                };
+
+                optionsContainer.appendChild(option);
+            });
+
+            // Toggle dropdown
+            trigger.onclick = () => {
+                trigger.classList.toggle('active');
+                optionsContainer.classList.toggle('active');
+            };
+
+            // Close on outside click
+            document.addEventListener('click', (e) => {
+                if (!wrapper.contains(e.target)) {
+                    trigger.classList.remove('active');
+                    optionsContainer.classList.remove('active');
+                }
+            });
+
+            wrapper.insertBefore(trigger, select);
+            wrapper.appendChild(optionsContainer);
         }
 
         function updateDropdown(id, options) {
