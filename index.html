@@ -2909,72 +2909,96 @@
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one game per row), and import it back.');
         };
 
-        // TSV/CSV Import for Games
-        window.importGamesCSV = async function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // TSV Import for Games (Multi-User Safe)
+window.importGamesTSV = async function(event) {
 
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    let text = e.target.result;
-                    // Remove BOM if present
-                    if (text.charCodeAt(0) === 0xFEFF) {
-                        text = text.slice(1);
-                    }
-                    const lines = text.split('\n').filter(line => line.trim());
-                    
-                    // Detect delimiter (tab or comma)
-                    const delimiter = lines[0].includes('\t') ? '\t' : ',';
-                    
-                    // Skip header row
-                    const dataLines = lines.slice(1);
-                    
-                    let imported = 0;
-                    for (const line of dataLines) {
-                        let values;
-                        if (delimiter === '\t') {
-                            // TSV - simple split
-                            values = line.split('\t');
-                        } else {
-                            // CSV - handle quoted values
-                            const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                            if (!matches) continue;
-                            values = matches.map(v => v.replace(/^"|"$/g, '').trim());
-                        }
-                        
-                        if (values.length < 6) continue;
-                        
-                        const game = {
-                            title: values[0]?.trim() || '',
-                            platform: values[1]?.trim() || 'PlayStation 5',
-                            genre: values[2]?.trim() || '🎯 Action',
-                            buyPrice: parseFloat(values[3]) || 0,
-                            buyDate: values[4]?.trim() || new Date().toISOString().split('T')[0],
-                            condition: values[5]?.trim() || 'Good',
-                            sellPrice: values[6]?.trim() ? parseFloat(values[6]) : null,
-                            sellDate: values[7]?.trim() || null,
-                            status: values[8]?.trim() || 'owned',
-                            notes: values[9]?.trim() || '',
-                            timestamp: Date.now()
-                        };
+    if (!currentUserUID) {
+        alert("User not logged in");
+        return;
+    }
 
-                        if (game.title && game.buyPrice) {
-                            await addDoc(collection(db, 'games'), game);
-                            imported++;
-                        }
-                    }
+    const file = event.target.files[0];
+    if (!file) return;
 
-                    alert(`Successfully imported ${imported} game(s)!`);
-                    await loadData();
-                    event.target.value = ''; // Reset file input
-                } catch (error) {
-                    console.error('Import error:', error);
-                    alert('Error importing file. Please check the file format.');
+    const reader = new FileReader();
+
+    reader.onload = async function(e) {
+
+        try {
+
+            let text = e.target.result;
+
+            // Remove BOM
+            if (text.charCodeAt(0) === 0xFEFF) {
+                text = text.slice(1);
+            }
+
+            const lines = text.split('\n').filter(l => l.trim());
+            const dataLines = lines.slice(1); // Skip header
+
+            let imported = 0;
+
+            function parseDate(d) {
+                if (!d) return new Date();
+
+                if (d.includes('/')) {
+                    const [day, month, year] = d.split('/');
+                    return new Date(`20${year}`, month - 1, day);
                 }
-            };
-            reader.readAsText(file, 'UTF-8');
-        };
+
+                return new Date(d);
+            }
+
+            for (const line of dataLines) {
+
+                const values = line.split('\t');
+
+                if (values.length < 6) continue;
+
+                const game = {
+
+                    title: values[0]?.trim(),
+                    platform: values[1]?.trim() || '🟦 PlayStation 5',
+                    genre: values[2]?.trim() || '🎯 Action',
+
+                    buyPrice: Number(values[3]) || 0,
+                    buyDate: parseDate(values[4]),
+
+                    condition: values[5]?.trim() || '👍 Good',
+
+                    sellPrice: values[6] ? Number(values[6]) : null,
+                    sellDate: values[7] ? parseDate(values[7]) : null,
+
+                    status: values[8]?.trim() || 'owned',
+                    notes: values[9]?.trim() || '',
+
+                    timestamp: new Date()
+                };
+
+                if (game.title && game.buyPrice) {
+
+                    await addDoc(
+                        collection(db, 'users', currentUserUID, 'games'),
+                        game
+                    );
+
+                    imported++;
+                }
+            }
+
+            alert(`Imported ${imported} games successfully`);
+            await loadAllData();
+
+        } catch (err) {
+            console.error(err);
+            alert("Import failed");
+        }
+
+        event.target.value = '';
+    };
+
+    reader.readAsText(file, 'UTF-8');
+};
 
         // TSV/CSV Export for Digital Purchases
         window.exportDigitalCSV = function() {
@@ -3043,67 +3067,91 @@
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one purchase per row), and import it back.');
         };
 
-        // TSV/CSV Import for Digital Purchases
-        window.importDigitalCSV = async function(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+       // TSV Import for Digital Purchases (Multi-User Safe)
+window.importDigitalTSV = async function(event) {
 
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    let text = e.target.result;
-                    // Remove BOM if present
-                    if (text.charCodeAt(0) === 0xFEFF) {
-                        text = text.slice(1);
-                    }
-                    const lines = text.split('\n').filter(line => line.trim());
-                    
-                    // Detect delimiter (tab or comma)
-                    const delimiter = lines[0].includes('\t') ? '\t' : ',';
-                    
-                    // Skip header row
-                    const dataLines = lines.slice(1);
-                    
-                    let imported = 0;
-                    for (const line of dataLines) {
-                        let values;
-                        if (delimiter === '\t') {
-                            values = line.split('\t');
-                        } else {
-                            const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                            if (!matches) continue;
-                            values = matches.map(v => v.replace(/^"|"$/g, '').trim());
-                        }
-                        
-                        if (values.length < 3) continue;
-                        
-                        const digital = {
-                            name: values[0]?.trim() || '',
-                            type: values[1]?.trim() || '💳 Other',
-                            amount: parseFloat(values[2]) || 0,
-                            date: values[3]?.trim() || new Date().toISOString().split('T')[0],
-                            duration: values[4]?.trim() || '',
-                            expiryDate: values[5]?.trim() || null,
-                            notes: values[6]?.trim() || '',
-                            timestamp: Date.now()
-                        };
+    if (!currentUserUID) {
+        alert("User not logged in");
+        return;
+    }
 
-                        if (digital.name && digital.amount) {
-                            await addDoc(collection(db, 'digitalPurchases'), digital);
-                            imported++;
-                        }
-                    }
+    const file = event.target.files[0];
+    if (!file) return;
 
-                    alert(`Successfully imported ${imported} digital purchase(s)!`);
-                    await loadData();
-                    event.target.value = '';
-                } catch (error) {
-                    console.error('Import error:', error);
-                    alert('Error importing file. Please check the file format.');
+    const reader = new FileReader();
+
+    reader.onload = async function(e) {
+
+        try {
+
+            let text = e.target.result;
+
+            // Remove BOM
+            if (text.charCodeAt(0) === 0xFEFF) {
+                text = text.slice(1);
+            }
+
+            const lines = text.split('\n').filter(l => l.trim());
+            const dataLines = lines.slice(1); // Skip header
+
+            let imported = 0;
+
+            function parseDate(d) {
+                if (!d) return null;
+
+                if (d.includes('/')) {
+                    const [day, month, year] = d.split('/');
+                    return new Date(`20${year}`, month - 1, day);
                 }
-            };
-            reader.readAsText(file, 'UTF-8');
-        };
+
+                return new Date(d);
+            }
+
+            for (const line of dataLines) {
+
+                const values = line.split('\t');
+
+                if (values.length < 3) continue;
+
+                const digital = {
+
+                    name: values[0]?.trim(),
+                    type: values[1]?.trim() || '💳 Other',
+
+                    amount: Number(values[2]) || 0,
+                    date: parseDate(values[3]) || new Date(),
+
+                    duration: values[4]?.trim() || '',
+                    expiryDate: values[5] ? parseDate(values[5]) : null,
+
+                    notes: values[6]?.trim() || '',
+                    timestamp: new Date()
+                };
+
+                if (digital.name && digital.amount) {
+
+                    await addDoc(
+                        collection(db, 'users', currentUserUID, 'digitalPurchases'),
+                        digital
+                    );
+
+                    imported++;
+                }
+            }
+
+            alert(`Imported ${imported} digital purchases successfully`);
+            await loadAllData();
+
+        } catch (err) {
+            console.error(err);
+            alert("Import failed");
+        }
+
+        event.target.value = '';
+    };
+
+    reader.readAsText(file, 'UTF-8');
+};
 
         // Initialize
         document.getElementById('g-date').valueAsDate = new Date();
