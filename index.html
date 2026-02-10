@@ -1489,7 +1489,15 @@
         }
 
         window.saveCustomIcon = async function() {
-            const platformName = document.getElementById('icon-platform-name').value.trim();
+            const selectElement = document.getElementById('icon-platform-name');
+            const platformName = selectElement.value;
+            
+            console.log('=== Saving Custom Icon Debug ===');
+            console.log('Raw value from dropdown:', platformName);
+            console.log('Value length:', platformName.length);
+            console.log('Value char codes:', [...platformName].map(c => c.charCodeAt(0)));
+            console.log('Selected index:', selectElement.selectedIndex);
+            console.log('Selected option text:', selectElement.options[selectElement.selectedIndex]?.text);
             
             if (!platformName) {
                 alert('Please select a platform');
@@ -1510,7 +1518,7 @@
                 timestamp: Date.now()
             };
             
-            console.log('Saving icon:', newIcon);
+            console.log('Icon object to save:', newIcon);
             
             if (existingIndex >= 0) {
                 if (confirm(`An icon already exists for "${platformName}". Replace it?`)) {
@@ -1524,10 +1532,17 @@
             
             await saveSettings();
             
+            console.log('After save, customIcons array:', customIcons);
+            console.log('==================================');
+            
             // Clear inputs
             document.getElementById('icon-platform-name').value = '';
             document.getElementById('icon-upload').value = '';
             document.getElementById('icon-url').value = '';
+            hideIconPreview();
+            
+            alert(`Icon for "${platformName}" saved successfully!`);
+        };
             hideIconPreview();
             
             alert(`Icon for "${platformName}" saved successfully!`);
@@ -1580,11 +1595,26 @@
                 console.log(`Icon ${index}:`, icon.platform);
                 console.log(`Icon ${index} length:`, icon.platform.length);
                 console.log(`Icon ${index} char codes:`, [...icon.platform].map(c => c.charCodeAt(0)));
-                console.log(`Match: ${icon.platform === platform}`);
+                console.log(`Exact match: ${icon.platform === platform}`);
             });
             
-            const customIcon = customIcons.find(icon => icon.platform === platform);
-            console.log('Found icon:', customIcon);
+            // Try exact match first
+            let customIcon = customIcons.find(icon => icon.platform === platform);
+            
+            // If no exact match, try fuzzy match (remove emojis and compare)
+            if (!customIcon) {
+                const cleanPlatform = platform.replace(/[\u{1F000}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
+                console.log('Trying fuzzy match with cleaned platform:', cleanPlatform);
+                
+                customIcon = customIcons.find(icon => {
+                    const cleanIcon = icon.platform.replace(/[\u{1F000}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
+                    const matches = cleanIcon === cleanPlatform;
+                    console.log(`  Comparing "${cleanIcon}" with "${cleanPlatform}": ${matches}`);
+                    return matches;
+                });
+            }
+            
+            console.log('Found icon (after exact or fuzzy match):', customIcon);
             console.log('=============================');
             
             if (customIcon) {
