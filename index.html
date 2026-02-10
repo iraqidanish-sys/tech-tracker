@@ -935,6 +935,20 @@
         </div>
     </div>
 
+    <!-- Loading Screen -->
+    <div id="loadingScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%); z-index: 10001; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+        <div style="font-size: 64px; margin-bottom: 20px; animation: pulse 2s ease-in-out infinite;">🎮</div>
+        <h1 style="font-size: 28px; background: linear-gradient(45deg, #00f5ff, #ff00e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Loading...
+        </h1>
+        <style>
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.1); opacity: 0.8; }
+            }
+        </style>
+    </div>
+
     <!-- User Info Bar (shown when logged in) -->
     <div id="userInfo" style="display: none; position: fixed; top: 20px; right: 20px; background: #1a1a2e; padding: 12px 20px; border-radius: 10px; border: 1px solid #2a2a3e; z-index: 1001; display: flex; align-items: center; gap: 12px;">
         <img id="userPhoto" src="" alt="" style="width: 32px; height: 32px; border-radius: 50%;">
@@ -983,6 +997,9 @@
 
         // Authentication State Management
         onAuthStateChanged(auth, (user) => {
+            // Hide loading screen
+            document.getElementById('loadingScreen').style.display = 'none';
+            
             if (user) {
                 // User is signed in
                 currentUser = user;
