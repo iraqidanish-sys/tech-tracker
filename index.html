@@ -2092,6 +2092,11 @@ async function loadSettings() {
                 await loadData();
                 e.target.reset();
                 document.getElementById('g-date').valueAsDate = new Date();
+            } catch (error) {
+                console.error('Error adding gadget:', error);
+                alert('Error adding gadget. Please try again.');
+            }
+        });
 
         // Gadget filter
         window.filterGadgets = function(event, filter) {
