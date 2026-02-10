@@ -3149,31 +3149,39 @@ window.importDigitalCSV = async function (event) {
                 return new Date(d);
             }
 
-            for (const line of dataLines) {
+           for (const line of dataLines) {
 
-                const values = line.split('\t');
+    const values = line
+        .split('\t')
+        .map(v => v.replace('\r', '').trim());
 
-                if (values.length < 3) continue;
+    const name = values[0] || '';
+    const type = values[1] || '💳 Other';
+    const amount = parseFloat(values[2]);
 
-                const digital = {
-                    name: values[0]?.trim(),
-                    type: values[1]?.trim() || '💳 Other',
-                    amount: Number(values[2]) || 0,
-                    date: parseDate(values[3]) || new Date(),
-                    duration: values[4]?.trim() || '',
-                    expiryDate: values[5] ? parseDate(values[5]) : null,
-                    notes: values[6]?.trim() || '',
-                    timestamp: Date.now()
-                };
+    if (!name || isNaN(amount)) {
+        console.warn('⛔ Skipping row:', values);
+        continue;
+    }
 
-                if (digital.name && digital.amount) {
-                    await addDoc(
-                        collection(db, 'users', currentUserUID, 'digitalPurchases'),
-                        digital
-                    );
-                    imported++;
-                }
-            }
+    const digital = {
+        name,
+        type,
+        amount,
+        date: parseDate(values[3]) || new Date(),
+        duration: values[4] || '',
+        expiryDate: values[5] ? parseDate(values[5]) : null,
+        notes: values[6] || '',
+        timestamp: Date.now()
+    };
+
+    await addDoc(
+        collection(db, 'users', currentUserUID, 'digitalPurchases'),
+        digital
+    );
+
+    imported++;
+}
 
             alert(`Imported ${imported} digital purchases`);
             await loadData();
