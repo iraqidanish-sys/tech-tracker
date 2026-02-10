@@ -1264,25 +1264,41 @@
             } else {
                 recentContainer.innerHTML = recent.map(item => {
                     if (item.title) {
+                        // Game item
+                        const duration = calculateOwnershipDuration(item.buyDate, item.sellDate);
+                        const status = item.status || 'owned';
                         return `
                             <div class="item-card">
                                 <div class="item-title">${item.title}</div>
                                 <span class="item-category">${item.platform}</span>
                                 ${item.genre ? `<span class="item-category" style="margin-left: 5px;">${item.genre}</span>` : ''}
+                                <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
                                 <div style="margin-top: 15px;">
                                     <div class="info-label">Buy Price</div>
                                     <div class="price-tag">₹${item.buyPrice.toFixed(2)}</div>
                                 </div>
+                                <div style="margin-top: 10px;">
+                                    <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
+                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px;">⏱️ ${duration}</div>
+                                </div>
                             </div>
                         `;
                     } else {
+                        // Gadget item
+                        const duration = calculateOwnershipDuration(item.date, item.sellDate);
+                        const status = item.status || 'owned';
                         return `
                             <div class="item-card">
                                 <div class="item-title">${item.name}</div>
                                 <span class="item-category">${item.category}</span>
+                                <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
                                 <div style="margin-top: 15px;">
                                     <div class="info-label">Price</div>
                                     <div class="price-tag">₹${item.price.toFixed(2)}</div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
+                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px;">⏱️ ${duration}</div>
                                 </div>
                             </div>
                         `;
