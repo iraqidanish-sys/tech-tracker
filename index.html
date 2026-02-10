@@ -575,7 +575,7 @@
             padding: 3px;
             border-radius: 6px;
             flex-shrink: 0;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) brightness(1.1) contrast(1.1);
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8)) brightness(1.4) contrast(1.3) saturate(1.2);
         }
 
         .custom-select-arrow {
@@ -1636,7 +1636,7 @@
                     if (customIcon) {
                         // Show custom icon + text without emoji
                         const textWithoutEmoji = removeEmojiFromText(item);
-                        displayContent = `<img src="${customIcon.iconUrl}" style="width: 28px; height: 28px; object-fit: contain; padding: 4px; border-radius: 6px; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5)) brightness(1.15) contrast(1.1);"> <span style="font-size: 14px;">${textWithoutEmoji}</span>`;
+                        displayContent = `<img src="${customIcon.iconUrl}" style="width: 28px; height: 28px; object-fit: contain; padding: 4px; border-radius: 6px; filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.9)) brightness(1.5) contrast(1.4) saturate(1.3);"> <span style="font-size: 14px;">${textWithoutEmoji}</span>`;
                     } else {
                         // Show with emoji as normal
                         displayContent = `<span style="font-size: 14px;">${item}</span>`;
@@ -1856,7 +1856,7 @@
             
             iconsGrid.innerHTML = customIcons.map((icon, index) => `
                 <div style="background: #16213e; border: 1px solid #2a2a3e; border-radius: 10px; padding: 15px; text-align: center;">
-                    <img src="${icon.iconUrl}" alt="${icon.platform}" style="width: 48px; height: 48px; object-fit: contain; margin-bottom: 10px; padding: 8px; border-radius: 8px; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6)) brightness(1.2) contrast(1.15);">
+                    <img src="${icon.iconUrl}" alt="${icon.platform}" style="width: 48px; height: 48px; object-fit: contain; margin-bottom: 10px; padding: 8px; border-radius: 8px; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 1)) brightness(1.6) contrast(1.5) saturate(1.4);">
                     <div style="font-size: 13px; color: #e0e0e0; margin-bottom: 10px; font-weight: 500;">${icon.platform}</div>
                     <button onclick="window.removeCustomIconByIndex(${index})" style="background: #f44336; border: none; padding: 6px 12px; border-radius: 5px; color: white; font-size: 11px; cursor: pointer; font-weight: 600;">Remove</button>
                 </div>
@@ -1909,7 +1909,7 @@
             if (customIcon) {
                 // Remove emoji from platform name when displaying with custom icon
                 const platformWithoutEmoji = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
-                return '<img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="width: 40px; height: 40px; object-fit: contain; vertical-align: middle; margin-right: 8px; padding: 4px; border-radius: 6px; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5)) brightness(1.15) contrast(1.1);">' + platformWithoutEmoji;
+                return '<img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="width: 40px; height: 40px; object-fit: contain; vertical-align: middle; margin-right: 8px; padding: 4px; border-radius: 6px; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.9)) brightness(1.5) contrast(1.4) saturate(1.3);">' + platformWithoutEmoji;
             }
             return platform; // Return plain text if no custom icon
         }
@@ -1917,7 +1917,7 @@
         function getPlatformIcon(platform) {
             const customIcon = customIcons.find(icon => icon.platform === platform);
             if (customIcon) {
-                return `<img src="${customIcon.iconUrl}" alt="${platform}" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; padding: 2px; border-radius: 4px; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)) brightness(1.1) contrast(1.1);">`;
+                return `<img src="${customIcon.iconUrl}" alt="${platform}" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; padding: 2px; border-radius: 4px; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.9)) brightness(1.4) contrast(1.3) saturate(1.2);">`;
             }
             return ''; // Return empty if no custom icon
         }
