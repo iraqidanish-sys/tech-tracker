@@ -559,6 +559,9 @@
         <div class="nav-item" onclick="window.showSection('digital')">
             <span>💳</span> Digital Purchases
         </div>
+        <div class="nav-item" onclick="window.showSection('settings')">
+            <span>⚙️</span> Settings
+        </div>
     </div>
 
     <div class="main-content">
@@ -731,12 +734,16 @@
                                 <!-- Replace icons below with custom console icons if needed -->
                                 <option value="🟦 PlayStation 5">🟦 PlayStation 5</option>
                                 <option value="🟦 PlayStation 4">🟦 PlayStation 4</option>
+                                <option value="🟦 PlayStation 3">🟦 PlayStation 3</option>
                                 <option value="🟩 Xbox Series X/S">🟩 Xbox Series X/S</option>
                                 <option value="🟩 Xbox One">🟩 Xbox One</option>
                                 <option value="🟩 Xbox 360">🟩 Xbox 360</option>
                                 <option value="🔴 Nintendo Switch">🔴 Nintendo Switch</option>
+                                <option value="🔵 Nintendo Wii U">🔵 Nintendo Wii U</option>
+                                <option value="⚪ Nintendo Wii">⚪ Nintendo Wii</option>
                                 <option value="💻 PC">💻 PC</option>
                                 <option value="📱 Mobile">📱 Mobile</option>
+                                <option value="🕹️ Retro">🕹️ Retro</option>
                                 <option value="🎮 Other">🎮 Other</option>
                             </select>
                         </div>
@@ -753,6 +760,7 @@
                                 <option value="😱 Horror">😱 Horror</option>
                                 <option value="🎭 Story-Driven">🎭 Story-Driven</option>
                                 <option value="🛡️ Strategy">🛡️ Strategy</option>
+                                <option value="🎪 Party">🎪 Party</option>
                                 <option value="🎨 Simulation">🎨 Simulation</option>
                                 <option value="⚔️ Fighting">⚔️ Fighting</option>
                                 <option value="🎮 Other">🎮 Other</option>
@@ -889,6 +897,66 @@
 
             <div class="items-grid" id="digital-list"></div>
         </div>
+
+        <!-- Settings Section -->
+        <div id="settings" class="section">
+            <div class="header">
+                <h1>⚙️ Settings</h1>
+                <p>Manage your categories, platforms, and icons</p>
+            </div>
+
+            <!-- Gadget Categories -->
+            <div class="add-card" style="margin-bottom: 30px;">
+                <h2>📱 Gadget Categories</h2>
+                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove gadget categories. These will be available across all your devices.</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="new-gadget-category" placeholder="e.g., 🎮 Gaming Console" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
+                    <button onclick="window.addGadgetCategory()" class="btn">Add Category</button>
+                </div>
+                
+                <div id="gadget-categories-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            </div>
+
+            <!-- Game Platforms -->
+            <div class="add-card" style="margin-bottom: 30px;">
+                <h2>🎮 Game Platforms</h2>
+                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove gaming platforms. Use emojis for visual icons.</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="new-game-platform" placeholder="e.g., 🟦 PlayStation 5" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
+                    <button onclick="window.addGamePlatform()" class="btn">Add Platform</button>
+                </div>
+                
+                <div id="game-platforms-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            </div>
+
+            <!-- Game Genres -->
+            <div class="add-card" style="margin-bottom: 30px;">
+                <h2>🎯 Game Genres</h2>
+                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove game genres.</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="new-game-genre" placeholder="e.g., 🏃 Adventure" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
+                    <button onclick="window.addGameGenre()" class="btn">Add Genre</button>
+                </div>
+                
+                <div id="game-genres-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            </div>
+
+            <!-- Digital Purchase Types -->
+            <div class="add-card">
+                <h2>💳 Digital Purchase Types</h2>
+                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove digital purchase categories.</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="new-digital-type" placeholder="e.g., 🎵 Music Subscription" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
+                    <button onclick="window.addDigitalType()" class="btn">Add Type</button>
+                </div>
+                
+                <div id="digital-types-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -990,6 +1058,12 @@
         var deleteCallback = null;
         var currentUser = null;
 
+        // Settings (loaded from Firestore)
+        var gadgetCategories = [];
+        var gamePlatforms = [];
+        var gameGenres = [];
+        var digitalTypes = [];
+
         // Authentication State Management
         onAuthStateChanged(auth, (user) => {
             // Hide loading screen
@@ -1005,7 +1079,8 @@
                 document.getElementById('userEmail').textContent = user.email;
                 document.getElementById('userPhoto').src = user.photoURL;
                 
-                // Load data after successful login
+                // Load settings and data after successful login
+                loadSettings();
                 loadData();
             } else {
                 // User is signed out
@@ -1080,6 +1155,205 @@
                 alert('Error loading data. Please refresh the page.');
             }
         }
+
+        // Load Settings from Firestore
+        async function loadSettings() {
+            try {
+                const settingsDoc = await getDocs(collection(db, 'settings'));
+                
+                if (settingsDoc.docs.length > 0) {
+                    const settings = settingsDoc.docs[0].data();
+                    gadgetCategories = settings.gadgetCategories || getDefaultGadgetCategories();
+                    gamePlatforms = settings.gamePlatforms || getDefaultGamePlatforms();
+                    gameGenres = settings.gameGenres || getDefaultGameGenres();
+                    digitalTypes = settings.digitalTypes || getDefaultDigitalTypes();
+                } else {
+                    // Initialize with defaults
+                    gadgetCategories = getDefaultGadgetCategories();
+                    gamePlatforms = getDefaultGamePlatforms();
+                    gameGenres = getDefaultGameGenres();
+                    digitalTypes = getDefaultDigitalTypes();
+                    
+                    // Save defaults to Firestore
+                    await addDoc(collection(db, 'settings'), {
+                        gadgetCategories,
+                        gamePlatforms,
+                        gameGenres,
+                        digitalTypes
+                    });
+                }
+                
+                updateAllDropdowns();
+                renderSettingsLists();
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        // Default values
+        function getDefaultGadgetCategories() {
+            return ['📱 Phone', '💻 Laptop', '⌚ Smartwatch', '🎧 Audio', '📷 Camera', '🎮 Gaming', '⚡ Accessories', '💾 Storage', '🖥️ Monitor', '⌨️ Keyboard/Mouse', '🔌 Chargers', '🔧 Other'];
+        }
+
+        function getDefaultGamePlatforms() {
+            return ['🟦 PlayStation 5', '🟦 PlayStation 4', '🟦 PlayStation 3', '🟩 Xbox Series X/S', '🟩 Xbox One', '🟩 Xbox 360', '🔴 Nintendo Switch', '🔵 Nintendo Wii U', '⚪ Nintendo Wii', '💻 PC', '📱 Mobile', '🕹️ Retro', '🎮 Other'];
+        }
+
+        function getDefaultGameGenres() {
+            return ['🎯 Action', '🏃 Adventure', '🎮 RPG', '🏆 Sports', '🏎️ Racing', '🧩 Puzzle', '🎲 Strategy', '👻 Horror', '🎭 Simulation', '🔫 Shooter', '⚔️ Fighting', '🎸 Music', '🏰 Platform'];
+        }
+
+        function getDefaultDigitalTypes() {
+            return ['🎮 Game Subscription', '📺 Streaming Service', '☁️ Cloud Storage', '🎵 Music Subscription', '📚 E-Book/Audiobook', '💼 Productivity Tool', '🎓 Online Course', '💳 Other'];
+        }
+
+        // Save settings to Firestore
+        async function saveSettings() {
+            try {
+                const settingsSnapshot = await getDocs(collection(db, 'settings'));
+                
+                if (settingsSnapshot.docs.length > 0) {
+                    // Update existing document
+                    const docRef = doc(db, 'settings', settingsSnapshot.docs[0].id);
+                    await deleteDoc(docRef);
+                }
+                
+                // Create new settings document
+                await addDoc(collection(db, 'settings'), {
+                    gadgetCategories,
+                    gamePlatforms,
+                    gameGenres,
+                    digitalTypes
+                });
+                
+                updateAllDropdowns();
+                renderSettingsLists();
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Error saving settings. Please try again.');
+            }
+        }
+
+        // Update all dropdowns with current settings
+        function updateAllDropdowns() {
+            updateDropdown('g-category', gadgetCategories);
+            updateDropdown('gm-platform', gamePlatforms);
+            updateDropdown('gm-genre', gameGenres);
+            updateDropdown('d-type', digitalTypes);
+        }
+
+        function updateDropdown(id, options) {
+            const select = document.getElementById(id);
+            if (!select) return;
+            
+            const currentValue = select.value;
+            select.innerHTML = '';
+            
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+            
+            // Restore previous selection if it still exists
+            if (options.includes(currentValue)) {
+                select.value = currentValue;
+            }
+        }
+
+        // Render settings lists
+        function renderSettingsLists() {
+            renderList('gadget-categories-list', gadgetCategories, 'gadgetCategory');
+            renderList('game-platforms-list', gamePlatforms, 'gamePlatform');
+            renderList('game-genres-list', gameGenres, 'gameGenre');
+            renderList('digital-types-list', digitalTypes, 'digitalType');
+        }
+
+        function renderList(containerId, items, type) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = items.map(item => `
+                <div style="background: #1a1a2e; padding: 10px 15px; border-radius: 8px; border: 1px solid #2a2a3e; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 14px;">${item}</span>
+                    <button onclick="window.remove${type.charAt(0).toUpperCase() + type.slice(1)}('${item.replace(/'/g, "\\'")}')" style="background: #f44336; border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">×</button>
+                </div>
+            `).join('');
+        }
+
+        // Add/Remove functions for each setting type
+        window.addGadgetCategory = async function() {
+            const input = document.getElementById('new-gadget-category');
+            const value = input.value.trim();
+            
+            if (value && !gadgetCategories.includes(value)) {
+                gadgetCategories.push(value);
+                input.value = '';
+                await saveSettings();
+            }
+        };
+
+        window.removeGadgetCategory = async function(category) {
+            if (confirm(`Remove category: ${category}?`)) {
+                gadgetCategories = gadgetCategories.filter(c => c !== category);
+                await saveSettings();
+            }
+        };
+
+        window.addGamePlatform = async function() {
+            const input = document.getElementById('new-game-platform');
+            const value = input.value.trim();
+            
+            if (value && !gamePlatforms.includes(value)) {
+                gamePlatforms.push(value);
+                input.value = '';
+                await saveSettings();
+            }
+        };
+
+        window.removeGamePlatform = async function(platform) {
+            if (confirm(`Remove platform: ${platform}?`)) {
+                gamePlatforms = gamePlatforms.filter(p => p !== platform);
+                await saveSettings();
+            }
+        };
+
+        window.addGameGenre = async function() {
+            const input = document.getElementById('new-game-genre');
+            const value = input.value.trim();
+            
+            if (value && !gameGenres.includes(value)) {
+                gameGenres.push(value);
+                input.value = '';
+                await saveSettings();
+            }
+        };
+
+        window.removeGameGenre = async function(genre) {
+            if (confirm(`Remove genre: ${genre}?`)) {
+                gameGenres = gameGenres.filter(g => g !== genre);
+                await saveSettings();
+            }
+        };
+
+        window.addDigitalType = async function() {
+            const input = document.getElementById('new-digital-type');
+            const value = input.value.trim();
+            
+            if (value && !digitalTypes.includes(value)) {
+                digitalTypes.push(value);
+                input.value = '';
+                await saveSettings();
+            }
+        };
+
+        window.removeDigitalType = async function(type) {
+            if (confirm(`Remove type: ${type}?`)) {
+                digitalTypes = digitalTypes.filter(t => t !== type);
+                await saveSettings();
+            }
+        };
 
         // Section navigation
         window.showSection = function(section) {
