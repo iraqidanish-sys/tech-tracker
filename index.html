@@ -638,283 +638,15 @@
             opacity: 0;
             pointer-events: none;
         }
-
-        /* Login Screen Styles */
-        #loginScreen {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-        }
-
-        .login-container {
-            background: #1a1a2e;
-            border: 1px solid #2a2a3e;
-            border-radius: 20px;
-            padding: 50px;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .login-logo {
-            text-align: center;
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-
-        .login-title {
-            text-align: center;
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #00f5ff, #ff00e5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .login-subtitle {
-            text-align: center;
-            color: #888;
-            margin-bottom: 40px;
-            font-size: 14px;
-        }
-
-        .login-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .login-tab {
-            flex: 1;
-            padding: 12px;
-            background: #16213e;
-            border: 1px solid #2a2a3e;
-            border-radius: 10px;
-            color: #888;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .login-tab.active {
-            background: linear-gradient(45deg, #00f5ff22, #ff00e522);
-            border-color: #00f5ff;
-            color: #00f5ff;
-        }
-
-        .login-form {
-            display: none;
-        }
-
-        .login-form.active {
-            display: block;
-        }
-
-        .login-input {
-            width: 100%;
-            background: #16213e;
-            border: 1px solid #2a2a3e;
-            border-radius: 10px;
-            padding: 15px;
-            color: #e0e0e0;
-            font-size: 14px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        .login-input:focus {
-            outline: none;
-            border-color: #00f5ff;
-            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
-        }
-
-        .login-btn {
-            width: 100%;
-            background: linear-gradient(45deg, #00f5ff, #ff00e5);
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
-        }
-
-        .login-divider {
-            text-align: center;
-            color: #888;
-            margin: 25px 0;
-            position: relative;
-        }
-
-        .login-divider::before,
-        .login-divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: #2a2a3e;
-        }
-
-        .login-divider::before {
-            left: 0;
-        }
-
-        .login-divider::after {
-            right: 0;
-        }
-
-        .google-btn {
-            width: 100%;
-            background: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 10px;
-            color: #444;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .google-btn:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            background: #16213e;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #00f5ff, #ff00e5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-        }
-
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-        }
-
-        .user-details {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 600;
-            color: #00f5ff;
-            font-size: 14px;
-        }
-
-        .user-email {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .logout-btn {
-            background: #ff4444;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #ff0000;
-        }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen">
-        <div class="login-container">
-            <div class="login-logo">🚀</div>
-            <h1 class="login-title">MyCollection</h1>
-            <p class="login-subtitle">Track your tech, games, and digital purchases</p>
-
-            <div class="login-tabs">
-                <div class="login-tab active" onclick="window.switchLoginTab('signin')">Sign In</div>
-                <div class="login-tab" onclick="window.switchLoginTab('signup')">Sign Up</div>
-            </div>
-
-            <!-- Sign In Form -->
-            <div id="signinForm" class="login-form active">
-                <input type="email" id="signin-email" class="login-input" placeholder="Email" required>
-                <input type="password" id="signin-password" class="login-input" placeholder="Password" required>
-                <button onclick="window.signInWithEmail()" class="login-btn">Sign In</button>
-            </div>
-
-            <!-- Sign Up Form -->
-            <div id="signupForm" class="login-form">
-                <input type="text" id="signup-name" class="login-input" placeholder="Display Name" required>
-                <input type="email" id="signup-email" class="login-input" placeholder="Email" required>
-                <input type="password" id="signup-password" class="login-input" placeholder="Password (min 6 characters)" required>
-                <button onclick="window.signUpWithEmail()" class="login-btn">Create Account</button>
-            </div>
-
-            <div class="login-divider">OR</div>
-
-            <button onclick="window.signInWithGoogle()" class="google-btn">
-                <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
-                    <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
-                    <path fill="#FBBC05" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
-                    <path fill="#EA4335" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
-                </svg>
-                Continue with Google
-            </button>
-        </div>
-    </div>
-
     <!-- Main App (hidden until authenticated) -->
     <div id="mainApp" style="display: none;">
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
 
     <div class="sidebar" id="sidebar">
         <div class="logo">🚀 MyCollection</div>
-        
-        <!-- User Info -->
-        <div class="user-info" id="userInfo" style="display: none;">
-            <div class="user-avatar" id="userAvatar">U</div>
-            <div class="user-details">
-                <div class="user-name" id="userName">User</div>
-                <div class="user-email" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b1e180e192b0e060a020745080406">[email&#160;protected]</a></div>
-            </div>
-            <button class="logout-btn" onclick="window.logOut()">Logout</button>
-        </div>
-        
         <div class="nav-item active" onclick="window.showSection('dashboard')">
             <span>📊</span> Dashboard
         </div>
@@ -1423,14 +1155,21 @@
     </div>
 
     <!-- Firebase SDK -->
+    <script>
+        console.log('✅ Regular script works');
+        window.addEventListener('error', (e) => {
+            console.error('🔥 Global error:', e.message, e.filename);
+        });
+    </script>
     <script type="module">
-        console.log('🚀 Script started loading...');
+        console.log('🚀 Module script started');
         
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, where, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        // Updated: Fixed syntax errors - Feb 2026
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        console.log('✅ Firebase modules imported');
+        console.log('✅ Imports successful');
 
         // Firebase configuration
         const firebaseConfig = {
@@ -1443,8 +1182,8 @@
             measurementId: "G-GSWW5KLR2H"
         };
 
-        console.log('🔧 Initializing Firebase...');
-        
+        console.log('🔧 Initializing Firebase');
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -1452,19 +1191,6 @@
         const provider = new GoogleAuthProvider();
         
         console.log('✅ Firebase initialized');
-        
-        // Emergency fallback timeout
-        setTimeout(() => {
-            const loadingScreen = document.getElementById('loadingScreen');
-            if (loadingScreen && loadingScreen.style.display !== 'none') {
-                console.warn('⚠️ Loading screen timeout - forcing hide');
-                loadingScreen.style.display = 'none';
-                const loginScreen = document.getElementById('loginScreen');
-                if (loginScreen) {
-                    loginScreen.style.display = 'flex';
-                }
-            }
-        }, 5000);
 
         // Global variables
         var gadgets = [];
@@ -1484,158 +1210,15 @@
         var customIcons = []; // New: Store custom platform icons
 
         // Authentication State Management
-        onAuthStateChanged(auth, async (user) => {
-            console.log('Auth state changed:', user ? user.email : 'No user');
+        onAuthStateChanged(auth, (user) => {
+            // Hide loading screen
+            document.getElementById('loadingScreen').style.display = 'none';
             
-            try {
-                // Hide loading screen
-                document.getElementById('loadingScreen').style.display = 'none';
-                
-                if (user) {
-                    // User is signed in
-                    currentUser = user;
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('mainApp').style.display = 'block';
-                    
-                    // Update user info in sidebar
-                    const userInfo = document.getElementById('userInfo');
-                    const userName = document.getElementById('userName');
-                    const userEmail = document.getElementById('userEmail');
-                    const userAvatar = document.getElementById('userAvatar');
-                    
-                    userInfo.style.display = 'flex';
-                    userName.textContent = user.displayName || user.email.split('@')[0];
-                    userEmail.textContent = user.email;
-                    
-                    // Set avatar
-                    if (user.photoURL) {
-                        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="User">`;
-                    } else {
-                        const initial = (user.displayName || user.email)[0].toUpperCase();
-                        userAvatar.textContent = initial;
-                    }
-                    
-                    // Load user data
-                    await loadSettings();
-                    await loadData();
-                } else {
-                    // User is signed out
-                    currentUser = null;
-                    document.getElementById('loginScreen').style.display = 'flex';
-                    document.getElementById('mainApp').style.display = 'none';
-                    
-                    // Clear data
-                    gadgets = [];
-                    games = [];
-                    digitalPurchases = [];
-                }
-            } catch (error) {
-                console.error('Error in auth state change:', error);
-                document.getElementById('loadingScreen').style.display = 'none';
-                alert('Error loading app: ' + error.message);
-            }
-        });
-
-        // Login Tab Switcher
-        window.switchLoginTab = function(tab) {
-            const tabs = document.querySelectorAll('.login-tab');
-            const forms = document.querySelectorAll('.login-form');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            forms.forEach(f => f.classList.remove('active'));
-            
-            if (tab === 'signin') {
-                tabs[0].classList.add('active');
-                document.getElementById('signinForm').classList.add('active');
-            } else {
-                tabs[1].classList.add('active');
-                document.getElementById('signupForm').classList.add('active');
-            }
-        };
-
-        // Sign In with Email
-        window.signInWithEmail = async function() {
-            const email = document.getElementById('signin-email').value;
-            const password = document.getElementById('signin-password').value;
-            
-            if (!email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                console.error('Sign in error:', error);
-                if (error.code === 'auth/invalid-credential') {
-                    alert('Invalid email or password');
-                } else if (error.code === 'auth/user-not-found') {
-                    alert('No account found with this email');
-                } else if (error.code === 'auth/wrong-password') {
-                    alert('Incorrect password');
-                } else {
-                    alert('Sign in failed: ' + error.message);
-                }
-            }
-        };
-
-        // Sign Up with Email
-        window.signUpWithEmail = async function() {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            
-            if (!name || !email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters');
-                return;
-            }
-            
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                // Update display name
-                await updateProfile(userCredential.user, {
-                    displayName: name
-                });
-            } catch (error) {
-                console.error('Sign up error:', error);
-                if (error.code === 'auth/email-already-in-use') {
-                    alert('An account with this email already exists');
-                } else if (error.code === 'auth/invalid-email') {
-                    alert('Invalid email address');
-                } else if (error.code === 'auth/weak-password') {
-                    alert('Password is too weak');
-                } else {
-                    alert('Sign up failed: ' + error.message);
-                }
-            }
-        };
-
-        // Sign In with Google
-        window.signInWithGoogle = async function() {
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error('Google sign in error:', error);
-                if (error.code !== 'auth/popup-closed-by-user') {
-                    alert('Google sign in failed: ' + error.message);
-                }
-            }
-        };
-
-        // Logout
-        window.logOut = async function() {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Logout failed: ' + error.message);
-            }
-        };
+            if (user) {
+                // User is signed in
+                currentUser = user;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
                 document.getElementById('userInfo').style.display = 'flex';
                 document.getElementById('userName').textContent = user.displayName;
                 document.getElementById('userEmail').textContent = user.email;
@@ -1668,6 +1251,16 @@
             }
         });
 
+        // Sign Out
+        document.getElementById('signOutBtn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log('Signed out successfully');
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Failed to sign out: ' + error.message);
+            }
+        });
 
         // Mobile menu toggle
         window.toggleMobileMenu = function() {
@@ -1676,43 +1269,30 @@
 
         // Load data from Firestore
         async function loadData() {
-            if (!currentUser) return;
-            
             try {
-                const userId = currentUser.uid;
-                
-                // Load gadgets for current user
-                const gadgetsQuery = query(
-                    collection(db, 'gadgets'), 
-                    where('userId', '==', userId)
-                );
+                // Load gadgets
+                const gadgetsQuery = query(collection(db, 'gadgets'), orderBy('timestamp', 'desc'));
                 const gadgetsSnapshot = await getDocs(gadgetsQuery);
                 gadgets = gadgetsSnapshot.docs.map(doc => ({
                     firestoreId: doc.id,
                     ...doc.data()
-                })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                }));
 
-                // Load games for current user
-                const gamesQuery = query(
-                    collection(db, 'games'),
-                    where('userId', '==', userId)
-                );
+                // Load games
+                const gamesQuery = query(collection(db, 'games'), orderBy('timestamp', 'desc'));
                 const gamesSnapshot = await getDocs(gamesQuery);
                 games = gamesSnapshot.docs.map(doc => ({
                     firestoreId: doc.id,
                     ...doc.data()
-                })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                }));
 
-                // Load digital purchases for current user
-                const digitalQuery = query(
-                    collection(db, 'digitalPurchases'),
-                    where('userId', '==', userId)
-                );
+                // Load digital purchases
+                const digitalQuery = query(collection(db, 'digitalPurchases'), orderBy('timestamp', 'desc'));
                 const digitalSnapshot = await getDocs(digitalQuery);
                 digitalPurchases = digitalSnapshot.docs.map(doc => ({
                     firestoreId: doc.id,
                     ...doc.data()
-                })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                }));
 
                 updateAll();
             } catch (error) {
@@ -1723,15 +1303,11 @@
 
         // Load Settings from Firestore
         async function loadSettings() {
-            if (!currentUser) return;
-            
             try {
-                const userId = currentUser.uid;
-                const settingsRef = doc(db, 'settings', userId);
-                const settingsDoc = await getDoc(settingsRef);
+                const settingsDoc = await getDocs(collection(db, 'settings'));
                 
-                if (settingsDoc.exists()) {
-                    const settings = settingsDoc.data();
+                if (settingsDoc.docs.length > 0) {
+                    const settings = settingsDoc.docs[0].data();
                     gadgetCategories = settings.gadgetCategories || getDefaultGadgetCategories();
                     gamePlatforms = settings.gamePlatforms || getDefaultGamePlatforms();
                     gameGenres = settings.gameGenres || getDefaultGameGenres();
@@ -1747,8 +1323,8 @@
                     customIcons = [];
                     console.log('No settings found, initialized with empty custom icons');
                     
-                    // Save defaults to Firestore for this user
-                    await setDoc(settingsRef, {
+                    // Save defaults to Firestore
+                    await addDoc(collection(db, 'settings'), {
                         gadgetCategories,
                         gamePlatforms,
                         gameGenres,
@@ -1784,14 +1360,17 @@
 
         // Save settings to Firestore
         async function saveSettings() {
-            if (!currentUser) return;
-            
             try {
-                const userId = currentUser.uid;
-                const settingsRef = doc(db, 'settings', userId);
+                const settingsSnapshot = await getDocs(collection(db, 'settings'));
                 
-                // Save settings to user-specific document
-                await setDoc(settingsRef, {
+                if (settingsSnapshot.docs.length > 0) {
+                    // Update existing document
+                    const docRef = doc(db, 'settings', settingsSnapshot.docs[0].id);
+                    await deleteDoc(docRef);
+                }
+                
+                // Create new settings document
+                await addDoc(collection(db, 'settings'), {
                     gadgetCategories,
                     gamePlatforms,
                     gameGenres,
@@ -2386,7 +1965,6 @@
             const sellDate = document.getElementById('g-sell-date').value;
 
             const gadget = {
-                userId: currentUser.uid,
                 name: document.getElementById('g-name').value,
                 category: document.getElementById('g-category').value,
                 price: parseFloat(document.getElementById('g-price').value),
@@ -2578,7 +2156,6 @@
             const sellDate = document.getElementById('gm-sell-date').value;
 
             const game = {
-                userId: currentUser.uid,
                 title: document.getElementById('gm-title').value,
                 platform: document.getElementById('gm-platform').value,
                 genre: document.getElementById('gm-genre').value,
@@ -2911,7 +2488,6 @@
             e.preventDefault();
             
             const digital = {
-                userId: currentUser.uid,
                 name: document.getElementById('d-name').value,
                 type: document.getElementById('d-type').value,
                 amount: parseFloat(document.getElementById('d-amount').value),
@@ -3480,3 +3056,11 @@
             }
             
             if (urlInput) {
+                urlInput.addEventListener('input', handleIconURL);
+            }
+        }, 1000);
+        
+        // Data will be loaded automatically after authentication via onAuthStateChanged
+    </script>
+</body>
+</html>
