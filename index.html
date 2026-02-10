@@ -3034,40 +3034,47 @@ window.importGamesCSV = async function(event) {
             }
 
             for (const line of dataLines) {
+                // Detect delimiter (tab or comma)
+                const delimiter = line.includes('\t') ? '\t' : ',';
 
-                const values = line.split('\t');
+                const values = line
+                    .split(delimiter)
+                    .map(v => v.replace('\r', '').trim());
 
-                if (values.length < 6) continue;
+                // Skip if not enough data
+                if (values.length < 3) continue;
+
+                const title = values[0]?.trim();
+                const buyPrice = parseFloat(values[3]?.replace(/[^\d.]/g, ''));
+
+                // Skip if missing required fields
+                if (!title || isNaN(buyPrice) || buyPrice === 0) {
+                    console.warn('⛔ Skipping game row:', values);
+                    continue;
+                }
+
+                const sellPrice = values[6] ? parseFloat(values[6]?.replace(/[^\d.]/g, '')) : null;
 
                 const game = {
-
-                    title: values[0]?.trim(),
+                    title,
                     platform: values[1]?.trim() || '🟦 PlayStation 5',
                     genre: values[2]?.trim() || '🎯 Action',
-
-                    buyPrice: Number(values[3]) || 0,
-                    buyDate: parseDate(values[4]),
-
-                    condition: values[5]?.trim() || '👍 Good',
-
-                    sellPrice: values[6] ? Number(values[6]) : null,
-                    sellDate: values[7] ? parseDate(values[7]) : null,
-
-                    status: values[8]?.trim() || 'owned',
-                    notes: values[9]?.trim() || '',
-
-                    timestamp: new Date()
+                    buyPrice,
+                    buyDate: values[4] || new Date().toISOString().split('T')[0],
+                    condition: values[5]?.trim() || '✨ New/Sealed',
+                    sellPrice,
+                    sellDate: values[7] || null,
+                    status: (sellPrice && values[7]) ? 'sold' : 'owned',
+                    notes: values[8]?.trim() || '',
+                    timestamp: Date.now()
                 };
 
-                if (game.title && game.buyPrice) {
+                await addDoc(
+                    collection(db, 'users', currentUserUID, 'games'),
+                    game
+                );
 
-                    await addDoc(
-                        collection(db, 'users', currentUserUID, 'games'),
-                        game
-                    );
-
-                    imported++;
-                }
+                imported++;
             }
 
             alert(`Imported ${imported} games successfully`);
