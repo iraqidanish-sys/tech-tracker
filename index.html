@@ -1615,7 +1615,9 @@
             console.log('=============================');
             
             if (customIcon) {
-                return '<img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin-right: 5px;">' + platform;
+                // Remove emoji from platform name when displaying with custom icon
+                const platformWithoutEmoji = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
+                return '<img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="width: 40px; height: 40px; object-fit: contain; vertical-align: middle; margin-right: 8px; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 6px;">' + platformWithoutEmoji;
             }
             return platform; // Return plain text if no custom icon
         }
