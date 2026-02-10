@@ -1189,9 +1189,45 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
-        
-        console.log('✅ Firebase initialized');
+        // Global user state
+        let currentUser = null;
+        let currentUserUID = null;
 
+        console.log('✅ Firebase initialized');
+        // ⭐⭐⭐ INSERT initializeUser() RIGHT HERE ⭐⭐⭐
+        async function initializeUser(user) {
+        try {
+        currentUserUID = user.uid;
+
+        const profileRef = collection(db, "users", user.uid, "profile");
+        const profileSnapshot = await getDocs(profileRef);
+
+        if (profileSnapshot.empty) {
+            console.log("🆕 Creating user profile");
+
+            await addDoc(collection(db, "users", user.uid, "profile"), {
+                email: user.email,
+                displayName: user.displayName || "User",
+                createdAt: new Date(),
+                role: "user",
+                status: "active"
+            });
+
+            await addDoc(collection(db, "users", user.uid, "settings"), {
+                currency: "INR",
+                theme: "dark",
+                locale: "en-IN",
+                dateFormat: "DD/MM/YYYY",
+                notifications: true
+            });
+        }
+
+        await loadAllData();
+
+    } catch (err) {
+        console.error("❌ initializeUser error:", err);
+    }
+}
         // Global variables
         var gadgets = [];
         var games = [];
@@ -1200,7 +1236,6 @@
         var currentGadgetFilter = 'all';
         var currentDigitalFilter = 'all';
         var deleteCallback = null;
-        var currentUser = null;
 
         // Settings (loaded from Firestore)
         var gadgetCategories = [];
@@ -1210,20 +1245,39 @@
         var customIcons = []; // New: Store custom platform icons
 
         // Authentication State Management
-        onAuthStateChanged(auth, (user) => {
-            // Hide loading screen
-            document.getElementById('loadingScreen').style.display = 'none';
-            
-            if (user) {
-                // User is signed in
-                currentUser = user;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                document.getElementById('userInfo').style.display = 'flex';
-                document.getElementById('userName').textContent = user.displayName;
-                document.getElementById('userEmail').textContent = user.email;
-                document.getElementById('userPhoto').src = user.photoURL;
-                
+       onAuthStateChanged(auth, async (user) => {
+
+    document.getElementById('loadingScreen').style.display = 'none';
+
+    if (user) {
+
+        currentUser = user;
+        currentUserUID = user.uid;
+
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('userInfo').style.display = 'flex';
+
+        document.getElementById('userName').textContent = user.displayName;
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userPhoto').src = user.photoURL;
+
+        // ⭐ THIS IS THE ONLY NEW LINE
+        await initializeUser(user);
+
+    } else {
+
+        // ✅ KEEP THIS EXACTLY SAME
+        currentUser = null;
+        currentUserUID = null;
+
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'none';
+
+    }
+
+});
                 // Load settings and data after successful login
                 loadSettings();
                 loadData();
