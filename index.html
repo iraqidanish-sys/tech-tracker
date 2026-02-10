@@ -1693,17 +1693,25 @@
                 g.notes || ''
             ]);
 
-            const tsv = [headers, ...rows]
-                .map(row => row.join('\t'))
+            // Use CSV format with proper escaping for Mac Excel compatibility
+            const escapeCsvValue = (val) => {
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            const csv = [headers, ...rows]
+                .map(row => row.map(escapeCsvValue).join(','))
                 .join('\n');
 
-            // Add UTF-8 BOM for proper emoji/unicode support
-            const BOM = '\uFEFF';
-            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+            // UTF-8 with BOM for emoji support in both Excel and Google Sheets
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `gadgets_export_${new Date().toISOString().split('T')[0]}.tsv`;
+            a.download = `gadgets_export_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         };
@@ -1713,15 +1721,21 @@
             const headers = ['Name', 'Category', 'Price', 'Purchase Date', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
             const exampleRow = ['iPhone 15 Pro', '📱 Phone', '119900', '2024-01-15', '95000', '2025-02-01', 'sold', 'Upgraded to 16'];
             
-            const tsv = [headers, exampleRow].map(row => row.join('\t')).join('\n');
+            const escapeCsvValue = (val) => {
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
             
-            // Add UTF-8 BOM for proper emoji/unicode support
-            const BOM = '\uFEFF';
-            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'gadgets_template.tsv';
+            a.download = 'gadgets_template.csv';
             a.click();
             URL.revokeObjectURL(url);
             
@@ -1814,17 +1828,25 @@
                 g.notes || ''
             ]);
 
-            const tsv = [headers, ...rows]
-                .map(row => row.join('\t'))
+            // Use CSV format with proper escaping for Mac Excel compatibility
+            const escapeCsvValue = (val) => {
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            const csv = [headers, ...rows]
+                .map(row => row.map(escapeCsvValue).join(','))
                 .join('\n');
 
-            // Add UTF-8 BOM for proper emoji/unicode support
-            const BOM = '\uFEFF';
-            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+            // UTF-8 with BOM for emoji support in both Excel and Google Sheets
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `games_export_${new Date().toISOString().split('T')[0]}.tsv`;
+            a.download = `games_export_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         };
@@ -1834,15 +1856,21 @@
             const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
             const exampleRow = ['Spider-Man 2', 'PlayStation 5', '🎯 Action', '3999', '2024-06-01', 'Mint', '2500', '2025-01-15', 'sold', 'Completed'];
             
-            const tsv = [headers, exampleRow].map(row => row.join('\t')).join('\n');
+            const escapeCsvValue = (val) => {
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
             
-            // Add UTF-8 BOM for proper emoji/unicode support
-            const BOM = '\uFEFF';
-            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'games_template.tsv';
+            a.download = 'games_template.csv';
             a.click();
             URL.revokeObjectURL(url);
             
@@ -1934,17 +1962,25 @@
                 d.notes || ''
             ]);
 
-            const tsv = [headers, ...rows]
-                .map(row => row.join('\t'))
+            // Use CSV format with proper escaping for Mac Excel compatibility
+            const escapeCsvValue = (val) => {
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            const csv = [headers, ...rows]
+                .map(row => row.map(escapeCsvValue).join(','))
                 .join('\n');
 
-            // Add UTF-8 BOM for proper emoji/unicode support
-            const BOM = '\uFEFF';
-            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+            // UTF-8 with BOM for emoji support in both Excel and Google Sheets
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `digital_purchases_export_${new Date().toISOString().split('T')[0]}.tsv`;
+            a.download = `digital_purchases_export_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             URL.revokeObjectURL(url);
         };
@@ -1954,15 +1990,21 @@
             const headers = ['Name', 'Type', 'Amount', 'Purchase Date', 'Duration', 'Expiry Date', 'Notes'];
             const exampleRow = ['PS+ Premium', '🎮 Game Subscription', '1299', '2024-01-15', '1 Month', '2024-02-15', 'Auto-renewal enabled'];
             
-            const tsv = [headers, exampleRow].map(row => row.join('\t')).join('\n');
+            const escapeCsvValue = (val) => {
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            };
+
+            const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
             
-            // Add UTF-8 BOM for proper emoji/unicode support
-            const BOM = '\uFEFF';
-            const blob = new Blob([BOM + tsv], { type: 'text/tab-separated-values;charset=utf-8' });
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'digital_purchases_template.tsv';
+            a.download = 'digital_purchases_template.csv';
             a.click();
             URL.revokeObjectURL(url);
             
