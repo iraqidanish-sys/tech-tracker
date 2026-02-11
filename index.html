@@ -794,25 +794,26 @@
             <span>🛡️</span> Admin Panel
         </div>
         
-        <!-- ✅ ADD #userInfo HERE - BEFORE sidebar closes -->
+        
+        <!-- User Profile Section -->
         <div id="userInfo" style="display: none; margin-top: auto; padding: 18px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 14px; border: 1px solid rgba(148, 163, 184, 0.2); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);">
-    <!-- User profile info row -->
-    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
-        <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #14b8a6, #22c55e); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);">
-            <img id="userPhoto" src="" alt="" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: none;">
-            <span id="userInitials" style="color: white; font-weight: 700; font-size: 20px;"></span>
+            <!-- Avatar and Info Row -->
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #14b8a6, #22c55e); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);">
+                    <img id="userPhoto" src="" alt="" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: none;">
+                    <span id="userInitials" style="color: white; font-weight: 700; font-size: 20px;"></span>
+                </div>
+                <div style="flex: 1; min-width: 0; overflow: hidden;">
+                    <div id="userName" style="font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
+                    <div id="userEmail" style="font-size: 13px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4;"></div>
+                </div>
+            </div>
+            <!-- Sign Out Button Below -->
+            <button id="signOutBtn" style="width: 100%; background: #ef4444; border: none; padding: 14px; border-radius: 10px; color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);" onmouseover="this.style.background='#dc2626'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(239, 68, 68, 0.4)';" onmouseout="this.style.background='#ef4444'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.3)';">
+                Sign Out
+            </button>
         </div>
-        <div style="flex: 1; min-width: 0; overflow: hidden;">
-            <div id="userName" style="font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
-            <div id="userEmail" style="font-size: 13px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4;"></div>
-        </div>
-    </div>
-    <!-- Sign Out button - full width below -->
-    <button id="signOutBtn" style="width: 100%; background: #ef4444; border: none; padding: 14px; border-radius: 10px; color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);" onmouseover="this.style.background='#dc2626'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(239, 68, 68, 0.4)';" onmouseout="this.style.background='#ef4444'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.3)';">
-        Sign Out
-    </button>
-</div>
-    </div> <!-- sidebar closes here -->
+        </div> <!-- sidebar closes here -->
     
     <div class="main-content">
         <!-- Dashboard Section -->
