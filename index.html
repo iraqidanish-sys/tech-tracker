@@ -676,11 +676,6 @@
     </style>
 </head>
 <body>
-   <!-- TEST DIV - Should be visible immediately -->
-   <div id="testDiv" style="position: fixed; top: 0; left: 0; width: 300px; height: 300px; background: red; z-index: 99999; display: block;">
-       <h1 style="color: white; padding: 20px;">TEST - CAN YOU SEE THIS?</h1>
-   </div>
-   
    <!-- Main App (hidden until authenticated) -->
 <div id="mainApp" style="display: none;">
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
@@ -1219,25 +1214,21 @@
     </div>
 
     <!-- Login Screen -->
-    <div id="loginScreen" style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; min-width: 100vw !important; min-height: 100vh !important; width: 100vw !important; height: 100vh !important; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%) !important; z-index: 10000 !important; display: flex !important; align-items: center !important; justify-content: center !important;">
-        <div style="text-align: center; max-width: 400px; padding: 40px; background: rgba(26, 26, 46, 0.8); border-radius: 15px;">
-            <div style="font-size: 64px; margin-bottom: 20px;">🎮</div>
-            <h1 style="font-size: 36px; margin-bottom: 10px; background: linear-gradient(45deg, #00f5ff, #ff00e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                My Tech & Games Collection
-            </h1>
-            <p style="color: #888; margin-bottom: 40px; font-size: 16px;">
-                Track your gadgets, games, and digital purchases
-            </p>
-            <button id="googleSignInBtn" style="background: white; color: #444; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 12px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;">
+    <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%); z-index: 10000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; color: black; border-radius: 15px; width: 400px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);">
+            <div style="font-size: 64px; margin-bottom: 20px; text-align: center;">🎮</div>
+            <h1 style="color: #000; font-size: 32px; margin-bottom: 10px; text-align: center; font-weight: 700;">My Tech & Games Collection</h1>
+            <p style="color: #666; margin-bottom: 30px; text-align: center; font-size: 15px;">Track your gadgets, games, and digital purchases</p>
+            <button id="googleSignInBtn" style="width: 100%; background: #4285F4; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;">
                 <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path fill="#4285F4" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
-                    <path fill="#34A853" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
-                    <path fill="#FBBC05" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
-                    <path fill="#EA4335" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
+                    <path fill="white" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
+                    <path fill="white" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
+                    <path fill="white" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
+                    <path fill="white" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
                 </svg>
                 Sign in with Google
             </button>
-            <div id="loginError" style="color: #f44336; margin-top: 20px; font-size: 14px; display: none;"></div>
+            <div id="loginError" style="color: #f44336; margin-top: 20px; font-size: 14px; text-align: center; display: none;"></div>
         </div>
     </div>
 
