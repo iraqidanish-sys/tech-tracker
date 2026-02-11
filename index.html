@@ -1312,6 +1312,16 @@
 
         console.log('🔧 Initializing Firebase');
 
+        // Safety timeout - hide loading screen after 5 seconds if Firebase fails
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && loadingScreen.style.display !== 'none') {
+                console.warn('⚠️ Loading screen timeout - hiding forcefully');
+                loadingScreen.style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+            }
+        }, 5000);
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -1440,46 +1450,53 @@ async function initializeUser(user) {
 
        // Authentication State Management
 onAuthStateChanged(auth, async (user) => {
+    try {
+        document.getElementById('loadingScreen').style.display = 'none';
 
-    document.getElementById('loadingScreen').style.display = 'none';
+        if (user) {
 
-    if (user) {
+            currentUser = user;
+            currentUserUID = user.uid;
 
-        currentUser = user;
-        currentUserUID = user.uid;
+            console.log('✅ User authenticated:', user.email);
 
-        console.log('✅ User authenticated:', user.email);
+            // Show admin panel if user is admin
+            if (isAdmin(user)) {
+                document.getElementById('admin-nav').style.display = 'flex';
+                console.log('👑 Admin access granted');
+            } else {
+                document.getElementById('admin-nav').style.display = 'none';
+            }
 
-        // Show admin panel if user is admin
-        if (isAdmin(user)) {
-            document.getElementById('admin-nav').style.display = 'flex';
-            console.log('👑 Admin access granted');
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'flex';
+
+            document.getElementById('userName').textContent = user.displayName;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('userPhoto').src = user.photoURL;
+
+            // Initialize user data
+            await initializeUser(user);
+
         } else {
-            document.getElementById('admin-nav').style.display = 'none';
-        }
+            // User not logged in
+            currentUser = null;
+            currentUserUID = null;
 
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('userInfo').style.display = 'flex';
+            console.log('⛔ User not authenticated');
 
-        document.getElementById('userName').textContent = user.displayName;
-        document.getElementById('userEmail').textContent = user.email;
-        document.getElementById('userPhoto').src = user.photoURL;
-
-        // Initialize user data
-        await initializeUser(user);
-
-    } else {
-        // User not logged in
-        currentUser = null;
-        currentUserUID = null;
-
-        console.log('⛔ User not authenticated');
-
-        // Hide admin panel
-        const adminNav = document.getElementById('admin-nav');
+            // Hide admin panel
+            const adminNav = document.getElementById('admin-nav');
         if (adminNav) adminNav.style.display = 'none';
 
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+    }
+    } catch (error) {
+        console.error('❌ Auth state change error:', error);
+        // Ensure loading screen is hidden and login screen is shown even on error
+        document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('mainApp').style.display = 'none';
     }
