@@ -24,16 +24,18 @@
         }
 
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            background: #1a1a2e;
-            padding: 30px 20px;
-            border-right: 1px solid #2a2a3e;
-            z-index: 1000;
-            transition: transform 0.3s ease;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: #1a1a2e;
+    padding: 30px 20px;
+    border-right: 1px solid #2a2a3e;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    display: flex;              /* ✅ ADD THIS */
+    flex-direction: column;     /* ✅ ADD THIS */
         }
 
         .mobile-menu-btn {
@@ -668,37 +670,52 @@
     </style>
 </head>
 <body>
-    <!-- Main App (hidden until authenticated) -->
-    <div id="mainApp" style="display: none;">
+   <!-- Main App (hidden until authenticated) -->
+<div id="mainApp" style="display: none;">
     <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-
+    
     <div class="sidebar" id="sidebar">
-    <div class="logo">🚀 MyCollection</div>
-
-    <div class="nav-item active" onclick="window.showSection('dashboard', this)">
-        <span>📊</span> Dashboard
-    </div>
-
-    <div class="nav-item" onclick="window.showSection('gadgets', this)">
-        <span>📱</span> Gadgets
-    </div>
-
-    <div class="nav-item" onclick="window.showSection('games', this)">
-        <span>🎮</span> Games
-    </div>
-
-    <div class="nav-item" onclick="window.showSection('digital', this)">
-        <span>💳</span> Digital Purchases
-    </div>
-
-    <div class="nav-item" onclick="window.showSection('settings', this)">
-        <span>⚙️</span> Settings
-    </div>
-    <div class="nav-item" id="admin-nav" onclick="window.showSection('admin', this)" style="display: none;">
-    <span>🛡️</span> Admin Panel
-</div>
-</div>
-
+        <div class="logo">🚀 MyCollection</div>
+        
+        <div class="nav-item active" onclick="window.showSection('dashboard', this)">
+            <span>📊</span> Dashboard
+        </div>
+        
+        <div class="nav-item" onclick="window.showSection('gadgets', this)">
+            <span>📱</span> Gadgets
+        </div>
+        
+        <div class="nav-item" onclick="window.showSection('games', this)">
+            <span>🎮</span> Games
+        </div>
+        
+        <div class="nav-item" onclick="window.showSection('digital', this)">
+            <span>💳</span> Digital Purchases
+        </div>
+        
+        <div class="nav-item" onclick="window.showSection('settings', this)">
+            <span>⚙️</span> Settings
+        </div>
+        
+        <div class="nav-item" id="admin-nav" onclick="window.showSection('admin', this)" style="display: none;">
+            <span>🛡️</span> Admin Panel
+        </div>
+        
+        <!-- ✅ ADD #userInfo HERE - BEFORE sidebar closes -->
+        <div id="userInfo" style="display: none; margin-top: auto; padding: 15px; background: #16213e; border-radius: 10px; border: 1px solid #2a2a3e;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                <img id="userPhoto" src="" alt="" style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid #00f5ff;">
+                <div style="flex: 1; min-width: 0;">
+                    <div id="userName" style="font-size: 13px; font-weight: 600; color: #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                    <div id="userEmail" style="font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+                </div>
+            </div>
+            <button id="signOutBtn" style="width: 100%; background: linear-gradient(45deg, #f44336, #d32f2f); border: none; padding: 10px; border-radius: 6px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">
+                Sign Out
+            </button>
+        </div>
+    </div> <!-- sidebar closes here -->
+    
     <div class="main-content">
         <!-- Dashboard Section -->
         <div id="dashboard" class="section active">
@@ -1195,17 +1212,19 @@
         </style>
     </div>
 
-    <!-- User Info Bar (shown when logged in) -->
-    <div id="userInfo" style="display: none; position: fixed; top: 20px; right: 20px; background: #1a1a2e; padding: 12px 20px; border-radius: 10px; border: 1px solid #2a2a3e; z-index: 1001; display: flex; align-items: center; gap: 12px;">
-        <img id="userPhoto" src="" alt="" style="width: 32px; height: 32px; border-radius: 50%;">
-        <div>
-            <div id="userName" style="font-size: 14px; font-weight: 600; color: #e0e0e0;"></div>
-            <div id="userEmail" style="font-size: 12px; color: #888;"></div>
+   <!-- User Info Bar (in sidebar at bottom) -->
+<div id="userInfo" style="display: none; margin-top: auto; padding: 15px; background: #16213e; border-radius: 10px; border: 1px solid #2a2a3e;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+        <img id="userPhoto" src="" alt="" style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid #00f5ff;">
+        <div style="flex: 1; min-width: 0;">
+            <div id="userName" style="font-size: 13px; font-weight: 600; color: #e0e0e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+            <div id="userEmail" style="font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
         </div>
-        <button id="signOutBtn" style="background: linear-gradient(45deg, #f44336, #d32f2f); border: none; padding: 8px 16px; border-radius: 6px; color: white; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 10px;">
-            Sign Out
-        </button>
     </div>
+    <button id="signOutBtn" style="width: 100%; background: linear-gradient(45deg, #f44336, #d32f2f); border: none; padding: 10px; border-radius: 6px; color: white; font-size: 12px; font-weight: 600; cursor: pointer;">
+        Sign Out
+    </button>
+</div>
 
     <!-- Firebase SDK -->
     <script>
