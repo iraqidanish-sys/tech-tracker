@@ -1210,8 +1210,10 @@
     <!-- End Main App -->
 
     <!-- Login Screen -->
-    <div id="loginScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%); z-index: 10000; display: flex; align-items: center; justify-content: center;">
-        <div style="text-align: center; max-width: 400px; padding: 40px;">
+    <!-- Login Screen -->
+    <div id="loginScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #ff0000; z-index: 99999;">
+        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; max-width: 400px; padding: 40px; background: white; color: black; border: 5px solid yellow;">
             <div style="font-size: 64px; margin-bottom: 20px;">🎮</div>
             <h1 style="font-size: 36px; margin-bottom: 10px; background: linear-gradient(45deg, #00f5ff, #ff00e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                 My Tech & Games Collection
@@ -1229,6 +1231,7 @@
                 Sign in with Google
             </button>
             <div id="loginError" style="color: #f44336; margin-top: 20px; font-size: 14px; display: none;"></div>
+        </div>
         </div>
     </div>
 
@@ -1269,6 +1272,18 @@
     </script>
     <script type="module">
         console.log('🚀 Module script started');
+        
+        // Initialize screens immediately
+        console.log('📺 Initializing screens...');
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loginScreen = document.getElementById('loginScreen');
+            const mainApp = document.getElementById('mainApp');
+            
+            console.log('Loading screen:', loadingScreen ? 'Found' : 'MISSING');
+            console.log('Login screen:', loginScreen ? 'Found' : 'MISSING');
+            console.log('Main app:', mainApp ? 'Found' : 'MISSING');
+        }, 100);
         
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         // Updated: Fixed syntax errors - Feb 2026
@@ -1440,8 +1455,18 @@ async function initializeUser(user) {
 
        // Authentication State Management
 onAuthStateChanged(auth, async (user) => {
-
-    document.getElementById('loadingScreen').style.display = 'none';
+    console.log('🔐 Auth state changed. User:', user ? user.email : 'NONE');
+    
+    const loadingScreen = document.getElementById('loadingScreen');
+    const loginScreen = document.getElementById('loginScreen');
+    const mainApp = document.getElementById('mainApp');
+    
+    console.log('📺 Hiding loading screen...');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+    } else {
+        console.error('❌ Loading screen not found!');
+    }
 
     if (user) {
 
@@ -1458,8 +1483,9 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('admin-nav').style.display = 'none';
         }
 
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
+        console.log('📺 Showing main app, hiding login...');
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (mainApp) mainApp.style.display = 'block';
         document.getElementById('userInfo').style.display = 'flex';
 
         document.getElementById('userName').textContent = user.displayName;
@@ -1474,14 +1500,24 @@ onAuthStateChanged(auth, async (user) => {
         currentUser = null;
         currentUserUID = null;
 
-        console.log('⛔ User not authenticated');
+        console.log('⛔ User not authenticated - showing login screen');
 
         // Hide admin panel
         const adminNav = document.getElementById('admin-nav');
         if (adminNav) adminNav.style.display = 'none';
 
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
+        console.log('📺 Showing login screen, hiding main app...');
+        if (loginScreen) {
+            loginScreen.style.display = 'flex';
+            console.log('✅ Login screen display set to flex');
+        } else {
+            console.error('❌ Login screen not found!');
+        }
+        
+        if (mainApp) {
+            mainApp.style.display = 'none';
+            console.log('✅ Main app hidden');
+        }
     }
 });
 
