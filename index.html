@@ -1212,8 +1212,6 @@
             </div>
         </div>
     </div>
-    </div>
-    <!-- End Main App -->
 
     <!-- Login Screen -->
     <div id="loginScreen" style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; min-width: 100vw !important; min-height: 100vh !important; width: 100vw !important; height: 100vh !important; background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%) !important; z-index: 10000 !important; display: flex !important; align-items: center !important; justify-content: center !important;">
@@ -1271,6 +1269,19 @@
         console.log('✅ Regular script works');
         window.addEventListener('error', (e) => {
             console.error('🔥 Global error:', e.message, e.filename);
+        });
+        
+        // IMMEDIATE FIX: Force loginScreen to be visible on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginScreen = document.getElementById('loginScreen');
+            if (loginScreen) {
+                console.log('🔧 DOM loaded - forcing loginScreen dimensions');
+                loginScreen.style.width = window.innerWidth + 'px';
+                loginScreen.style.height = window.innerHeight + 'px';
+                loginScreen.style.display = 'flex';
+                loginScreen.style.visibility = 'visible';
+                console.log('✅ loginScreen dimensions set:', loginScreen.getBoundingClientRect());
+            }
         });
     </script>
     <script type="module">
