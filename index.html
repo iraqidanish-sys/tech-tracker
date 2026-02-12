@@ -1930,18 +1930,67 @@
             @media (max-width: 768px) {
                 #loginScreen {
                     flex-direction: column !important;
+                    overflow-y: auto !important; /* Make login screen scrollable on mobile */
+                    -webkit-overflow-scrolling: touch !important;
                 }
+                
+                /* Left branding section - more compact on mobile */
                 #loginScreen > div:first-child {
-                    padding: 40px 24px !important;
+                    padding: 30px 24px !important;
+                    min-height: auto !important;
+                    flex-shrink: 0 !important; /* Prevent from taking too much space */
                 }
+                
                 #loginScreen > div:first-child h1 {
-                    font-size: 42px !important;
+                    font-size: 32px !important;
+                    line-height: 1.2 !important;
+                    margin-bottom: 20px !important;
                 }
+                
+                #loginScreen > div:first-child p {
+                    font-size: 14px !important;
+                    margin-bottom: 30px !important;
+                }
+                
+                /* Hide category badges on very small screens to save space */
+                #loginScreen > div:first-child > div:last-of-type {
+                    display: none !important;
+                }
+                
+                /* Right login section - ensure it's always visible */
                 #loginScreen > div:last-child {
                     width: 100% !important;
-                    padding: 40px 24px !important;
+                    padding: 40px 24px 60px 24px !important;
                     border-left: none !important;
                     border-top: 1px solid rgba(148, 163, 184, 0.1) !important;
+                    min-height: auto !important;
+                    flex-shrink: 0 !important;
+                }
+                
+                /* Ensure login button and content are easily tappable on mobile */
+                #googleSignInBtn {
+                    max-width: 100% !important;
+                    padding: 18px 32px !important;
+                    font-size: 16px !important;
+                }
+            }
+            
+            /* Extra small devices */
+            @media (max-width: 480px) {
+                #loginScreen > div:first-child h1 {
+                    font-size: 28px !important;
+                }
+                
+                #loginScreen > div:first-child {
+                    padding: 24px 20px !important;
+                }
+                
+                #loginScreen > div:last-child {
+                    padding: 36px 20px 50px 20px !important;
+                }
+                
+                #loginScreen > div:last-child h2 {
+                    font-size: 24px !important;
                 }
             }
         </style>
