@@ -1601,7 +1601,7 @@
                        <div id="encryption-status-icon">🔓</div>
                        <div>
                            <div style="font-weight: 600; color: #f1f5f9;" id="encryption-status-text">Encryption Disabled</div>
-                           <div style="font-size: 13px; color: #94a3b8;">Your data is stored without encryption</div>
+                           <div style="font-size: 13px; color: #94a3b8;" id="encryption-status-subtitle">Your data is stored without encryption</div>
                        </div>
                    </div>
                </div>
@@ -5402,6 +5402,7 @@ window.importDigitalCSV = async function (event) {
             if (isEnabled) {
                 document.getElementById('encryption-status-icon').textContent = '🔐';
                 document.getElementById('encryption-status-text').textContent = 'Encryption Enabled';
+                document.getElementById('encryption-status-subtitle').textContent = 'Your data is protected with end-to-end encryption';
                 document.getElementById('encryption-status').style.background = 'rgba(16, 185, 129, 0.15)';
                 document.getElementById('encryption-status').style.borderColor = 'rgba(16, 185, 129, 0.3)';
                 document.getElementById('encryption-disabled-view').style.display = 'none';
@@ -5410,6 +5411,7 @@ window.importDigitalCSV = async function (event) {
             } else {
                 document.getElementById('encryption-status-icon').textContent = '🔓';
                 document.getElementById('encryption-status-text').textContent = 'Encryption Disabled';
+                document.getElementById('encryption-status-subtitle').textContent = 'Your data is stored without encryption';
                 document.getElementById('encryption-status').style.background = 'rgba(148, 163, 184, 0.1)';
                 document.getElementById('encryption-status').style.borderColor = 'rgba(148, 163, 184, 0.2)';
                 document.getElementById('encryption-disabled-view').style.display = 'block';
