@@ -1589,6 +1589,88 @@
                     </div>
 
                     
+           <!-- Encryption Settings -->
+           <div class="add-card" style="margin-top: 40px;">
+               <h2>🔐 End-to-End Encryption</h2>
+               <p style="color: #888; margin-bottom: 20px; font-size: 14px;">
+                   Encrypt your data with AES-256 encryption before storing it. Only you can decrypt with your master password.
+               </p>
+               
+               <div id="encryption-status" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2);">
+                   <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                       <div id="encryption-status-icon">🔓</div>
+                       <div>
+                           <div style="font-weight: 600; color: #f1f5f9;" id="encryption-status-text">Encryption Disabled</div>
+                           <div style="font-size: 13px; color: #94a3b8;">Your data is stored without encryption</div>
+                       </div>
+                   </div>
+               </div>
+               
+               <div id="encryption-disabled-view" style="display: block;">
+                   <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                       <div style="font-weight: 600; color: #10b981; margin-bottom: 8px;">✓ Benefits of Encryption:</div>
+                       <ul style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin-left: 20px;">
+                           <li>AES-256 military-grade encryption</li>
+                           <li>Your data is encrypted locally before storage</li>
+                           <li>Only you have the decryption key</li>
+                           <li>Even we cannot access your encrypted data</li>
+                       </ul>
+                   </div>
+                   
+                   <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                       <div style="font-weight: 600; color: #ef4444; margin-bottom: 8px;">⚠️ Important Warning:</div>
+                       <ul style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin-left: 20px;">
+                           <li>You must remember your master password</li>
+                           <li>If you lose your password, your data CANNOT be recovered</li>
+                           <li>There is no password reset option</li>
+                       </ul>
+                   </div>
+                   
+                   <button class="btn" onclick="showEnableEncryptionForm()" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); width: 100%;">
+                       🔐 Enable Encryption
+                   </button>
+               </div>
+               
+               <div id="encryption-setup-form" style="display: none;">
+                   <div style="margin-bottom: 20px;">
+                       <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Create Master Password</label>
+                       <input type="password" id="settings-master-password" placeholder="Enter a strong password (min 8 characters)" 
+                              style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
+                   </div>
+                   
+                   <div style="margin-bottom: 20px;">
+                       <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Confirm Master Password</label>
+                       <input type="password" id="settings-master-password-confirm" placeholder="Re-enter your password" 
+                              style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
+                   </div>
+                   
+                   <div style="display: flex; gap: 12px;">
+                       <button class="btn" onclick="cancelEnableEncryption()" style="flex: 1; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2);">
+                           Cancel
+                       </button>
+                       <button class="btn" onclick="enableEncryptionFromSettings()" style="flex: 2; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">
+                           🔐 Enable Encryption
+                       </button>
+                   </div>
+               </div>
+               
+               <div id="encryption-enabled-view" style="display: none;">
+                   <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+                       <div style="color: #10b981; font-size: 14px;">
+                           ✓ Your data is protected with end-to-end encryption
+                       </div>
+                   </div>
+                   
+                   <button class="btn" onclick="disableEncryption()" style="background: rgba(239, 68, 68, 0.9); width: 100%;">
+                       🔓 Disable Encryption
+                   </button>
+                   
+                   <p style="font-size: 12px; color: #94a3b8; margin-top: 10px; text-align: center;">
+                       Warning: Disabling encryption will store your data without encryption
+                   </p>
+               </div>
+           </div>
+           
            <!-- Account Deletion - Danger Zone -->
                 <div class="add-card" style="border-color: #ff0055; margin-top: 40px; margin-bottom: 150px;">
                 <h2 style="color: #ff0055;">⚠️ Danger Zone</h2>
@@ -2549,23 +2631,9 @@ async function initializeUser(user) {
             document.getElementById('unlockModal').style.display = 'flex';
             // Data will be loaded after successful unlock
         } else {
-            // New user or encryption not enabled - ask if they want to enable it
-            const enableEncryption = confirm(
-                '🔐 Enable End-to-End Encryption?\n\n' +
-                '✅ Your data will be encrypted before storage\n' +
-                '✅ Maximum privacy and security\n' +
-                '✅ Only you can decrypt with your password\n\n' +
-                '⚠️ You will need a master password to access your data.\n\n' +
-                'Enable encryption now?'
-            );
-            
-            if (enableEncryption) {
-                document.getElementById('encryptionSetupModal').style.display = 'flex';
-                // Data will be loaded after setup
-            } else {
-                // Load data without encryption
-                await loadData();
-            }
+            // No encryption - load data normally
+            console.log('ℹ️ No encryption enabled - loading data normally');
+            await loadData();
         }
     } catch (err) {
         console.error("❌ initializeUser error:", err);
@@ -3463,6 +3531,11 @@ async function loadSettings() {
         updateAllDropdowns();
         renderSettingsLists();
         renderCustomIcons();
+        
+        // Update encryption status display
+        if (typeof updateEncryptionStatus === 'function') {
+            updateEncryptionStatus();
+        }
 
     } catch (error) {
         console.error('Error loading settings:', error);
@@ -4462,8 +4535,15 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
 
         window.confirmDelete = async function() {
             if (deleteCallback) {
-                await deleteCallback();
-                window.closeDeleteModal();
+                try {
+                    await deleteCallback();
+                } catch (error) {
+                    console.error('Error during delete:', error);
+                    alert('Error deleting item. Please try again.');
+                } finally {
+                    // Always close the modal, even if there's an error
+                    window.closeDeleteModal();
+                }
             }
         };
 
@@ -5287,6 +5367,180 @@ window.importDigitalCSV = async function (event) {
             }
         };
 
+        window.skipEncryptionSetup = async function() {
+            // Store the current timestamp to prevent showing the popup again for 24 hours
+            localStorage.setItem('encryptionSkipTime', Date.now().toString());
+            console.log('ℹ️ User skipped encryption setup - will not show again for 24 hours');
+            
+            // Close the modal and load data
+            document.getElementById('encryptionSetupModal').style.display = 'none';
+            await loadData();
+        };
+
+        // ========== ENCRYPTION SETTINGS FUNCTIONS (FROM SETTINGS PANEL) ==========
+        
+        window.updateEncryptionStatus = function() {
+            const isEnabled = encryptionManager.isEncryptionEnabled();
+            
+            if (isEnabled) {
+                document.getElementById('encryption-status-icon').textContent = '🔐';
+                document.getElementById('encryption-status-text').textContent = 'Encryption Enabled';
+                document.getElementById('encryption-status').style.background = 'rgba(16, 185, 129, 0.15)';
+                document.getElementById('encryption-status').style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                document.getElementById('encryption-disabled-view').style.display = 'none';
+                document.getElementById('encryption-enabled-view').style.display = 'block';
+                document.getElementById('encryption-setup-form').style.display = 'none';
+            } else {
+                document.getElementById('encryption-status-icon').textContent = '🔓';
+                document.getElementById('encryption-status-text').textContent = 'Encryption Disabled';
+                document.getElementById('encryption-status').style.background = 'rgba(148, 163, 184, 0.1)';
+                document.getElementById('encryption-status').style.borderColor = 'rgba(148, 163, 184, 0.2)';
+                document.getElementById('encryption-disabled-view').style.display = 'block';
+                document.getElementById('encryption-enabled-view').style.display = 'none';
+                document.getElementById('encryption-setup-form').style.display = 'none';
+            }
+        };
+        
+        window.showEnableEncryptionForm = function() {
+            document.getElementById('encryption-disabled-view').style.display = 'none';
+            document.getElementById('encryption-setup-form').style.display = 'block';
+        };
+        
+        window.cancelEnableEncryption = function() {
+            document.getElementById('encryption-setup-form').style.display = 'none';
+            document.getElementById('encryption-disabled-view').style.display = 'block';
+            document.getElementById('settings-master-password').value = '';
+            document.getElementById('settings-master-password-confirm').value = '';
+        };
+        
+        window.enableEncryptionFromSettings = async function() {
+            const password = document.getElementById('settings-master-password').value;
+            const confirmPassword = document.getElementById('settings-master-password-confirm').value;
+            
+            if (!password || password.length < 8) {
+                alert('⚠️ Password must be at least 8 characters long');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('⚠️ Passwords do not match');
+                return;
+            }
+            
+            if (!confirm('⚠️ Are you sure you want to enable encryption?\n\nIMPORTANT: If you lose your password, your data CANNOT be recovered!')) {
+                return;
+            }
+            
+            try {
+                // Setup encryption
+                await encryptionManager.setupNewUser(password);
+                
+                // Re-encrypt all existing data
+                console.log('🔄 Re-encrypting existing data...');
+                
+                // Re-save all gadgets with encryption
+                for (const gadget of gadgets) {
+                    const encryptedData = await encryptData(gadget);
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'gadgets', gadget.firestoreId),
+                        encryptedData
+                    );
+                }
+                
+                // Re-save all games with encryption
+                for (const game of games) {
+                    const encryptedData = await encryptData(game);
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'games', game.firestoreId),
+                        encryptedData
+                    );
+                }
+                
+                // Re-save all digital purchases with encryption
+                for (const digital of digitalPurchases) {
+                    const encryptedData = await encryptData(digital);
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'digitalPurchases', digital.firestoreId),
+                        encryptedData
+                    );
+                }
+                
+                document.body.classList.add('encrypted');
+                updateEncryptionStatus();
+                
+                alert('✅ Encryption enabled successfully!\n\nAll your data has been encrypted with your master password.');
+                
+                // Clear password fields
+                document.getElementById('settings-master-password').value = '';
+                document.getElementById('settings-master-password-confirm').value = '';
+                
+            } catch (error) {
+                console.error('Encryption setup error:', error);
+                alert('❌ Failed to setup encryption: ' + error.message);
+            }
+        };
+        
+        window.disableEncryption = async function() {
+            if (!confirm('⚠️ Are you sure you want to disable encryption?\n\nYour data will be stored WITHOUT encryption. This means it will be less secure.')) {
+                return;
+            }
+            
+            if (!confirm('⚠️ FINAL WARNING: Disable encryption?\n\nThis action will decrypt all your data and remove encryption protection.')) {
+                return;
+            }
+            
+            try {
+                console.log('🔄 Decrypting and removing encryption...');
+                
+                // Decrypt and re-save all gadgets without encryption
+                for (const gadget of gadgets) {
+                    // Remove firestoreId before saving
+                    const { firestoreId, ...gadgetData } = gadget;
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'gadgets', firestoreId),
+                        gadgetData
+                    );
+                }
+                
+                // Decrypt and re-save all games without encryption
+                for (const game of games) {
+                    const { firestoreId, ...gameData } = game;
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'games', firestoreId),
+                        gameData
+                    );
+                }
+                
+                // Decrypt and re-save all digital purchases without encryption
+                for (const digital of digitalPurchases) {
+                    const { firestoreId, ...digitalData } = digital;
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId),
+                        digitalData
+                    );
+                }
+                
+                // Remove encryption settings from localStorage
+                localStorage.removeItem('encryptionEnabled_' + currentUserUID);
+                localStorage.removeItem('encryptionSalt_' + currentUserUID);
+                
+                // Reset encryption manager
+                encryptionManager.encryptionKey = null;
+                encryptionManager.isUnlocked = false;
+                
+                document.body.classList.remove('encrypted');
+                updateEncryptionStatus();
+                
+                alert('✅ Encryption disabled successfully!\n\nYour data is now stored without encryption.');
+                
+            } catch (error) {
+                console.error('Disable encryption error:', error);
+                alert('❌ Failed to disable encryption: ' + error.message);
+            }
+        };
+
+
+
         window.unlockData = async function() {
             const password = document.getElementById('unlockPassword').value;
             const errorDiv = document.getElementById('unlockError');
@@ -5559,7 +5813,7 @@ window.importDigitalCSV = async function (event) {
         </div>
 
         <div style="display: flex; gap: 12px;">
-            <button onclick="document.getElementById('encryptionSetupModal').style.display='none'; loadData();" 
+            <button onclick="skipEncryptionSetup()" 
                     style="flex: 1; padding: 16px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;">
                 Skip for Now
             </button>
