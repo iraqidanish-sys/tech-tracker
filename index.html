@@ -2234,6 +2234,183 @@
 
         console.log('✅ Imports successful');
 
+        // ============================================
+        // ENCRYPTION MANAGER CLASS - AES-256-GCM
+        // ============================================
+        class EncryptionManager {
+            constructor() {
+                this.encryptionKey = null;
+                this.isUnlocked = false;
+            }
+
+            async deriveKeyFromPassword(password, salt) {
+                const encoder = new TextEncoder();
+                const passwordBuffer = encoder.encode(password);
+                
+                const keyMaterial = await window.crypto.subtle.importKey(
+                    'raw', passwordBuffer, 'PBKDF2', false, ['deriveBits', 'deriveKey']
+                );
+
+                return await window.crypto.subtle.deriveKey(
+                    {
+                        name: 'PBKDF2',
+                        salt: salt,
+                        iterations: 100000,
+                        hash: 'SHA-256'
+                    },
+                    keyMaterial,
+                    { name: 'AES-GCM', length: 256 },
+                    false,
+                    ['encrypt', 'decrypt']
+                );
+            }
+
+            generateSalt() {
+                return window.crypto.getRandomValues(new Uint8Array(16));
+            }
+
+            async encrypt(plaintext) {
+                if (!this.encryptionKey) {
+                    throw new Error('Encryption key not set');
+                }
+
+                const encoder = new TextEncoder();
+                const data = encoder.encode(JSON.stringify(plaintext));
+                const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                
+                const encryptedData = await window.crypto.subtle.encrypt(
+                    { name: 'AES-GCM', iv: iv },
+                    this.encryptionKey,
+                    data
+                );
+
+                const combined = new Uint8Array(iv.length + encryptedData.byteLength);
+                combined.set(iv);
+                combined.set(new Uint8Array(encryptedData), iv.length);
+
+                return this.arrayBufferToBase64(combined);
+            }
+
+            async decrypt(encryptedBase64) {
+                if (!this.encryptionKey) {
+                    throw new Error('Encryption key not set');
+                }
+
+                try {
+                    const combined = this.base64ToArrayBuffer(encryptedBase64);
+                    const iv = combined.slice(0, 12);
+                    const encryptedData = combined.slice(12);
+                    
+                    const decryptedData = await window.crypto.subtle.decrypt(
+                        { name: 'AES-GCM', iv: iv },
+                        this.encryptionKey,
+                        encryptedData
+                    );
+
+                    const decoder = new TextDecoder();
+                    return JSON.parse(decoder.decode(decryptedData));
+                } catch (error) {
+                    console.error('Decryption failed:', error);
+                    throw new Error('Failed to decrypt. Wrong password or corrupted data.');
+                }
+            }
+
+            arrayBufferToBase64(buffer) {
+                const bytes = new Uint8Array(buffer);
+                let binary = '';
+                for (let i = 0; i < bytes.byteLength; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return btoa(binary);
+            }
+
+            base64ToArrayBuffer(base64) {
+                const binary = atob(base64);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                return bytes;
+            }
+
+            async setupNewUser(password) {
+                const salt = this.generateSalt();
+                this.encryptionKey = await this.deriveKeyFromPassword(password, salt);
+                this.isUnlocked = true;
+
+                const saltBase64 = this.arrayBufferToBase64(salt);
+                localStorage.setItem('encryptionSalt_' + currentUserUID, saltBase64);
+                localStorage.setItem('encryptionEnabled_' + currentUserUID, 'true');
+
+                return true;
+            }
+
+            async unlockExistingUser(password) {
+                const saltBase64 = localStorage.getItem('encryptionSalt_' + currentUserUID);
+                if (!saltBase64) {
+                    throw new Error('No encryption salt found');
+                }
+
+                const salt = this.base64ToArrayBuffer(saltBase64);
+                this.encryptionKey = await this.deriveKeyFromPassword(password, salt);
+                this.isUnlocked = true;
+
+                return true;
+            }
+
+            isEncryptionEnabled() {
+                if (!currentUserUID) return false;
+                return localStorage.getItem('encryptionEnabled_' + currentUserUID) === 'true';
+            }
+
+            lockData() {
+                this.encryptionKey = null;
+                this.isUnlocked = false;
+            }
+        }
+
+        // Initialize global encryption manager
+        const encryptionManager = new EncryptionManager();
+        window.encryptionManager = encryptionManager;
+
+        // Helper functions for encryption
+        window.encryptData = async function(data) {
+            if (!encryptionManager.isUnlocked) {
+                return data;
+            }
+            
+            try {
+                const encrypted = await encryptionManager.encrypt(data);
+                return {
+                    encrypted: true,
+                    data: encrypted,
+                    timestamp: Date.now()
+                };
+            } catch (error) {
+                console.error('Encryption error:', error);
+                return data;
+            }
+        };
+
+        window.decryptData = async function(encryptedDoc) {
+            if (!encryptedDoc.encrypted) {
+                return encryptedDoc;
+            }
+            
+            if (!encryptionManager.isUnlocked) {
+                throw new Error('Data is locked');
+            }
+            
+            try {
+                return await encryptionManager.decrypt(encryptedDoc.data);
+            } catch (error) {
+                console.error('Decryption error:', error);
+                throw error;
+            }
+        };
+
+        console.log('✅ Encryption module loaded');
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAJtyDC0fI_AzGcKxVHBvF-Focs4doWxMM",
@@ -2362,7 +2539,34 @@ async function initializeUser(user) {
         }
         
         await loadSettings();
-        await loadData();
+        
+        // ============================================
+        // ENCRYPTION FLOW - Check if user has encryption enabled
+        // ============================================
+        if (encryptionManager.isEncryptionEnabled()) {
+            // User has encryption - show unlock modal
+            console.log('🔐 Encryption enabled - showing unlock modal');
+            document.getElementById('unlockModal').style.display = 'flex';
+            // Data will be loaded after successful unlock
+        } else {
+            // New user or encryption not enabled - ask if they want to enable it
+            const enableEncryption = confirm(
+                '🔐 Enable End-to-End Encryption?\n\n' +
+                '✅ Your data will be encrypted before storage\n' +
+                '✅ Maximum privacy and security\n' +
+                '✅ Only you can decrypt with your password\n\n' +
+                '⚠️ You will need a master password to access your data.\n\n' +
+                'Enable encryption now?'
+            );
+            
+            if (enableEncryption) {
+                document.getElementById('encryptionSetupModal').style.display = 'flex';
+                // Data will be loaded after setup
+            } else {
+                // Load data without encryption
+                await loadData();
+            }
+        }
     } catch (err) {
         console.error("❌ initializeUser error:", err);
     }
@@ -2526,6 +2730,10 @@ document.getElementById('googleSignInBtn').addEventListener('click', async () =>
         // Sign Out
         document.getElementById('signOutBtn').addEventListener('click', async () => {
             try {
+                // Clear encryption key on sign out
+                encryptionManager.lockData();
+                document.body.classList.remove('encrypted');
+                
                 await signOut(auth);
                 console.log('Signed out successfully');
             } catch (error) {
@@ -2556,8 +2764,9 @@ async function loadData() {
 
         const gadgetsSnapshot = await getDocs(gadgetsQuery);
 
-        gadgets = gadgetsSnapshot.docs.map(doc => {
-            const data = doc.data();
+        gadgets = await Promise.all(gadgetsSnapshot.docs.map(async doc => {
+            const encryptedData = doc.data();
+            const data = await decryptData(encryptedData);
             // Set status for old gadgets that don't have it
             if (!data.status) {
                 data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
@@ -2566,7 +2775,7 @@ async function loadData() {
                 firestoreId: doc.id,
                 ...data
             };
-        });
+        }));
 
 
         // ----------------
@@ -2579,8 +2788,9 @@ async function loadData() {
 
         const gamesSnapshot = await getDocs(gamesQuery);
 
-        games = gamesSnapshot.docs.map(doc => {
-            const data = doc.data();
+        games = await Promise.all(gamesSnapshot.docs.map(async doc => {
+            const encryptedData = doc.data();
+            const data = await decryptData(encryptedData);
             // Set status for old games that don't have it
             if (!data.status) {
                 data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
@@ -2589,7 +2799,7 @@ async function loadData() {
                 firestoreId: doc.id,
                 ...data
             };
-        });
+        }));
 
 
         // ----------------
@@ -2602,9 +2812,13 @@ async function loadData() {
 
         const digitalSnapshot = await getDocs(digitalQuery);
 
-        digitalPurchases = digitalSnapshot.docs.map(doc => ({
-            firestoreId: doc.id,
-            ...doc.data()
+        digitalPurchases = await Promise.all(digitalSnapshot.docs.map(async doc => {
+            const encryptedData = doc.data();
+            const data = await decryptData(encryptedData);
+            return {
+                firestoreId: doc.id,
+                ...data
+            };
         }));
 
 
@@ -3877,17 +4091,19 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
     try {
         if (window.editingGadgetId) {
             // UPDATE existing gadget
+            const gadgetToSave = await encryptData(gadget);
             await updateDoc(
                 doc(db, 'users', currentUserUID, 'gadgets', window.editingGadgetId),
-                gadget
+                gadgetToSave
             );
             window.editingGadgetId = null;
             document.querySelector('#gadget-form .btn').textContent = 'Add to Collection';
         } else {
             // ADD new gadget
+            const gadgetToSave = await encryptData(gadget);
             await addDoc(
                 collection(db, 'users', currentUserUID, 'gadgets'),
-                gadget
+                gadgetToSave
             );
         }
 
@@ -4067,9 +4283,10 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 if (window.editingGameId) {
 
     // ✅ UPDATE existing game (do NOT delete)
+    const gameToSave = await encryptData(game);
     await updateDoc(
         doc(db, 'users', currentUserUID, 'games', window.editingGameId),
-        game
+        gameToSave
     );
 
     window.editingGameId = null;
@@ -4078,9 +4295,10 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 } else {
 
     // ✅ ADD new game
+    const gameToSave = await encryptData(game);
     await addDoc(
         collection(db, 'users', currentUserUID, 'games'),
-        game
+        gameToSave
     );
 }
 
@@ -4407,9 +4625,10 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
             try {
                if (window.editingDigitalId) {
 
+                const digitalToSave = await encryptData(digital);
                 await updateDoc(
                 doc(db, 'users', currentUserUID, 'digitalPurchases', window.editingDigitalId),
-                digital
+                digitalToSave
                 );
 
                 window.editingDigitalId = null;
@@ -4417,9 +4636,10 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
 
                 } else {
 
+                const digitalToSave = await encryptData(digital);
                 await addDoc(
             collection(db, 'users', currentUserUID, 'digitalPurchases'),
-            digital
+            digitalToSave
             );
             }
 
@@ -4531,7 +4751,7 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
             
             deleteCallback = async () => {
                 try {
-                    await deleteDoc(doc(db, 'digitalPurchases', firestoreId));
+                    await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId));
                     await loadData();
                 } catch (error) {
                     console.error('Error deleting digital purchase:', error);
@@ -5036,6 +5256,62 @@ window.importDigitalCSV = async function (event) {
 
     reader.readAsText(file, 'UTF-8');
 };
+
+        // ========== ENCRYPTION UI FUNCTIONS ==========
+
+        window.setupEncryption = async function() {
+            const password = document.getElementById('masterPassword').value;
+            const confirmPassword = document.getElementById('masterPasswordConfirm').value;
+
+            if (!password || password.length < 8) {
+                alert('⚠️ Password must be at least 8 characters long');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('⚠️ Passwords do not match');
+                return;
+            }
+
+            try {
+                await encryptionManager.setupNewUser(password);
+                document.getElementById('encryptionSetupModal').style.display = 'none';
+                document.body.classList.add('encrypted');
+                alert('✅ Encryption enabled! Your data is now protected.');
+                
+                await loadData();
+                
+            } catch (error) {
+                console.error('Encryption setup error:', error);
+                alert('❌ Failed to setup encryption: ' + error.message);
+            }
+        };
+
+        window.unlockData = async function() {
+            const password = document.getElementById('unlockPassword').value;
+            const errorDiv = document.getElementById('unlockError');
+
+            if (!password) {
+                errorDiv.textContent = '⚠️ Please enter your password';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                await encryptionManager.unlockExistingUser(password);
+                document.getElementById('unlockModal').style.display = 'none';
+                document.body.classList.add('encrypted');
+                errorDiv.style.display = 'none';
+                
+                await loadData();
+                
+            } catch (error) {
+                console.error('Unlock error:', error);
+                errorDiv.textContent = '❌ Incorrect password or decryption error';
+                errorDiv.style.display = 'block';
+            }
+        };
+
         // ========== ADMIN FUNCTIONS ==========
 
         let currentSearchedUID = null;
@@ -5246,5 +5522,145 @@ window.importDigitalCSV = async function (event) {
     
     // Data will be loaded automatically after authentication via onAuthStateChanged
 </script>
+
+<!-- ============================================ -->
+<!-- ENCRYPTION MODALS & UI                      -->
+<!-- ============================================ -->
+
+<!-- Encryption Setup Modal (for new users) -->
+<div id="encryptionSetupModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 40px; border: 1px solid rgba(16, 185, 129, 0.3);">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
+                <svg width="40" height="40" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h2 style="font-size: 28px; margin-bottom: 12px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Enable End-to-End Encryption</h2>
+            <p style="color: #94a3b8; font-size: 15px; line-height: 1.6;">Your data will be encrypted using AES-256 encryption before being stored.</p>
+        </div>
+
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 25px;">
+            <p style="color: #ef4444; margin: 0; font-weight: 600; font-size: 14px;">
+                ⚠️ IMPORTANT: Store your password securely. If you lose it, your data CANNOT be recovered!
+            </p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Create Master Password</label>
+            <input type="password" id="masterPassword" placeholder="Enter a strong password (min 8 characters)" 
+                   style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Confirm Master Password</label>
+            <input type="password" id="masterPasswordConfirm" placeholder="Re-enter your password" 
+                   style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+            <button onclick="document.getElementById('encryptionSetupModal').style.display='none'; loadData();" 
+                    style="flex: 1; padding: 16px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                Skip for Now
+            </button>
+            <button onclick="setupEncryption()" 
+                    style="flex: 2; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
+                🔐 Enable Encryption
+            </button>
+        </div>
+
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(148, 163, 184, 0.1);">
+            <p style="color: #64748b; font-size: 12px; text-align: center; margin: 0;">
+                🔒 Your data is encrypted locally before storage<br>
+                🔑 Only you have the decryption key<br>
+                🚫 Even we cannot access your encrypted data
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Unlock Modal (for returning users) -->
+<div id="unlockModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 40px; border: 1px solid rgba(16, 185, 129, 0.3);">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
+                <svg width="40" height="40" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 style="font-size: 28px; margin-bottom: 12px; color: #f1f5f9; font-weight: 700;">Welcome Back!</h2>
+            <p style="color: #94a3b8; font-size: 15px;">Enter your master password to unlock your encrypted data.</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Master Password</label>
+            <input type="password" id="unlockPassword" placeholder="Enter your master password" 
+                   style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;"
+                   onkeypress="if(event.key==='Enter') unlockData()">
+        </div>
+
+        <div id="unlockError" style="color: #ef4444; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: none; padding: 12px; background: rgba(239, 68, 68, 0.15); border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3);"></div>
+
+        <button onclick="unlockData()" 
+                style="width: 100%; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
+            🔓 Unlock My Data
+        </button>
+
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(148, 163, 184, 0.1);">
+            <p style="color: #64748b; font-size: 12px; text-align: center; margin: 0;">
+                Forgot your password? Unfortunately, encrypted data cannot be recovered without it.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Encryption Indicator Badge -->
+<div class="encryption-indicator" style="position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); padding: 12px 20px; border-radius: 12px; color: white; font-size: 12px; font-weight: 600; display: none; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3); z-index: 9999; animation: pulse 2s infinite;">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+    <span>End-to-End Encrypted ✓</span>
+</div>
+
+<style>
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.85; }
+    }
+
+    body.encrypted .encryption-indicator {
+        display: flex !important;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+    }
+
+    .modal .modal-content {
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
 </body>
 </html>
