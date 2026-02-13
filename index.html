@@ -120,13 +120,14 @@
         }
 
         .desktop-nav-item {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 10px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             color: var(--text-secondary);
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .desktop-nav-item:hover {
@@ -139,10 +140,65 @@
             color: var(--accent-purple);
         }
 
+        /* Filter chips */
+        .filter-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-chip.active,
+        .filter-chip:hover {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Info card styles for item cards */
+        .info-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .price-tag {
+            font-size: 18px;
+            font-weight: 800;
+            color: #4facfe;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .status-owned { color: #4CAF50; font-weight: 700; }
+        .status-sold { color: #ff9800; font-weight: 700; }
+
+        .profit-positive { color: #4CAF50 !important; }
+        .profit-negative { color: #f44336 !important; }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+
         @media (max-width: 768px) {
-            .desktop-nav-links {
-                display: none;
-            }
+            .desktop-nav-links { display: none; }
         }
 
         .nav-actions {
@@ -762,6 +818,7 @@
                 <div class="desktop-nav-item" data-section="games" onclick="showSection('games')">🎮 Games</div>
                 <div class="desktop-nav-item" data-section="digital" onclick="showSection('digital')">💳 Digital</div>
                 <div class="desktop-nav-item" data-section="settings" onclick="showSection('settings')">⚙️ Settings</div>
+                <div class="desktop-nav-item" data-section="admin" id="admin-nav" onclick="showSection('admin')" style="display:none;color:#fbbf24;">👑 Admin</div>
             </div>
             <div class="nav-actions">
                 <div id="userInfo" style="display: none; position: relative;">
@@ -769,8 +826,7 @@
                     <!-- Profile Dropdown -->
                     <div id="profileMenu" style="display:none; position:absolute; top:52px; right:0; min-width:220px; background:rgba(15,23,42,0.98); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:8px; z-index:9999; box-shadow:0 16px 48px rgba(0,0,0,0.5);">
                         <div id="profileMenuName" style="padding:12px 14px 4px; font-weight:700; font-size:15px; color:#fff;"></div>
-                        <div id="profileMenuEmail" style="padding:0 14px 12px; font-size:12px; color:rgba(255,255,255,0.5); border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:8px;"></div>
-                        <div onclick="showSection('dashboard'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#e2e8f0; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">🏠 Dashboard</div>
+                        <div id="profileMenuEmail" style="padding:0 14px 12px; font-size:12px; color:rgba(255,255,255,0.5); border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:8px; word-break:break-all;"></div>
                         <div onclick="showSection('settings'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#e2e8f0; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">⚙️ Settings</div>
                         <div style="border-top:1px solid rgba(255,255,255,0.08); margin:8px 0;"></div>
                         <div onclick="document.getElementById('signOutBtn').click(); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#ef4444; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Sign Out</div>
@@ -782,148 +838,246 @@
         <!-- Main Container -->
         <div class="container">
             
-            <!-- Dashboard Section -->
+            <!-- ==================== DASHBOARD ==================== -->
             <div id="dashboard" class="section active">
-                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 8px;">Dashboard</h1>
-                <p style="color: var(--text-secondary); margin-bottom: 32px;">Welcome back!</p>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-content">
-                            <div class="stat-icon">📱</div>
-                            <div class="stat-label">Gadgets</div>
-                            <div class="stat-value" id="gadgetCount">0</div>
-                        </div>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:4px;">Dashboard</h1>
+                <p style="color:var(--text-secondary);margin-bottom:28px;">Welcome back!</p>
+
+                <!-- Gadgets Stats -->
+                <div style="margin-bottom:24px;">
+                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">📱 Gadgets</h3>
+                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-gadgets">0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-gadgets-value">₹0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Sold</div><div class="stat-value" id="dash-gadgets-sold">0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Profit/Loss</div><div class="stat-value" style="font-size:22px;" id="dash-gadgets-profit">₹0</div></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-content">
-                            <div class="stat-icon">🎮</div>
-                            <div class="stat-label">Games</div>
-                            <div class="stat-value" id="gameCount">0</div>
-                        </div>
+                </div>
+
+                <!-- Games Stats -->
+                <div style="margin-bottom:24px;">
+                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🎮 Games</h3>
+                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-games">0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-games-value">₹0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Sold</div><div class="stat-value" id="dash-games-sold">0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Profit/Loss</div><div class="stat-value" style="font-size:22px;" id="dash-games-profit-stat">₹0</div></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-content">
-                            <div class="stat-icon">💳</div>
-                            <div class="stat-label">Digital</div>
-                            <div class="stat-value" id="digitalCount">0</div>
-                        </div>
+                </div>
+
+                <!-- Digital Stats -->
+                <div style="margin-bottom:24px;">
+                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">💳 Digital</h3>
+                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Purchases</div><div class="stat-value" id="dash-total-digital">0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Spent</div><div class="stat-value" style="font-size:22px;" id="dash-digital-spent">₹0</div></div></div>
+                        <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Profit/Loss</div><div class="stat-value" style="font-size:22px;" id="dash-total-profit">₹0</div></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-content">
-                            <div class="stat-icon">💰</div>
-                            <div class="stat-label">Total Value</div>
-                            <div class="stat-value" id="totalValue">₹0</div>
-                        </div>
-                    </div>
+                </div>
+
+                <!-- Recent Items -->
+                <div>
+                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🕐 Recent Activity</h3>
+                    <div id="recent-items" class="items-grid"></div>
                 </div>
             </div>
 
-            <!-- Gadgets Section -->
+            <!-- ==================== GADGETS ==================== -->
             <div id="gadgets" class="section">
-                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">📱 Gadgets</h1>
-                
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">📱 Gadgets</h1>
+
                 <div class="add-form">
-                    <h3 style="margin-bottom: 20px;">Add New Gadget</h3>
+                    <h3 style="margin-bottom:20px;">Add / Edit Gadget</h3>
                     <form id="gadget-form">
-                        <div class="input-group">
-                            <label>Name</label>
-                            <input type="text" id="g-name" required>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                            <div class="input-group"><label>Name</label><input type="text" id="g-name" placeholder="e.g. iPhone 15 Pro" required></div>
+                            <div class="input-group"><label>Category</label><select id="g-category"></select></div>
+                            <div class="input-group"><label>Buy Price (₹)</label><input type="number" id="g-price" placeholder="0" required></div>
+                            <div class="input-group"><label>Purchase Date</label><input type="date" id="g-date" required></div>
+                            <div class="input-group"><label>Sell Price (₹) <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="number" id="g-sell-price" placeholder="Leave blank if owned"></div>
+                            <div class="input-group"><label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="g-sell-date"></div>
                         </div>
-                        <div class="input-group">
-                            <label>Category</label>
-                            <select id="g-category"></select>
-                        </div>
-                        <div class="input-group">
-                            <label>Price (₹)</label>
-                            <input type="number" id="g-price" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Purchase Date</label>
-                            <input type="date" id="g-date" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Notes</label>
-                            <textarea id="g-notes" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn">Add Gadget</button>
+                        <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="g-notes" rows="2" placeholder="Any notes..."></textarea></div>
+                        <button type="submit" class="btn">Add to Collection</button>
                     </form>
+                </div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+                    <button class="filter-chip active" onclick="filterGadgets(event,'all')">All</button>
+                    <button class="filter-chip" onclick="filterGadgets(event,'owned')">Owned</button>
+                    <button class="filter-chip" onclick="filterGadgets(event,'sold')">Sold</button>
                 </div>
 
                 <div id="gadgets-list" class="items-grid"></div>
             </div>
 
-            <!-- Games Section -->
+            <!-- ==================== GAMES ==================== -->
             <div id="games" class="section">
-                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">🎮 Games</h1>
-                
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">🎮 Games</h1>
+
                 <div class="add-form">
-                    <h3 style="margin-bottom: 20px;">Add New Game</h3>
+                    <h3 style="margin-bottom:20px;">Add / Edit Game</h3>
                     <form id="game-form">
-                        <div class="input-group">
-                            <label>Title</label>
-                            <input type="text" id="gm-title" required>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                            <div class="input-group"><label>Title</label><input type="text" id="gm-title" placeholder="e.g. Elden Ring" required></div>
+                            <div class="input-group"><label>Platform</label>
+                                <div id="platform-select-wrapper" style="position:relative;">
+                                    <select id="gm-platform"></select>
+                                </div>
+                            </div>
+                            <div class="input-group"><label>Genre</label><select id="gm-genre"></select></div>
+                            <div class="input-group"><label>Buy Price (₹)</label><input type="number" id="gm-buy-price" placeholder="0" required></div>
+                            <div class="input-group"><label>Purchase Date</label><input type="date" id="gm-buy-date" required></div>
+                            <div class="input-group"><label>Sell Price (₹) <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="number" id="gm-sell-price" placeholder="Leave blank if owned"></div>
+                            <div class="input-group"><label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="gm-sell-date"></div>
                         </div>
-                        <div class="input-group">
-                            <label>Platform</label>
-                            <select id="gm-platform"></select>
-                        </div>
-                        <div class="input-group">
-                            <label>Genre</label>
-                            <select id="gm-genre"></select>
-                        </div>
-                        <div class="input-group">
-                            <label>Buy Price (₹)</label>
-                            <input type="number" id="gm-buy-price" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Purchase Date</label>
-                            <input type="date" id="gm-buy-date" required>
-                        </div>
-                        <button type="submit" class="btn">Add Game</button>
+                        <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="gm-notes" rows="2" placeholder="Any notes..."></textarea></div>
+                        <button type="submit" class="btn">Add to Collection</button>
                     </form>
+                </div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+                    <button class="filter-chip active" onclick="filterGames(event,'all')">All</button>
+                    <button class="filter-chip" onclick="filterGames(event,'owned')">Owned</button>
+                    <button class="filter-chip" onclick="filterGames(event,'sold')">Sold</button>
                 </div>
 
                 <div id="games-list" class="items-grid"></div>
             </div>
 
-            <!-- Digital Section -->
+            <!-- ==================== DIGITAL ==================== -->
             <div id="digital" class="section">
-                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">💳 Digital</h1>
-                
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">💳 Digital</h1>
+
                 <div class="add-form">
-                    <h3 style="margin-bottom: 20px;">Add Digital Purchase</h3>
+                    <h3 style="margin-bottom:20px;">Add Digital Purchase</h3>
                     <form id="digital-form">
-                        <div class="input-group">
-                            <label>Name</label>
-                            <input type="text" id="d-name" required>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                            <div class="input-group"><label>Name</label><input type="text" id="d-name" placeholder="e.g. Netflix" required></div>
+                            <div class="input-group"><label>Type</label><select id="d-type"></select></div>
+                            <div class="input-group"><label>Amount (₹)</label><input type="number" id="d-amount" placeholder="0" required></div>
+                            <div class="input-group"><label>Purchase Date</label><input type="date" id="d-date" required></div>
+                            <div class="input-group"><label>Duration <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="text" id="d-duration" placeholder="e.g. 1 month, 1 year"></div>
+                            <div class="input-group"><label>Expiry Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="d-expiry"></div>
                         </div>
-                        <div class="input-group">
-                            <label>Type</label>
-                            <select id="d-type"></select>
-                        </div>
-                        <div class="input-group">
-                            <label>Amount (₹)</label>
-                            <input type="number" id="d-amount" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Purchase Date</label>
-                            <input type="date" id="d-date" required>
-                        </div>
+                        <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="d-notes" rows="2" placeholder="Any notes..."></textarea></div>
                         <button type="submit" class="btn">Add Purchase</button>
                     </form>
+                </div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+                    <button class="filter-chip active" onclick="filterDigital(event,'all')">All</button>
+                    <button class="filter-chip" onclick="filterDigital(event,'active')">Active</button>
+                    <button class="filter-chip" onclick="filterDigital(event,'expired')">Expired</button>
                 </div>
 
                 <div id="digital-list" class="items-grid"></div>
             </div>
 
-            <!-- Settings Section -->
+            <!-- ==================== SETTINGS ==================== -->
             <div id="settings" class="section">
-                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">⚙️ Settings</h1>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">⚙️ Settings</h1>
+
+                <!-- Account -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">👤 Account</h3>
+                    <p style="color:var(--text-secondary);margin-bottom:16px;">Signed in as: <strong id="userEmail" style="color:#fff;"></strong></p>
+                    <button id="signOutBtn" class="btn" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);">🚪 Sign Out</button>
+                </div>
+
+                <!-- Encryption -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">🔐 Encryption</h3>
+                    <div id="encryption-status" style="padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.1);margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+                        <span id="encryption-status-icon" style="font-size:24px;">🔓</span>
+                        <div>
+                            <div id="encryption-status-text" style="font-weight:700;font-size:15px;">Encryption Disabled</div>
+                            <div id="encryption-status-subtitle" style="font-size:12px;color:var(--text-muted);">Your data is stored without encryption</div>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('encryptionSetupModal').style.display='flex';" class="btn" style="background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);">🔐 Setup Encryption</button>
+                </div>
+
+                <!-- Gadget Categories -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">📱 Gadget Categories</h3>
+                    <div style="display:flex;gap:8px;margin-bottom:12px;">
+                        <input type="text" id="new-gadget-category" placeholder="New category name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <button class="btn" onclick="addGadgetCategory()">Add</button>
+                    </div>
+                    <div id="gadget-categories-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+                </div>
+
+                <!-- Game Platforms -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">🎮 Game Platforms</h3>
+                    <div style="display:flex;gap:8px;margin-bottom:12px;">
+                        <input type="text" id="new-game-platform" placeholder="New platform name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <button class="btn" onclick="addGamePlatform()">Add</button>
+                    </div>
+                    <div id="game-platforms-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+                </div>
+
+                <!-- Game Genres -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">🏷️ Game Genres</h3>
+                    <div style="display:flex;gap:8px;margin-bottom:12px;">
+                        <input type="text" id="new-game-genre" placeholder="New genre name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <button class="btn" onclick="addGameGenre()">Add</button>
+                    </div>
+                    <div id="game-genres-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+                </div>
+
+                <!-- Digital Types -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">💳 Digital Types</h3>
+                    <div style="display:flex;gap:8px;margin-bottom:12px;">
+                        <input type="text" id="new-digital-type" placeholder="New type name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <button class="btn" onclick="addDigitalType()">Add</button>
+                    </div>
+                    <div id="digital-types-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+                </div>
+
+                <!-- Custom Platform Icons -->
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">🖼️ Custom Platform Icons</h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
+                        <div class="input-group"><label>Platform</label>
+                            <div id="icon-platform-select-wrapper">
+                                <select id="icon-platform-name"><option value="">Select a platform...</option></select>
+                            </div>
+                        </div>
+                        <div class="input-group"><label>Upload Image</label><input type="file" id="icon-upload" accept="image/*" style="padding:8px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;width:100%;"></div>
+                        <div class="input-group"><label>Or paste Image URL</label><input type="url" id="icon-url" placeholder="https://..." style="padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;width:100%;"></div>
+                    </div>
+                    <div id="icon-preview" style="display:none;margin-bottom:12px;align-items:center;gap:12px;">
+                        <img id="icon-preview-img" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.9);padding:4px;" alt="Preview">
+                        <span style="color:var(--text-secondary);font-size:14px;">Preview</span>
+                    </div>
+                    <button class="btn" onclick="saveCustomIcon()">💾 Save Icon</button>
+                    <div id="icons-grid" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;"></div>
+                </div>
+            </div>
+
+            <!-- ==================== ADMIN ==================== -->
+            <div id="admin" class="section">
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">👑 Admin Panel</h1>
+
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:16px;">🔍 Find User</h3>
+                    <div style="display:flex;gap:8px;margin-bottom:16px;">
+                        <input type="email" id="admin-search-email" placeholder="user@email.com" style="flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <button class="btn" onclick="searchUser()">Search</button>
+                    </div>
+                    <div id="admin-user-details" style="display:none;">
+                        <div id="admin-user-info"></div>
+                    </div>
+                </div>
+
                 <div class="add-form">
-                    <h3>Account</h3>
-                    <p style="color: var(--text-secondary); margin: 16px 0;">Signed in as: <span id="userEmail"></span></p>
-                    <button id="signOutBtn" class="btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">Sign Out</button>
+                    <h3 style="margin-bottom:16px;">👥 All Users</h3>
+                    <button class="btn" style="margin-bottom:16px;" onclick="loadAllUsers()">Load All Users</button>
+                    <div id="admin-users-list"></div>
                 </div>
             </div>
 
@@ -1378,6 +1532,12 @@ onAuthStateChanged(auth, async (user) => {
 
             // Populate profile menu
             if (window.updateProfileMenu) window.updateProfileMenu(user);
+
+            // Show admin nav if admin
+            if (isAdmin(user)) {
+                const adminNav = document.getElementById('admin-nav');
+                if (adminNav) adminNav.style.display = 'block';
+            }
 
             // Initialize user data
             await initializeUser(user);
@@ -2869,13 +3029,13 @@ async function loadSettings() {
 
     if (el) el.classList.add('active');
 
-    // Update desktop nav
+    // Sync desktop nav
     document.querySelectorAll('.desktop-nav-item').forEach(item => {
         item.classList.remove('active');
         if (item.dataset.section === section) item.classList.add('active');
     });
 
-    // Update bottom nav
+    // Sync bottom nav
     document.querySelectorAll('.bottom-nav-item').forEach(item => {
         item.classList.remove('active');
         if (item.dataset.section === section) item.classList.add('active');
@@ -4675,46 +4835,33 @@ window.importDigitalCSV = async function (event) {
 
     <script>
         // ============================================
-        // NAVIGATION & PROFILE MENU
+        // NAVIGATION & PROFILE MENU (non-module scope)
         // ============================================
         function showSection(sectionId) {
-            // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            // Show selected section
             const target = document.getElementById(sectionId);
             if (target) target.classList.add('active');
-
-            // Update bottom nav
             document.querySelectorAll('.bottom-nav-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.section === sectionId) item.classList.add('active');
             });
-
-            // Update desktop nav
             document.querySelectorAll('.desktop-nav-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.section === sectionId) item.classList.add('active');
             });
-
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Bottom navigation click handlers
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                showSection(this.dataset.section);
-            });
+            item.addEventListener('click', function() { showSection(this.dataset.section); });
         });
 
-        // Profile menu toggle
         function toggleProfileMenu() {
             const menu = document.getElementById('profileMenu');
             if (!menu) return;
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
-        // Close profile menu when clicking outside
         document.addEventListener('click', function(e) {
             const menu = document.getElementById('profileMenu');
             const avatar = document.getElementById('userAvatar');
@@ -4723,7 +4870,6 @@ window.importDigitalCSV = async function (event) {
             }
         });
 
-        // Populate profile menu with user details once auth fires
         function updateProfileMenu(user) {
             if (!user) return;
             const nameEl = document.getElementById('profileMenuName');
@@ -4732,7 +4878,6 @@ window.importDigitalCSV = async function (event) {
             if (emailEl) emailEl.textContent = user.email;
         }
 
-        // Make functions globally available
         window.showSection = showSection;
         window.toggleProfileMenu = toggleProfileMenu;
         window.updateProfileMenu = updateProfileMenu;
