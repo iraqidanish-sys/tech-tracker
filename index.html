@@ -112,6 +112,39 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Desktop Navigation Links */
+        .desktop-nav-links {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .desktop-nav-item {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .desktop-nav-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+        }
+
+        .desktop-nav-item.active {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--accent-purple);
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav-links {
+                display: none;
+            }
+        }
+
         .nav-actions {
             display: flex;
             gap: 12px;
@@ -722,9 +755,26 @@
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="logo">✨ MyCollection</div>
+            <!-- Desktop Nav Links -->
+            <div class="desktop-nav-links" id="desktopNavLinks">
+                <div class="desktop-nav-item active" data-section="dashboard" onclick="showSection('dashboard')">🏠 Home</div>
+                <div class="desktop-nav-item" data-section="gadgets" onclick="showSection('gadgets')">📱 Gadgets</div>
+                <div class="desktop-nav-item" data-section="games" onclick="showSection('games')">🎮 Games</div>
+                <div class="desktop-nav-item" data-section="digital" onclick="showSection('digital')">💳 Digital</div>
+                <div class="desktop-nav-item" data-section="settings" onclick="showSection('settings')">⚙️ Settings</div>
+            </div>
             <div class="nav-actions">
-                <div id="userInfo" style="display: none;">
-                    <div class="user-avatar" id="userAvatar">U</div>
+                <div id="userInfo" style="display: none; position: relative;">
+                    <div class="user-avatar" id="userAvatar" onclick="toggleProfileMenu()">U</div>
+                    <!-- Profile Dropdown -->
+                    <div id="profileMenu" style="display:none; position:absolute; top:52px; right:0; min-width:220px; background:rgba(15,23,42,0.98); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:8px; z-index:9999; box-shadow:0 16px 48px rgba(0,0,0,0.5);">
+                        <div id="profileMenuName" style="padding:12px 14px 4px; font-weight:700; font-size:15px; color:#fff;"></div>
+                        <div id="profileMenuEmail" style="padding:0 14px 12px; font-size:12px; color:rgba(255,255,255,0.5); border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:8px;"></div>
+                        <div onclick="showSection('dashboard'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#e2e8f0; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">🏠 Dashboard</div>
+                        <div onclick="showSection('settings'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#e2e8f0; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">⚙️ Settings</div>
+                        <div style="border-top:1px solid rgba(255,255,255,0.08); margin:8px 0;"></div>
+                        <div onclick="document.getElementById('signOutBtn').click(); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#ef4444; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Sign Out</div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -1325,6 +1375,9 @@ onAuthStateChanged(auth, async (user) => {
                 const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
                 userAvatar.textContent = initials;
             }
+
+            // Populate profile menu
+            if (window.updateProfileMenu) window.updateProfileMenu(user);
 
             // Initialize user data
             await initializeUser(user);
@@ -2810,15 +2863,30 @@ async function loadSettings() {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     
     const sectionElement = document.getElementById(section);
-    if (sectionElement) {  // ← ADD THIS CHECK
+    if (sectionElement) {
         sectionElement.classList.add('active');
     }
 
     if (el) el.classList.add('active');
 
+    // Update desktop nav
+    document.querySelectorAll('.desktop-nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === section) item.classList.add('active');
+    });
+
+    // Update bottom nav
+    document.querySelectorAll('.bottom-nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === section) item.classList.add('active');
+    });
+
     if (window.innerWidth <= 768) {
-        document.getElementById('sidebar').classList.remove('mobile-open');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('mobile-open');
     }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
       // Gadget form handler (with sanitization)
@@ -4605,37 +4673,70 @@ window.importDigitalCSV = async function (event) {
     }
 </style>
 
-</body>
-</html>
-
     <script>
-        // Navigation functionality
+        // ============================================
+        // NAVIGATION & PROFILE MENU
+        // ============================================
         function showSection(sectionId) {
             // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            
             // Show selected section
-            document.getElementById(sectionId).classList.add('active');
-            
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.add('active');
+
             // Update bottom nav
             document.querySelectorAll('.bottom-nav-item').forEach(item => {
                 item.classList.remove('active');
-                if (item.dataset.section === sectionId) {
-                    item.classList.add('active');
-                }
+                if (item.dataset.section === sectionId) item.classList.add('active');
             });
+
+            // Update desktop nav
+            document.querySelectorAll('.desktop-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === sectionId) item.classList.add('active');
+            });
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Bottom navigation click handlers
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
             item.addEventListener('click', function() {
-                const section = this.dataset.section;
-                showSection(section);
+                showSection(this.dataset.section);
             });
         });
 
-        // Make showSection available globally
+        // Profile menu toggle
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            if (!menu) return;
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('profileMenu');
+            const avatar = document.getElementById('userAvatar');
+            if (menu && avatar && !avatar.contains(e.target) && !menu.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        // Populate profile menu with user details once auth fires
+        function updateProfileMenu(user) {
+            if (!user) return;
+            const nameEl = document.getElementById('profileMenuName');
+            const emailEl = document.getElementById('profileMenuEmail');
+            if (nameEl) nameEl.textContent = user.displayName || user.email.split('@')[0];
+            if (emailEl) emailEl.textContent = user.email;
+        }
+
+        // Make functions globally available
         window.showSection = showSection;
+        window.toggleProfileMenu = toggleProfileMenu;
+        window.updateProfileMenu = updateProfileMenu;
     </script>
+
 </body>
 </html>
