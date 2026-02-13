@@ -157,8 +157,12 @@
 
         /* Universal icon image wrapper - overflow:hidden is the only bulletproof size fix */
         .icon-img-wrap {
-            width: 40px;
-            height: 40px;
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
+            max-width: 40px !important;
+            max-height: 40px !important;
             overflow: hidden;
             flex-shrink: 0;
             border-radius: 8px;
@@ -175,8 +179,36 @@
             height: 100% !important;
             max-width: 100% !important;
             max-height: 100% !important;
-            object-fit: contain;
-            display: block;
+            object-fit: contain !important;
+            display: block !important;
+        }
+        
+        /* Smaller icon wrapper for inline use */
+        .icon-img-wrap-sm {
+            width: 24px !important;
+            height: 24px !important;
+            min-width: 24px !important;
+            min-height: 24px !important;
+            max-width: 24px !important;
+            max-height: 24px !important;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.95);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+        
+        .icon-img-wrap-sm img {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            object-fit: contain !important;
+            display: block !important;
         }
 
         .icon-img-wrap-sm {
@@ -320,14 +352,17 @@
             border-radius: 16px;
             position: relative;
             transition: all 0.3s ease;
-            background: var(--glass-bg);
+            background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .item-card:hover {
             transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
         }
 
         /* All direct children of item-card need z-index to be above ::before */
@@ -360,7 +395,11 @@
 
         .item-category {
             font-size: 12px;
-            color: var(--text-muted);
+            font-weight: 600;
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         /* Info rows inside cards */
@@ -381,15 +420,19 @@
 
         .info-label {
             font-size: 11px;
-            color: var(--text-muted);
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .info-value {
             font-size: 13px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #ffffff;
             font-family: 'Space Mono', monospace;
         }
 
@@ -593,12 +636,13 @@
 
         /* Forms */
         .add-form {
-            background: var(--glass-bg);
+            background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 32px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         .input-group {
@@ -609,9 +653,13 @@
             display: block;
             margin-bottom: 8px;
             font-size: 13px;
-            color: var(--text-secondary);
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .input-group input,
@@ -619,18 +667,26 @@
         .input-group textarea {
             width: 100%;
             padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: 8px;
             color: var(--text-primary);
             font-family: inherit;
+            transition: all 0.3s ease;
         }
 
         .input-group input:focus,
         .input-group select:focus,
         .input-group textarea:focus {
             outline: none;
-            border-color: var(--accent-purple);
+            border-color: #10b981;
+            background: rgba(30, 41, 59, 0.95);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
 
         /* Loading */
@@ -702,7 +758,7 @@
             .desktop-nav-links { display: none; }
 
             .container {
-                padding: 72px 12px 90px !important;
+                padding: 72px 16px 90px !important;
             }
 
             .section h1 {
@@ -712,33 +768,88 @@
 
             .items-grid {
                 grid-template-columns: 1fr !important;
-                gap: 10px;
+                gap: 16px;
                 margin-top: 10px;
             }
 
-            .item-card { padding: 12px; }
-            .item-title { font-size: 14px; }
-            .info-label { font-size: 10px; }
-            .info-value { font-size: 12px; }
+            .item-card { 
+                padding: 16px;
+                background: rgba(30, 41, 59, 0.9);
+                border: 1px solid rgba(16, 185, 129, 0.2);
+            }
+            
+            .item-title { 
+                font-size: 16px;
+                margin-bottom: 6px;
+            }
+            
+            .item-category {
+                font-size: 12px;
+                color: rgba(16, 185, 129, 0.8);
+                font-weight: 600;
+            }
+            
+            .info-label { 
+                font-size: 11px;
+                font-weight: 700;
+                color: rgba(16, 185, 129, 0.9);
+            }
+            
+            .info-value { 
+                font-size: 13px;
+                color: #ffffff;
+                font-weight: 700;
+            }
+            
+            .info-row {
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .info-row:last-child {
+                border-bottom: none;
+            }
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 8px;
+                gap: 12px;
             }
 
-            .stat-card { padding: 12px; }
-            .stat-value { font-size: 20px !important; }
-            .stat-label { font-size: 10px; }
+            .stat-card { 
+                padding: 16px;
+                background: rgba(30, 41, 59, 0.9);
+            }
+            
+            .stat-value { 
+                font-size: 24px !important;
+                background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            .stat-label { 
+                font-size: 11px;
+                color: rgba(255, 255, 255, 0.6);
+                font-weight: 600;
+            }
 
-            .add-form { padding: 14px; margin-bottom: 14px; }
+            .add-form { 
+                padding: 16px; 
+                margin-bottom: 16px;
+                background: rgba(30, 41, 59, 0.8);
+                border: 1px solid rgba(16, 185, 129, 0.2);
+            }
 
             /* This is the key - form-grid class collapses to single column */
             .form-grid {
                 grid-template-columns: 1fr !important;
-                gap: 10px !important;
+                gap: 12px !important;
             }
 
-            .filter-chip { padding: 6px 12px; font-size: 12px; }
+            .filter-chip { 
+                padding: 8px 14px; 
+                font-size: 12px;
+            }
 
             .fab { bottom: 80px; }
 
