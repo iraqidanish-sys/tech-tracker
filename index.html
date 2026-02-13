@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0a0e27">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>MyCollection - Your Digital Vault</title>
+    <title>GearNest - Your Digital Vault</title>
     
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
@@ -105,17 +105,48 @@
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 800;
-            color: #10b981; /* Fallback for browsers that don't support background-clip */
+            color: #10b981;
             background: linear-gradient(90deg, #10b981 0%, #06b6d4 25%, #10b981 50%, #06b6d4 75%, #10b981 100%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            -webkit-animation: shimmer 3s ease-in-out infinite;
-            animation: shimmer 3s ease-in-out infinite;
-            will-change: background-position;
+            animation: shimmer 3s ease-in-out infinite, logoFloat 3s ease-in-out infinite;
+            will-change: background-position, transform;
+            letter-spacing: 1px;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo::before {
+            content: '🏠';
+            font-size: 32px;
+            animation: iconPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.9));
+            }
         }
 
         @keyframes shimmer {
@@ -1161,47 +1192,206 @@
     </style>
 
     <!-- Login Screen -->
-    <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a1628 0%, #162447 50%, #1f1b3d 100%); z-index: 10000; display: none;">
+    <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f1729 0%, #1a2332 50%, #0f1729 100%); z-index: 10000; display: none; overflow-y: auto;">
         
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%); padding: 50px 40px; border-radius: 24px; width: 420px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.2); backdrop-filter: blur(10px);">
+        <!-- Background animated elements -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
+            <div style="position: absolute; top: 10%; left: 15%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float1 8s ease-in-out infinite;"></div>
+            <div style="position: absolute; bottom: 15%; right: 10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float2 10s ease-in-out infinite;"></div>
+        </div>
+        
+        <div style="position: relative; max-width: 1400px; margin: 0 auto; min-height: 100vh; display: flex; align-items: center; padding: 40px 20px;">
             
-            <!-- Animated Logo -->
-            <div style="position: relative; width: 120px; height: 120px; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;">
-                <div class="scifi-logo-container" style="position: relative; width: 80px; height: 80px;">
-                    <!-- Outer rotating ring -->
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; border: 2px solid rgba(16, 185, 129, 0.3); border-radius: 50%; animation: rotateRing 8s linear infinite;"></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; width: 100%; align-items: center;">
+                
+                <!-- Left Content -->
+                <div style="padding: 40px 20px;">
                     
-                    <!-- Middle pulsing ring -->
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; border: 2px solid rgba(6, 182, 212, 0.4); border-radius: 50%; animation: pulseRing 2s ease-in-out infinite;"></div>
-                    
-                    <!-- Core hexagon -->
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2); animation: hexFloat 3s ease-in-out infinite;">
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%); animation: innerGlow 2s ease-in-out infinite;"></div>
+                    <!-- Logo -->
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 60px; animation: slideInLeft 0.8s ease-out;">
+                        <div style="position: relative; width: 50px; height: 50px;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4); animation: logoPulse 2s ease-in-out infinite;">
+                                <svg width="28" height="28" fill="white" viewBox="0 0 24 24" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 style="color: #fff; font-size: 24px; font-weight: 800; margin: 0; letter-spacing: 0.5px; background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GEARNEST</h2>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0; letter-spacing: 2px; text-transform: uppercase;">Digital Locker</p>
+                        </div>
                     </div>
                     
-                    <!-- Orbiting particles -->
-                    <div style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: orbit1 3s linear infinite;"></div>
-                    <div style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 8px #06b6d4; animation: orbit2 3s linear infinite;"></div>
-                    <div style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 8px #06b6d4; animation: orbit3 3s linear infinite;"></div>
+                    <!-- Main Heading -->
+                    <h1 style="color: #fff; font-size: 52px; line-height: 1.1; margin-bottom: 24px; font-weight: 800; animation: slideInLeft 0.8s ease-out 0.2s backwards;">
+                        Track Your<br>
+                        <span style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tech & Gaming</span><br>
+                        Legacy.
+                    </h1>
+                    
+                    <!-- Description -->
+                    <p style="color: rgba(255,255,255,0.7); font-size: 16px; line-height: 1.6; margin-bottom: 48px; max-width: 500px; animation: slideInLeft 0.8s ease-out 0.4s backwards;">
+                        A secure, private vault for your gadgets, game library, and digital purchases. Built for collectors, by collectors.
+                    </p>
+                    
+                    <!-- Category Buttons -->
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; animation: slideInLeft 0.8s ease-out 0.6s backwards;">
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'; this.style.borderColor='rgba(16, 185, 129, 0.5)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'">
+                            <svg width="18" height="18" fill="none" stroke="#10b981" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <span style="color: #10b981; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Hardware</span>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(139, 92, 246, 0.2)'; this.style.borderColor='rgba(139, 92, 246, 0.5)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.1)'; this.style.borderColor='rgba(139, 92, 246, 0.3)'">
+                            <svg width="18" height="18" fill="none" stroke="#8b5cf6" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                            </svg>
+                            <span style="color: #8b5cf6; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Gaming</span>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(6, 182, 212, 0.2)'; this.style.borderColor='rgba(6, 182, 212, 0.5)'" onmouseout="this.style.background='rgba(6, 182, 212, 0.1)'; this.style.borderColor='rgba(6, 182, 212, 0.3)'">
+                            <svg width="18" height="18" fill="none" stroke="#06b6d4" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            <span style="color: #06b6d4; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Digital</span>
+                        </div>
+                    </div>
+                    
                 </div>
+                
+                <!-- Right Login Box -->
+                <div style="animation: slideInRight 0.8s ease-out 0.4s backwards;">
+                    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%); backdrop-filter: blur(20px); padding: 50px 40px; border-radius: 24px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.2); max-width: 450px; margin-left: auto;">
+                        
+                        <!-- Shield Icon -->
+                        <div style="width: 70px; height: 70px; margin: 0 auto 24px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(16, 185, 129, 0.3); animation: shieldPulse 2s ease-in-out infinite;">
+                            <svg width="32" height="32" fill="none" stroke="#10b981" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        
+                        <h2 style="color: #fff; font-size: 28px; font-weight: 800; margin-bottom: 10px; text-align: center; letter-spacing: -0.5px;">System Access</h2>
+                        <p style="color: rgba(255,255,255,0.6); margin-bottom: 35px; text-align: center; font-size: 14px; font-weight: 500;">Initialize secure session to manage your assets</p>
+                        
+                        <button id="googleSignInBtn" style="width: 100%; background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%); color: white; border: none; padding: 18px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(16, 185, 129, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.4)'">
+                            <svg width="20" height="20" viewBox="0 0 20 20">
+                                <path fill="white" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
+                                <path fill="white" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
+                                <path fill="white" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
+                                <path fill="white" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
+                            </svg>
+                            Sign in with Google
+                        </button>
+                        
+                        <p style="color: rgba(255,255,255,0.4); font-size: 11px; text-align: center; margin-top: 24px; letter-spacing: 1px; text-transform: uppercase;">
+                            Verified Security // Google Auth Protocol
+                        </p>
+                        
+                        <div id="loginError" style="color: #ef4444; margin-top: 20px; font-size: 14px; text-align: center; display: none;"></div>
+                    </div>
+                </div>
+                
             </div>
             
-            <h1 style="color: #f8f9fa; font-size: 32px; margin-bottom: 10px; text-align: center; font-weight: 800; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px;">MyCollection</h1>
-            <h2 style="color: #f8f9fa; font-size: 20px; font-weight: 700; margin-bottom: 10px; text-align: center; letter-spacing: -0.5px;">System Access</h2>
-            <p style="color: #94a3b8; margin-bottom: 35px; text-align: center; font-size: 14px; font-weight: 500;">Initialize secure session to manage your assets</p>
-            
-            <button id="googleSignInBtn" style="width: 100%; background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%); color: white; border: none; padding: 16px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(16, 185, 129, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.4)'">
-                <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path fill="white" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
-                    <path fill="white" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
-                    <path fill="white" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
-                    <path fill="white" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
-                </svg>
-                Sign in with Google
-            </button>
-            
-            <div id="loginError" style="color: #ef4444; margin-top: 20px; font-size: 14px; text-align: center; display: none;"></div>
         </div>
+        
+        <!-- Mobile Responsive Layout -->
+        <style>
+            @media (max-width: 968px) {
+                #loginScreen > div > div {
+                    grid-template-columns: 1fr !important;
+                    gap: 40px !important;
+                }
+                
+                #loginScreen h1 {
+                    font-size: 38px !important;
+                }
+                
+                #loginScreen > div > div > div:last-child > div {
+                    margin-left: 0 !important;
+                    max-width: 100% !important;
+                }
+            }
+            
+            @media (max-width: 640px) {
+                #loginScreen > div {
+                    padding: 30px 15px !important;
+                }
+                
+                #loginScreen h1 {
+                    font-size: 32px !important;
+                }
+                
+                #loginScreen > div > div > div:first-child {
+                    padding: 20px 10px !important;
+                }
+                
+                #loginScreen > div > div > div:last-child > div {
+                    padding: 35px 25px !important;
+                }
+            }
+            
+            @keyframes slideInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes float1 {
+                0%, 100% {
+                    transform: translate(0, 0) scale(1);
+                }
+                50% {
+                    transform: translate(30px, -30px) scale(1.1);
+                }
+            }
+            
+            @keyframes float2 {
+                0%, 100% {
+                    transform: translate(0, 0) scale(1);
+                }
+                50% {
+                    transform: translate(-30px, 30px) scale(1.1);
+                }
+            }
+            
+            @keyframes logoPulse {
+                0%, 100% {
+                    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+                }
+                50% {
+                    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
+                }
+            }
+            
+            @keyframes shieldPulse {
+                0%, 100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+                }
+                50% {
+                    transform: scale(1.05);
+                    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+                }
+            }
+        </style>
     </div>
 
     <!-- Main App -->
@@ -1209,7 +1399,7 @@
         
         <!-- Top Navigation -->
         <nav class="top-nav">
-            <div class="logo">✨ MyCollection</div>
+            <div class="logo">GearNest</div>
             <div class="desktop-nav-links" id="desktopNavLinks">
                 <div class="desktop-nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
