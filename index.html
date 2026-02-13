@@ -112,7 +112,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* Desktop Navigation Links */
+        /* Desktop Navigation */
         .desktop-nav-links {
             display: flex;
             gap: 4px;
@@ -140,62 +140,25 @@
             color: var(--accent-purple);
         }
 
-        /* Filter chips */
-        .filter-chip {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            background: var(--glass-bg);
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+        /* Fix custom icons grid — prevent huge images */
+        #icons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
         }
 
-        .filter-chip.active,
-        .filter-chip:hover {
-            background: var(--gradient-primary);
-            color: white;
-            border-color: transparent;
+        #icons-grid > div {
+            width: 100px;
+            flex-shrink: 0;
         }
 
-        /* Info card styles for item cards */
-        .info-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        #icons-grid img {
+            width: 48px !important;
+            height: 48px !important;
+            max-width: 48px !important;
+            object-fit: contain;
         }
-
-        .info-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-            font-family: 'Space Mono', monospace;
-        }
-
-        .price-tag {
-            font-size: 18px;
-            font-weight: 800;
-            color: #4facfe;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .status-owned { color: #4CAF50; font-weight: 700; }
-        .status-sold { color: #ff9800; font-weight: 700; }
-
-        .profit-positive { color: #4CAF50 !important; }
-        .profit-negative { color: #f44336 !important; }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px;
-            color: var(--text-muted);
-            grid-column: 1 / -1;
-        }
-
-        .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
 
         @media (max-width: 768px) {
             .desktop-nav-links { display: none; }
@@ -310,27 +273,24 @@
             border-radius: 16px;
             position: relative;
             transition: all 0.3s ease;
-        }
-
-        .item-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            border-radius: 16px;
             border: 1px solid var(--glass-border);
         }
 
         .item-card:hover {
             transform: translateY(-4px);
-        }
-
-        .item-card:hover::before {
             background: rgba(255, 255, 255, 0.08);
         }
 
-        .item-content {
+        /* All direct children of item-card need z-index to be above ::before */
+        .item-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-content,
+        .item-info {
             position: relative;
             z-index: 1;
         }
@@ -338,20 +298,131 @@
         .item-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 16px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1;
         }
 
         .item-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             margin-bottom: 4px;
+            color: var(--text-primary);
         }
 
         .item-category {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
         }
 
+        /* Info rows inside cards */
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .price-tag {
+            font-size: 16px;
+            font-weight: 800;
+            color: #4facfe;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Edit / Delete icon buttons in cards */
+        .edit-icon,
+        .delete-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            background: transparent;
+            position: relative;
+            z-index: 2;
+        }
+
+        .edit-icon {
+            background: rgba(79, 172, 254, 0.15);
+            color: #4facfe;
+        }
+
+        .delete-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .edit-icon:hover { background: rgba(79, 172, 254, 0.3); transform: scale(1.1); }
+        .delete-icon:hover { background: rgba(239, 68, 68, 0.3); transform: scale(1.1); }
+
+        /* Status badges */
+        .status-owned { color: #4CAF50; font-weight: 700; font-size: 11px; text-transform: uppercase; }
+        .status-sold  { color: #ff9800; font-weight: 700; font-size: 11px; text-transform: uppercase; }
+
+        /* Profit colors */
+        .profit-positive { color: #4CAF50 !important; }
+        .profit-negative { color: #f44336 !important; }
+
+        /* Filter chips */
+        .filter-chip {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-chip.active,
+        .filter-chip:hover {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+        .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+
+        /* Item actions row */
         .item-actions {
             display: flex;
             gap: 8px;
@@ -369,39 +440,19 @@
             transition: all 0.2s ease;
         }
 
-        .action-btn.edit {
-            background: rgba(79, 172, 254, 0.2);
-            color: #4facfe;
-        }
+        .action-btn.edit  { background: rgba(79, 172, 254, 0.2); color: #4facfe; }
+        .action-btn.delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .action-btn:hover { transform: scale(1.1); }
 
-        .action-btn.delete {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .item-details {
-            display: grid;
-            gap: 8px;
-        }
+        .item-details { display: grid; gap: 8px; }
 
         .detail-row {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
         }
-
-        .detail-label {
-            color: var(--text-muted);
-        }
-
-        .detail-value {
-            font-weight: 600;
-            font-family: 'Space Mono', monospace;
-        }
+        .detail-label { color: var(--text-muted); }
+        .detail-value { font-weight: 600; font-family: 'Space Mono', monospace; }
 
         /* Bottom Navigation */
         .bottom-nav {
@@ -811,7 +862,6 @@
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="logo">✨ MyCollection</div>
-            <!-- Desktop Nav Links -->
             <div class="desktop-nav-links" id="desktopNavLinks">
                 <div class="desktop-nav-item active" data-section="dashboard" onclick="showSection('dashboard')">🏠 Home</div>
                 <div class="desktop-nav-item" data-section="gadgets" onclick="showSection('gadgets')">📱 Gadgets</div>
@@ -823,13 +873,12 @@
             <div class="nav-actions">
                 <div id="userInfo" style="display: none; position: relative;">
                     <div class="user-avatar" id="userAvatar" onclick="toggleProfileMenu()">U</div>
-                    <!-- Profile Dropdown -->
                     <div id="profileMenu" style="display:none; position:absolute; top:52px; right:0; min-width:220px; background:rgba(15,23,42,0.98); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:8px; z-index:9999; box-shadow:0 16px 48px rgba(0,0,0,0.5);">
                         <div id="profileMenuName" style="padding:12px 14px 4px; font-weight:700; font-size:15px; color:#fff;"></div>
                         <div id="profileMenuEmail" style="padding:0 14px 12px; font-size:12px; color:rgba(255,255,255,0.5); border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:8px; word-break:break-all;"></div>
-                        <div onclick="showSection('settings'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#e2e8f0; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">⚙️ Settings</div>
+                        <div onclick="showSection('settings'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#e2e8f0; font-size:14px; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">⚙️ Settings</div>
                         <div style="border-top:1px solid rgba(255,255,255,0.08); margin:8px 0;"></div>
-                        <div onclick="document.getElementById('signOutBtn').click(); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#ef4444; font-size:14px; display:flex; align-items:center; gap:10px; transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Sign Out</div>
+                        <div onclick="document.getElementById('signOutBtn').click(); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#ef4444; font-size:14px; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Sign Out</div>
                     </div>
                 </div>
             </div>
@@ -843,9 +892,8 @@
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:4px;">Dashboard</h1>
                 <p style="color:var(--text-secondary);margin-bottom:28px;">Welcome back!</p>
 
-                <!-- Gadgets Stats -->
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">📱 Gadgets</h3>
+                    <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">📱 Gadgets</h3>
                     <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-gadgets">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-gadgets-value">₹0</div></div></div>
@@ -854,9 +902,8 @@
                     </div>
                 </div>
 
-                <!-- Games Stats -->
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🎮 Games</h3>
+                    <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🎮 Games</h3>
                     <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-games">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-games-value">₹0</div></div></div>
@@ -865,9 +912,8 @@
                     </div>
                 </div>
 
-                <!-- Digital Stats -->
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">💳 Digital</h3>
+                    <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">💳 Digital</h3>
                     <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Purchases</div><div class="stat-value" id="dash-total-digital">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Spent</div><div class="stat-value" style="font-size:22px;" id="dash-digital-spent">₹0</div></div></div>
@@ -875,9 +921,8 @@
                     </div>
                 </div>
 
-                <!-- Recent Items -->
                 <div>
-                    <h3 style="font-size:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🕐 Recent Activity</h3>
+                    <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🕐 Recent Activity</h3>
                     <div id="recent-items" class="items-grid"></div>
                 </div>
             </div>
@@ -885,7 +930,6 @@
             <!-- ==================== GADGETS ==================== -->
             <div id="gadgets" class="section">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">📱 Gadgets</h1>
-
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add / Edit Gadget</h3>
                     <form id="gadget-form">
@@ -901,20 +945,17 @@
                         <button type="submit" class="btn">Add to Collection</button>
                     </form>
                 </div>
-
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
                     <button class="filter-chip active" onclick="filterGadgets(event,'all')">All</button>
                     <button class="filter-chip" onclick="filterGadgets(event,'owned')">Owned</button>
                     <button class="filter-chip" onclick="filterGadgets(event,'sold')">Sold</button>
                 </div>
-
                 <div id="gadgets-list" class="items-grid"></div>
             </div>
 
             <!-- ==================== GAMES ==================== -->
             <div id="games" class="section">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">🎮 Games</h1>
-
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add / Edit Game</h3>
                     <form id="game-form">
@@ -935,20 +976,17 @@
                         <button type="submit" class="btn">Add to Collection</button>
                     </form>
                 </div>
-
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
                     <button class="filter-chip active" onclick="filterGames(event,'all')">All</button>
                     <button class="filter-chip" onclick="filterGames(event,'owned')">Owned</button>
                     <button class="filter-chip" onclick="filterGames(event,'sold')">Sold</button>
                 </div>
-
                 <div id="games-list" class="items-grid"></div>
             </div>
 
             <!-- ==================== DIGITAL ==================== -->
             <div id="digital" class="section">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">💳 Digital</h1>
-
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add Digital Purchase</h3>
                     <form id="digital-form">
@@ -957,20 +995,18 @@
                             <div class="input-group"><label>Type</label><select id="d-type"></select></div>
                             <div class="input-group"><label>Amount (₹)</label><input type="number" id="d-amount" placeholder="0" required></div>
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="d-date" required></div>
-                            <div class="input-group"><label>Duration <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="text" id="d-duration" placeholder="e.g. 1 month, 1 year"></div>
+                            <div class="input-group"><label>Duration <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="text" id="d-duration" placeholder="e.g. 1 month"></div>
                             <div class="input-group"><label>Expiry Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="d-expiry"></div>
                         </div>
                         <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="d-notes" rows="2" placeholder="Any notes..."></textarea></div>
                         <button type="submit" class="btn">Add Purchase</button>
                     </form>
                 </div>
-
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
                     <button class="filter-chip active" onclick="filterDigital(event,'all')">All</button>
                     <button class="filter-chip" onclick="filterDigital(event,'active')">Active</button>
                     <button class="filter-chip" onclick="filterDigital(event,'expired')">Expired</button>
                 </div>
-
                 <div id="digital-list" class="items-grid"></div>
             </div>
 
@@ -978,14 +1014,12 @@
             <div id="settings" class="section">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">⚙️ Settings</h1>
 
-                <!-- Account -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">👤 Account</h3>
                     <p style="color:var(--text-secondary);margin-bottom:16px;">Signed in as: <strong id="userEmail" style="color:#fff;"></strong></p>
                     <button id="signOutBtn" class="btn" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);">🚪 Sign Out</button>
                 </div>
 
-                <!-- Encryption -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">🔐 Encryption</h3>
                     <div id="encryption-status" style="padding:16px;border-radius:12px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.1);margin-bottom:16px;display:flex;align-items:center;gap:12px;">
@@ -998,82 +1032,73 @@
                     <button onclick="document.getElementById('encryptionSetupModal').style.display='flex';" class="btn" style="background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);">🔐 Setup Encryption</button>
                 </div>
 
-                <!-- Gadget Categories -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">📱 Gadget Categories</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
-                        <input type="text" id="new-gadget-category" placeholder="New category name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <input type="text" id="new-gadget-category" placeholder="New category" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addGadgetCategory()">Add</button>
                     </div>
                     <div id="gadget-categories-list" style="display:flex;flex-direction:column;gap:8px;"></div>
                 </div>
 
-                <!-- Game Platforms -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">🎮 Game Platforms</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
-                        <input type="text" id="new-game-platform" placeholder="New platform name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <input type="text" id="new-game-platform" placeholder="New platform" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addGamePlatform()">Add</button>
                     </div>
                     <div id="game-platforms-list" style="display:flex;flex-direction:column;gap:8px;"></div>
                 </div>
 
-                <!-- Game Genres -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">🏷️ Game Genres</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
-                        <input type="text" id="new-game-genre" placeholder="New genre name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <input type="text" id="new-game-genre" placeholder="New genre" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addGameGenre()">Add</button>
                     </div>
                     <div id="game-genres-list" style="display:flex;flex-direction:column;gap:8px;"></div>
                 </div>
 
-                <!-- Digital Types -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">💳 Digital Types</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
-                        <input type="text" id="new-digital-type" placeholder="New type name" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
+                        <input type="text" id="new-digital-type" placeholder="New type" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addDigitalType()">Add</button>
                     </div>
                     <div id="digital-types-list" style="display:flex;flex-direction:column;gap:8px;"></div>
                 </div>
 
-                <!-- Custom Platform Icons -->
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">🖼️ Custom Platform Icons</h3>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
                         <div class="input-group"><label>Platform</label>
                             <div id="icon-platform-select-wrapper">
                                 <select id="icon-platform-name"><option value="">Select a platform...</option></select>
                             </div>
                         </div>
                         <div class="input-group"><label>Upload Image</label><input type="file" id="icon-upload" accept="image/*" style="padding:8px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;width:100%;"></div>
-                        <div class="input-group"><label>Or paste Image URL</label><input type="url" id="icon-url" placeholder="https://..." style="padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;width:100%;"></div>
+                        <div class="input-group"><label>Or paste URL</label><input type="url" id="icon-url" placeholder="https://..." style="padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;width:100%;"></div>
                     </div>
                     <div id="icon-preview" style="display:none;margin-bottom:12px;align-items:center;gap:12px;">
                         <img id="icon-preview-img" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.9);padding:4px;" alt="Preview">
                         <span style="color:var(--text-secondary);font-size:14px;">Preview</span>
                     </div>
-                    <button class="btn" onclick="saveCustomIcon()">💾 Save Icon</button>
-                    <div id="icons-grid" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;"></div>
+                    <button class="btn" onclick="saveCustomIcon()" style="margin-bottom:16px;">💾 Save Icon</button>
+                    <div id="icons-grid"></div>
                 </div>
             </div>
 
             <!-- ==================== ADMIN ==================== -->
             <div id="admin" class="section">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">👑 Admin Panel</h1>
-
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">🔍 Find User</h3>
                     <div style="display:flex;gap:8px;margin-bottom:16px;">
                         <input type="email" id="admin-search-email" placeholder="user@email.com" style="flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="searchUser()">Search</button>
                     </div>
-                    <div id="admin-user-details" style="display:none;">
-                        <div id="admin-user-info"></div>
-                    </div>
+                    <div id="admin-user-details" style="display:none;"><div id="admin-user-info"></div></div>
                 </div>
-
                 <div class="add-form">
                     <h3 style="margin-bottom:16px;">👥 All Users</h3>
                     <button class="btn" style="margin-bottom:16px;" onclick="loadAllUsers()">Load All Users</button>
@@ -1530,7 +1555,7 @@ onAuthStateChanged(auth, async (user) => {
                 userAvatar.textContent = initials;
             }
 
-            // Populate profile menu
+            // Populate profile dropdown
             if (window.updateProfileMenu) window.updateProfileMenu(user);
 
             // Show admin nav if admin
@@ -4834,20 +4859,18 @@ window.importDigitalCSV = async function (event) {
 </style>
 
     <script>
-        // ============================================
-        // NAVIGATION & PROFILE MENU (non-module scope)
-        // ============================================
+        // Navigation & profile menu (non-module, runs after DOM ready)
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(sectionId);
-            if (target) target.classList.add('active');
-            document.querySelectorAll('.bottom-nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.section === sectionId) item.classList.add('active');
+            const t = document.getElementById(sectionId);
+            if (t) t.classList.add('active');
+            document.querySelectorAll('.bottom-nav-item').forEach(i => {
+                i.classList.remove('active');
+                if (i.dataset.section === sectionId) i.classList.add('active');
             });
-            document.querySelectorAll('.desktop-nav-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.section === sectionId) item.classList.add('active');
+            document.querySelectorAll('.desktop-nav-item').forEach(i => {
+                i.classList.remove('active');
+                if (i.dataset.section === sectionId) i.classList.add('active');
             });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -4857,25 +4880,21 @@ window.importDigitalCSV = async function (event) {
         });
 
         function toggleProfileMenu() {
-            const menu = document.getElementById('profileMenu');
-            if (!menu) return;
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+            const m = document.getElementById('profileMenu');
+            if (m) m.style.display = m.style.display === 'none' ? 'block' : 'none';
         }
 
         document.addEventListener('click', function(e) {
-            const menu = document.getElementById('profileMenu');
-            const avatar = document.getElementById('userAvatar');
-            if (menu && avatar && !avatar.contains(e.target) && !menu.contains(e.target)) {
-                menu.style.display = 'none';
-            }
+            const m = document.getElementById('profileMenu');
+            const a = document.getElementById('userAvatar');
+            if (m && a && !a.contains(e.target) && !m.contains(e.target)) m.style.display = 'none';
         });
 
         function updateProfileMenu(user) {
-            if (!user) return;
-            const nameEl = document.getElementById('profileMenuName');
-            const emailEl = document.getElementById('profileMenuEmail');
-            if (nameEl) nameEl.textContent = user.displayName || user.email.split('@')[0];
-            if (emailEl) emailEl.textContent = user.email;
+            const n = document.getElementById('profileMenuName');
+            const e = document.getElementById('profileMenuEmail');
+            if (n) n.textContent = user.displayName || user.email.split('@')[0];
+            if (e) e.textContent = user.email;
         }
 
         window.showSection = showSection;
