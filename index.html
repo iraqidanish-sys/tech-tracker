@@ -2,281 +2,145 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Tech & Games Collection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MyCollection - Your Digital Vault</title>
     
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            /* Glassmorphism Colors */
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151932;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            
+            /* Text */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            /* Accents */
+            --accent-purple: #667eea;
+            --accent-pink: #f093fb;
+            --accent-blue: #4facfe;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            height: 100%;
-            min-height: 100vh;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            background-attachment: fixed;
-            color: #f1f5f9;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            height: 100%;
-            padding: 0;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 260px;
-            height: 100vh;
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            padding: 30px 20px;
-            border-right: 1px solid #334155;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            border: none;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-menu-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
-        }
-        
-        /* Add this with your other general styles, NOT inside @media */
-        #userEmail {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-item {
-            padding: 14px 18px;
-            margin-bottom: 6px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #94a3b8;
-        }
-
-        .nav-item:hover {
-            background: rgba(16, 185, 129, 0.1);
-            color: #f1f5f9;
-            transform: translateX(4px);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%);
-            border-left: 3px solid #10b981;
-            color: #f1f5f9;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-        }
-
-        .nav-icon {
-            flex-shrink: 0;
-            stroke: currentColor;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item:hover .nav-icon {
-            stroke: #10b981;
-            transform: translate(-50%, -50%) scale(1.2);
-            animation-play-state: paused;
-        }
-
-        .nav-item.active .nav-icon {
-            stroke: #10b981;
-        }
-        
-        @keyframes floatNav1 {
-            0%, 100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-3px) rotate(5deg);
-            }
-        }
-        
-        @keyframes floatNav2 {
-            0%, 100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-4px) rotate(-5deg);
-            }
-        }
-        
-        @keyframes floatNav3 {
-            0%, 100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-3px) rotate(3deg);
-            }
-        }
-        
-        @keyframes floatNav4 {
-            0%, 100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-4px) rotate(-3deg);
-            }
-        }
-        
-        @keyframes floatNav5 {
-            0%, 100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-3px) rotate(2deg);
-            }
-        }
-        
-        @keyframes floatCategoryIcon {
-            0%, 100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-4px) rotate(4deg);
-            }
-        }
-        
-        .floating-category-icon {
-            transition: all 0.3s ease;
-        }
-        
-        .floating-category-icon:hover {
-            animation-play-state: paused !important;
-            transform: translate(-50%, -50%) scale(1.25) !important;
-            filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.5)) !important;
-        }
-        
-        .floating-category-icon svg {
-            width: 24px;
-            height: 24px;
-            display: block;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            padding: 40px;
-            min-height: 100vh;
-        }
-
-        .header {
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 38px;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            color: #94a3b8;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 48px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 16px;
-            padding: 28px;
+            overflow-x: hidden;
             position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-        
-        .stat-box:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-            border-color: rgba(16, 185, 129, 0.3);
         }
 
-        .stat-box::before {
+        /* Animated Background */
+        body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #10b981, #06b6d4);
-            border-radius: 16px 16px 0 0;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
+            z-index: 0;
+            animation: bgShift 20s ease-in-out infinite;
         }
 
-        .stat-label {
-            font-size: 13px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-bottom: 12px;
-            font-weight: 600;
+        @keyframes bgShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
-        .stat-value {
-            font-size: 36px;
+        /* Glass Effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
         }
 
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Main Container */
+        .container {
+            padding: 90px 24px 100px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section */
         .section {
             display: none;
         }
@@ -285,327 +149,399 @@
             display: block;
         }
 
-        .add-card {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 2px dashed rgba(148, 163, 184, 0.3);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .add-card h2 {
-            font-size: 22px;
-            margin-bottom: 28px;
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-
-        .input-row {
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
 
-        .input-group {
+        .stat-card {
+            padding: 24px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card:hover::before {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Items Grid */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .item-card {
+            padding: 20px;
+            border-radius: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .item-card:hover::before {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .item-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .item-header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .item-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .item-category {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .item-actions {
+            display: flex;
             gap: 8px;
         }
 
-        .input-group label {
-            font-size: 13px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.edit {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .item-details {
+            display: grid;
+            gap: 8px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+        }
+
+        .detail-value {
             font-weight: 600;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            z-index: 1000;
+        }
+
+        .bottom-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            border-radius: 12px;
+            min-width: 60px;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--accent-purple);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .bottom-nav-icon {
+            font-size: 24px;
+        }
+
+        .bottom-nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Forms */
+        .add-form {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .input-group input,
         .input-group select,
         .input-group textarea {
-            background: #0f172a;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 10px;
-            padding: 13px 16px;
-            color: #f1f5f9;
-            font-size: 15px;
-            transition: all 0.3s ease;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
         }
 
         .input-group input:focus,
         .input-group select:focus,
         .input-group textarea:focus {
             outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-            background: #1e293b;
+            border-color: var(--accent-purple);
         }
 
-        .input-group textarea {
-            resize: vertical;
-            min-height: 80px;
-            grid-column: 1 / -1;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            border: none;
-            padding: 14px 32px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 15px;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-        }
-
-        .item-card {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .item-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .item-header {
+        /* Loading */
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
             display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 12px;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
         }
 
-        .item-title {
-            font-size: 16px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
-            line-height: 1.4;
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .item-category {
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
-            color: #c4b5fd;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            border: 1px solid rgba(168, 85, 247, 0.3);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .delete-icon {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: white;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        /* Login Screen */
+        #loginScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
         }
 
-        .delete-icon:hover {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
-        }
-
-        .edit-icon {
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .edit-icon:hover {
-            background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
-            transform: scale(1.1);
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5);
-        }
-
-        .item-info {
-            display: grid;
-            gap: 8px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            color: #f1f5f9;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .price-tag {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-        .profit-positive {
-            color: #10b981;
-            font-weight: 700;
-        }
-
-        .profit-negative {
-            color: #ef4444;
-            font-weight: 700;
-        }
-
-        .status-owned {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%);
-            color: #6ee7b7;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            letter-spacing: 0.5px;
-        }
-
-        .status-sold {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
-            color: #fcd34d;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            border: 1px solid rgba(251, 191, 36, 0.4);
-            letter-spacing: 0.5px;
-        }
-
-        .filter-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-
-        .filter-chip {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            padding: 10px 20px;
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            font-weight: 600;
-            color: #94a3b8;
+            padding: 48px;
+            text-align: center;
+            max-width: 400px;
         }
 
-        .filter-chip:hover {
-            background: rgba(51, 65, 85, 0.8);
-            border-color: rgba(16, 185, 129, 0.5);
-            color: #f1f5f9;
+        .login-card h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
         }
 
-        .filter-chip.active {
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-            border-color: transparent;
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 24px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
             color: white;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: block;
+            }
+
+            .container {
+                padding-bottom: 90px;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fab {
+                bottom: 80px;
+            }
         }
 
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        /* Loading Indicator */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #00f5ff;
-        }
-
-        .loading::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-
-        /* Modal for Delete Confirmation */
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            justify-content: center;
+            backdrop-filter: blur(4px);
+            z-index: 10000;
             align-items: center;
+            justify-content: center;
         }
 
         .modal.active {
@@ -613,1677 +549,237 @@
         }
 
         .modal-content {
-            background: #1a1a2e;
-            border: 1px solid #2a2a3e;
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
             width: 90%;
         }
 
         .modal-header {
-            font-size: 20px;
-            color: #00f5ff;
-            margin-bottom: 15px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
         }
 
-        .modal-body {
-            color: #e0e0e0;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-        }
-
-        .btn-cancel {
-            background: #2a2a3e;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            color: #e0e0e0;
-            font-weight: 600;
+        .close-modal {
+            float: right;
+            font-size: 28px;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-cancel:hover {
-            background: #3a3a4e;
-        }
-
-        .btn-edit {
-            background: linear-gradient(45deg, #00f5ff, #0099cc);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .item-actions button {
-            flex: 1;
-        }
-
-        .btn-delete {
-            background: linear-gradient(45deg, #ff4444, #ff0000);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-delete:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
-        }
-
-       /* Mobile Styles */
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-        padding-bottom: 180px;  /* ← ADD THIS - space for user info */
-    }
-    .sidebar.mobile-open {
-        transform: translateX(0);
-    }
-    .mobile-menu-btn {
-        display: block;
-    }
-    .main-content {
-        margin-left: 0;
-        padding: 80px 20px 20px 20px;
-    }
-    .header h1 {
-        font-size: 28px;
-    }
-    .items-grid {
-        grid-template-columns: 1fr;
-    }
-    .dashboard-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-    .stat-value {
-        font-size: 24px;
-    }
-    .input-row {
-        grid-template-columns: 1fr;
-    }
-    
-    /* ✅ ADD THESE NEW RULES */
-    #userInfo {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        width: calc(100% - 40px);
-        max-width: 210px;
-        font-size: 13px;
-    }
-    
-    #userEmail {
-        font-size: 11px;
-        word-break: break-word;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    #userName {
-        font-size: 14px;
-        font-weight: 600;
-    }
-}
-
-        /* Custom Dropdown Styles */
-        .custom-select-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .custom-select-trigger {
-            background: #16213e;
-            border: 1px solid #2a2a3e;
-            border-radius: 8px;
-            padding: 12px 15px;
-            color: #e0e0e0;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .custom-select-trigger:hover {
-            border-color: #00f5ff;
-        }
-
-        .custom-select-trigger.active {
-            border-color: #00f5ff;
-            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
-        }
-
-        .custom-select-icon {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-            padding: 3px;
-            border-radius: 6px;
-            flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-        }
-
-        .custom-select-arrow {
-            margin-left: auto;
-            transition: transform 0.3s;
-            flex-shrink: 0;
-        }
-
-        .custom-select-trigger.active .custom-select-arrow {
-            transform: rotate(180deg);
-        }
-
-        .custom-select-options {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #16213e;
-            border: 1px solid #2a2a3e;
-            border-radius: 8px;
-            margin-top: 4px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .custom-select-options.active {
-            display: block;
-        }
-
-        .custom-select-option {
-            padding: 10px 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-
-        .custom-select-option:hover {
-            background: #2a2a3e;
-        }
-
-        .custom-select-option.selected {
-            background: rgba(0, 245, 255, 0.1);
-        }
-
-        /* Hide original select when custom dropdown exists */
-        .custom-select-wrapper select {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
-   <!-- Main App (hidden until authenticated) -->
-<div id="mainApp" style="display: none;">
-    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-    
-    <div class="sidebar" id="sidebar">
-        <div class="logo" style="display: flex; align-items: center; gap: 12px;">
-            <!-- Modern Sci-Fi Animated Logo (smaller version for sidebar) -->
-            <div class="scifi-logo-sidebar" style="position: relative; width: 48px; height: 48px; flex-shrink: 0;">
-                <!-- Outer rotating ring -->
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 42px; height: 42px; border: 1.5px solid rgba(13, 202, 240, 0.3); border-radius: 50%; animation: rotateRing 8s linear infinite;"></div>
-                
-                <!-- Middle pulsing ring -->
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 32px; height: 32px; border: 1.5px solid rgba(139, 92, 246, 0.4); border-radius: 50%; animation: pulseRing 2s ease-in-out infinite;"></div>
-                
-                <!-- Core hexagon -->
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; background: linear-gradient(135deg, #0dcaf0 0%, #8b5cf6 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); box-shadow: 0 0 20px rgba(13, 202, 240, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.2); animation: hexFloat 3s ease-in-out infinite;">
-                    <!-- Inner glow -->
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%); animation: innerGlow 2s ease-in-out infinite;"></div>
-                </div>
-                
-                <!-- Orbiting particles -->
-                <div style="position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; background: #0dcaf0; border-radius: 50%; box-shadow: 0 0 6px #0dcaf0; animation: orbit1 3s linear infinite;"></div>
-                <div style="position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; background: #8b5cf6; border-radius: 50%; box-shadow: 0 0 6px #8b5cf6; animation: orbit2 3s linear infinite;"></div>
-            </div>
-            <span>NexaVault</span>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <h1>✨ MyCollection</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 8px;">Your Digital Vault</p>
+            <p style="color: var(--text-muted); font-size: 14px;">Track your tech, games & digital life</p>
+            <button id="googleSignInBtn" class="login-btn">Sign in with Google</button>
         </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" style="display: none;">
         
-        <div class="nav-item active" onclick="window.showSection('dashboard', this)">
-            <div style="position: relative; width: 24px; height: 24px; flex-shrink: 0;">
-                <svg class="nav-icon floating-nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.3)); animation: floatNav1 3s ease-in-out infinite;">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                </svg>
-            </div>
-            Dashboard
-        </div>
-        
-        <div class="nav-item" onclick="window.showSection('gadgets', this)">
-            <div style="position: relative; width: 24px; height: 24px; flex-shrink: 0;">
-                <svg class="nav-icon floating-nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 3px rgba(13, 202, 240, 0.3)); animation: floatNav2 3s ease-in-out infinite; animation-delay: 0.2s;">
-                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                </svg>
-            </div>
-            Gadgets
-        </div>
-        
-        <div class="nav-item" onclick="window.showSection('games', this)">
-            <div style="position: relative; width: 24px; height: 24px; flex-shrink: 0;">
-                <svg class="nav-icon floating-nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 3px rgba(236, 72, 153, 0.3)); animation: floatNav3 3s ease-in-out infinite; animation-delay: 0.4s;">
-                    <line x1="6" y1="11" x2="10" y2="11"></line>
-                    <line x1="8" y1="9" x2="8" y2="13"></line>
-                    <line x1="15" y1="12" x2="15.01" y2="12"></line>
-                    <line x1="18" y1="10" x2="18.01" y2="10"></line>
-                    <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"></path>
-                </svg>
-            </div>
-            Games
-        </div>
-        
-        <div class="nav-item" onclick="window.showSection('digital', this)">
-            <div style="position: relative; width: 24px; height: 24px; flex-shrink: 0;">
-                <svg class="nav-icon floating-nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 3px rgba(139, 92, 246, 0.3)); animation: floatNav4 3s ease-in-out infinite; animation-delay: 0.6s;">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-            </div>
-            Digital Purchases
-        </div>
-        
-        <div class="nav-item" onclick="window.showSection('settings', this)">
-            <div style="position: relative; width: 24px; height: 24px; flex-shrink: 0;">
-                <svg class="nav-icon floating-nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: drop-shadow(0 0 3px rgba(100, 116, 139, 0.3)); animation: floatNav5 3s ease-in-out infinite; animation-delay: 0.8s;">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M12 1v6m0 6v6m-5.2-3.8l4.2-4.2m2.8 2.8l4.2-4.2M1 12h6m6 0h6m-3.8 5.2l-4.2-4.2m-2.8 2.8l-4.2 4.2"></path>
-                </svg>
-            </div>
-            Settings
-        </div>
-        
-        <div class="nav-item" id="admin-nav" onclick="window.showSection('admin', this)" style="display: none;">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-            Admin Panel
-        </div>
-        
-        
-        <!-- User Profile Section -->
-        <div id="userInfo" style="display: none; margin-top: auto; padding: 18px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 14px; border: 1px solid rgba(148, 163, 184, 0.2); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);">
-            <!-- Avatar and Info Row -->
-            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
-                <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #14b8a6, #22c55e); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);">
-                    <img id="userPhoto" src="" alt="" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: none;">
-                    <span id="userInitials" style="color: white; font-weight: 700; font-size: 20px;"></span>
-                </div>
-                <div style="flex: 1; min-width: 0; overflow: hidden;">
-                    <div id="userName" style="font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
-                    <div id="userEmail" style="font-size: 13px; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4;"></div>
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="logo">✨ MyCollection</div>
+            <div class="nav-actions">
+                <div id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">U</div>
                 </div>
             </div>
-            <!-- Sign Out Button Below -->
-            <button id="signOutBtn" style="width: 100%; background: #ef4444; border: none; padding: 14px; border-radius: 10px; color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);" onmouseover="this.style.background='#dc2626'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(239, 68, 68, 0.4)';" onmouseout="this.style.background='#ef4444'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(239, 68, 68, 0.3)';">
-                Sign Out
-            </button>
-        </div>
-        </div> <!-- sidebar closes here -->
-    
-    <div class="main-content">
-        <!-- Dashboard Section -->
-        <div id="dashboard" class="section active">
-            <div class="header">
-                <h1 style="display: flex; align-items: center; gap: 16px;">
-                    <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <!-- Hexagon background -->
-                        <div style="position: absolute; width: 48px; height: 48px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); opacity: 0.2;"></div>
-                        <!-- Dashboard icon -->
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#dashboardGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 1; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));">
-                            <defs>
-                                <linearGradient id="dashboardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                        </svg>
-                        <!-- Orbiting dot -->
-                        <div style="position: absolute; width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 6px #10b981; animation: orbitDashboard 3s linear infinite;"></div>
-                    </div>
-                    <span style="font-weight: 900; background: linear-gradient(135deg, #10b981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4));">Dashboard</span>
-                </h1>
-                <p>Your complete tech and gaming collection overview</p>
-            </div>
+        </nav>
+
+        <!-- Main Container -->
+        <div class="container">
             
-            <style>
-                @keyframes orbitDashboard {
-                    0% {
-                        transform: rotate(0deg) translateX(28px) rotate(0deg);
-                    }
-                    100% {
-                        transform: rotate(360deg) translateX(28px) rotate(-360deg);
-                    }
-                }
-            </style>
-
-            <div class="dashboard-grid">
-                <div class="stat-box">
-                    <div class="stat-label">Total Gadgets</div>
-                    <div class="stat-value" id="dash-total-gadgets">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Current Gadgets Value</div>
-                    <div class="stat-value" id="dash-gadgets-value">₹0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Gadgets Sold</div>
-                    <div class="stat-value" id="dash-gadgets-sold">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Gadgets Profit/Loss</div>
-                    <div class="stat-value" id="dash-gadgets-profit">₹0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Total Games</div>
-                    <div class="stat-value" id="dash-total-games">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Current Games Value</div>
-                    <div class="stat-value" id="dash-games-value">₹0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Games Sold</div>
-                    <div class="stat-value" id="dash-games-sold">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Games Profit/Loss</div>
-                    <div class="stat-value" id="dash-games-profit-stat">₹0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Digital Purchases</div>
-                    <div class="stat-value" id="dash-total-digital">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Digital Spending</div>
-                    <div class="stat-value" id="dash-digital-spent">₹0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Total Profit/Loss</div>
-                    <div class="stat-value" id="dash-total-profit">₹0</div>
-                </div>
-            </div>
-
-            <h2 style="font-weight: 900; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4)); margin-bottom: 20px; font-size: 24px;">Recent Additions</h2>
-            <div class="items-grid" id="recent-items"></div>
-        </div>
-
-        <!-- Gadgets Section -->
-        <div id="gadgets" class="section">
-            <div class="header">
-                <h1 style="display: flex; align-items: center; gap: 16px;">
-                    <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <!-- Hexagon background -->
-                        <div style="position: absolute; width: 48px; height: 48px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); opacity: 0.2;"></div>
-                        <!-- Smartphone/Gadget icon -->
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#gadgetsGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 1; filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));">
-                            <defs>
-                                <linearGradient id="gadgetsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                        </svg>
-                        <!-- Orbiting dot -->
-                        <div style="position: absolute; width: 6px; height: 6px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 6px #06b6d4; animation: orbitGadgets 3s linear infinite;"></div>
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section active">
+                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 8px;">Dashboard</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 32px;">Welcome back!</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-icon">📱</div>
+                            <div class="stat-label">Gadgets</div>
+                            <div class="stat-value" id="gadgetCount">0</div>
+                        </div>
                     </div>
-                    <span style="font-weight: 900; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.4));">Gadgets Collection</span>
-                </h1>
-                <p>Track all your tech purchases and expenses</p>
-            </div>
-            
-            <style>
-                @keyframes orbitGadgets {
-                    0% {
-                        transform: rotate(0deg) translateX(28px) rotate(0deg);
-                    }
-                    100% {
-                        transform: rotate(360deg) translateX(28px) rotate(-360deg);
-                    }
-                }
-            </style>
-
-            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button class="btn" onclick="window.exportGadgetsCSV()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export to TSV
-                </button>
-                <button class="btn" onclick="document.getElementById('gadget-import').click()" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    Import from TSV/CSV
-                </button>
-                <button class="btn" onclick="window.downloadGadgetTemplate()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                    Download Template
-                </button>
-                <input type="file" id="gadget-import" accept=".csv,.tsv,.txt" style="display: none;" onchange="window.importGadgetsCSV(event)">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-icon">🎮</div>
+                            <div class="stat-label">Games</div>
+                            <div class="stat-value" id="gameCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-icon">💳</div>
+                            <div class="stat-label">Digital</div>
+                            <div class="stat-value" id="digitalCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-label">Total Value</div>
+                            <div class="stat-value" id="totalValue">₹0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="add-card">
-                <h2>➕ Add New Gadget</h2>
-                <form id="gadget-form">
-                    <div class="input-row">
+            <!-- Gadgets Section -->
+            <div id="gadgets" class="section">
+                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">📱 Gadgets</h1>
+                
+                <div class="add-form">
+                    <h3 style="margin-bottom: 20px;">Add New Gadget</h3>
+                    <form id="gadget-form">
                         <div class="input-group">
-                            <label>Gadget Name</label>
+                            <label>Name</label>
                             <input type="text" id="g-name" required>
                         </div>
                         <div class="input-group">
                             <label>Category</label>
-                            <select id="g-category">
-                                <option value="📱 Phone">📱 Phone</option>
-                                <option value="💻 Laptop">💻 Laptop</option>
-                                <option value="⌚ Smartwatch">⌚ Smartwatch</option>
-                                <option value="🎧 Audio">🎧 Audio</option>
-                                <option value="📷 Camera">📷 Camera</option>
-                                <option value="🎮 Gaming">🎮 Gaming</option>
-                                <option value="⚡ Accessories">⚡ Accessories</option>
-                                <option value="💾 Storage">💾 Storage</option>
-                                <option value="🖥️ Monitor">🖥️ Monitor</option>
-                                <option value="⌨️ Keyboard/Mouse">⌨️ Keyboard/Mouse</option>
-                                <option value="🔌 Chargers">🔌 Chargers</option>
-                                <option value="🔧 Other">🔧 Other</option>
-                            </select>
+                            <select id="g-category"></select>
                         </div>
                         <div class="input-group">
                             <label>Price (₹)</label>
-                            <input type="number" id="g-price" required min="0" step="0.01">
+                            <input type="number" id="g-price" required>
                         </div>
                         <div class="input-group">
                             <label>Purchase Date</label>
                             <input type="date" id="g-date" required>
                         </div>
                         <div class="input-group">
-                            <label>Sell Price (₹) - Optional</label>
-                            <input type="number" id="g-sell-price" min="0" step="0.01">
+                            <label>Notes</label>
+                            <textarea id="g-notes" rows="3"></textarea>
                         </div>
+                        <button type="submit" class="btn">Add Gadget</button>
+                    </form>
+                </div>
+
+                <div id="gadgets-list" class="items-grid"></div>
+            </div>
+
+            <!-- Games Section -->
+            <div id="games" class="section">
+                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">🎮 Games</h1>
+                
+                <div class="add-form">
+                    <h3 style="margin-bottom: 20px;">Add New Game</h3>
+                    <form id="game-form">
                         <div class="input-group">
-                            <label>Sell Date - Optional</label>
-                            <input type="date" id="g-sell-date">
-                        </div>
-                    </div>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Notes (Optional)</label>
-                            <textarea id="g-notes" placeholder="Where you bought it, warranty info, etc..."></textarea>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn">Add to Collection</button>
-                </form>
-            </div>
-
-            <div class="filter-bar" style="margin-bottom: 25px;">
-                <div class="filter-chip active" onclick="window.filterGadgets(event, 'all')">All Gadgets</div>
-                <div class="filter-chip" onclick="window.filterGadgets(event, 'owned')">Owned</div>
-                <div class="filter-chip" onclick="window.filterGadgets(event, 'sold')">Sold</div>
-            </div>
-
-            <div class="items-grid" id="gadgets-list"></div>
-        </div>
-
-        <!-- Games Section -->
-        <div id="games" class="section">
-            <div class="header">
-                <h1 style="display: flex; align-items: center; gap: 16px;">
-                    <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <!-- Hexagon background -->
-                        <div style="position: absolute; width: 48px; height: 48px; background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); opacity: 0.2;"></div>
-                        <!-- Game controller icon -->
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#gamesGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 1; filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.6));">
-                            <defs>
-                                <linearGradient id="gamesGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <line x1="6" y1="11" x2="10" y2="11"></line>
-                            <line x1="8" y1="9" x2="8" y2="13"></line>
-                            <line x1="15" y1="12" x2="15.01" y2="12"></line>
-                            <line x1="18" y1="10" x2="18.01" y2="10"></line>
-                            <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"></path>
-                        </svg>
-                        <!-- Orbiting dot -->
-                        <div style="position: absolute; width: 6px; height: 6px; background: #ec4899; border-radius: 50%; box-shadow: 0 0 6px #ec4899; animation: orbitGames 3s linear infinite;"></div>
-                    </div>
-                    <span style="font-weight: 900; background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.4));">Games Collection</span>
-                </h1>
-                <p>Manage your game discs and track buy/sell transactions</p>
-            </div>
-            
-            <style>
-                @keyframes orbitGames {
-                    0% {
-                        transform: rotate(0deg) translateX(28px) rotate(0deg);
-                    }
-                    100% {
-                        transform: rotate(360deg) translateX(28px) rotate(-360deg);
-                    }
-                }
-            </style>
-
-            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button class="btn" onclick="window.exportGamesCSV()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export to TSV
-                </button>
-                <button class="btn" onclick="document.getElementById('game-import').click()" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    Import from TSV/CSV
-                </button>
-                <button class="btn" onclick="window.downloadGameTemplate()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                    Download Template
-                </button>
-                <input type="file" id="game-import" accept=".csv,.tsv,.txt" style="display: none;" onchange="window.importGamesCSV(event)">
-            </div>
-
-            <div class="add-card">
-                <h2>➕ Add New Game</h2>
-                <form id="game-form">
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Game Title</label>
+                            <label>Title</label>
                             <input type="text" id="gm-title" required>
                         </div>
                         <div class="input-group">
                             <label>Platform</label>
-                            <div class="custom-select-wrapper" id="platform-select-wrapper">
-                                <select id="gm-platform">
-                                    <!-- Options populated by updateAllDropdowns() -->
-                                </select>
-                            </div>
+                            <select id="gm-platform"></select>
                         </div>
                         <div class="input-group">
                             <label>Genre</label>
-                            <select id="gm-genre">
-                                <option value="🎯 Action">🎯 Action</option>
-                                <option value="🏃 Adventure">🏃 Adventure</option>
-                                <option value="⚔️ RPG">⚔️ RPG</option>
-                                <option value="🔫 Shooter">🔫 Shooter</option>
-                                <option value="⚽ Sports">⚽ Sports</option>
-                                <option value="🏎️ Racing">🏎️ Racing</option>
-                                <option value="🧩 Puzzle">🧩 Puzzle</option>
-                                <option value="😱 Horror">😱 Horror</option>
-                                <option value="🎭 Story-Driven">🎭 Story-Driven</option>
-                                <option value="🛡️ Strategy">🛡️ Strategy</option>
-                                <option value="🎪 Party">🎪 Party</option>
-                                <option value="🎨 Simulation">🎨 Simulation</option>
-                                <option value="⚔️ Fighting">⚔️ Fighting</option>
-                                <option value="🎮 Other">🎮 Other</option>
-                            </select>
+                            <select id="gm-genre"></select>
                         </div>
                         <div class="input-group">
                             <label>Buy Price (₹)</label>
-                            <input type="number" id="gm-buy-price" required min="0" step="0.01">
+                            <input type="number" id="gm-buy-price" required>
                         </div>
                         <div class="input-group">
-                            <label>Buy Date</label>
+                            <label>Purchase Date</label>
                             <input type="date" id="gm-buy-date" required>
                         </div>
-                        <div class="input-group">
-                            <label>Condition</label>
-                            <select id="gm-condition">
-                                <option value="✨ New/Sealed">✨ New/Sealed</option>
-                                <option value="⭐ Like New">⭐ Like New</option>
-                                <option value="👍 Good">👍 Good</option>
-                                <option value="👌 Fair">👌 Fair</option>
-                                <option value="📦 Poor">📦 Poor</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Sell Price (₹) - Optional</label>
-                            <input type="number" id="gm-sell-price" min="0" step="0.01">
-                        </div>
-                        <div class="input-group">
-                            <label>Sell Date - Optional</label>
-                            <input type="date" id="gm-sell-date">
-                        </div>
-                    </div>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Notes (Optional)</label>
-                            <textarea id="gm-notes" placeholder="Special editions, DLC included, etc..."></textarea>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn">Add to Collection</button>
-                </form>
+                        <button type="submit" class="btn">Add Game</button>
+                    </form>
+                </div>
+
+                <div id="games-list" class="items-grid"></div>
             </div>
 
-            <div class="filter-bar">
-                <div class="filter-chip active" onclick="window.filterGames(event, 'all')">All Games</div>
-                <div class="filter-chip" onclick="window.filterGames(event, 'owned')">Currently Owned</div>
-                <div class="filter-chip" onclick="window.filterGames(event, 'sold')">Sold</div>
-            </div>
-
-            <div class="items-grid" id="games-list"></div>
-        </div>
-
-        <!-- Digital Purchases Section -->
-        <div id="digital" class="section">
-            <div class="header">
-                <h1 style="display: flex; align-items: center; gap: 16px;">
-                    <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <!-- Hexagon background -->
-                        <div style="position: absolute; width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); opacity: 0.2;"></div>
-                        <!-- Cloud/Digital icon -->
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#digitalGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 1; filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));">
-                            <defs>
-                                <linearGradient id="digitalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
-                            <polyline points="9 13 12 10 15 13"></polyline>
-                            <line x1="12" y1="10" x2="12" y2="17"></line>
-                        </svg>
-                        <!-- Orbiting dot -->
-                        <div style="position: absolute; width: 6px; height: 6px; background: #f59e0b; border-radius: 50%; box-shadow: 0 0 6px #f59e0b; animation: orbitDigital 3s linear infinite;"></div>
-                    </div>
-                    <span style="font-weight: 900; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.4));">Digital Purchases</span>
-                </h1>
-                <p>Track subscriptions, gift cards, in-game purchases, and digital content</p>
-            </div>
-            
-            <style>
-                @keyframes orbitDigital {
-                    0% {
-                        transform: rotate(0deg) translateX(28px) rotate(0deg);
-                    }
-                    100% {
-                        transform: rotate(360deg) translateX(28px) rotate(-360deg);
-                    }
-                }
-            </style>
-
-            <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button class="btn" onclick="window.exportDigitalCSV()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export to TSV
-                </button>
-                <button class="btn" onclick="document.getElementById('digital-import').click()" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    Import from TSV/CSV
-                </button>
-                <button class="btn" onclick="window.downloadDigitalTemplate()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                    Download Template
-                </button>
-                <input type="file" id="digital-import" accept=".csv,.tsv,.txt" style="display: none;" onchange="window.importDigitalCSV(event)">
-            </div>
-            <div class="add-card">
-                <h2>➕ Add Digital Purchase</h2>
-                <form id="digital-form">
-                    <div class="input-row">
+            <!-- Digital Section -->
+            <div id="digital" class="section">
+                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">💳 Digital</h1>
+                
+                <div class="add-form">
+                    <h3 style="margin-bottom: 20px;">Add Digital Purchase</h3>
+                    <form id="digital-form">
                         <div class="input-group">
-                            <label>Item Name</label>
-                            <input type="text" id="d-name" placeholder="e.g., PS+ Premium" required>
+                            <label>Name</label>
+                            <input type="text" id="d-name" required>
                         </div>
                         <div class="input-group">
                             <label>Type</label>
-                            <select id="d-type">
-                                <option value="🎮 Game Subscription">🎮 Game Subscription</option>
-                                <option value="💎 Gift Card">💎 Gift Card</option>
-                                <option value="🎯 In-Game Purchase">🎯 In-Game Purchase</option>
-                                <option value="📺 Streaming Service">📺 Streaming Service</option>
-                                <option value="☁️ Cloud Storage">☁️ Cloud Storage</option>
-                                <option value="🎵 Music Service">🎵 Music Service</option>
-                                <option value="📚 Digital Content">📚 Digital Content</option>
-                                <option value="🔧 Software/App">🔧 Software/App</option>
-                                <option value="💳 Other">💳 Other</option>
-                            </select>
+                            <select id="d-type"></select>
                         </div>
                         <div class="input-group">
                             <label>Amount (₹)</label>
-                            <input type="number" id="d-amount" required min="0" step="0.01">
+                            <input type="number" id="d-amount" required>
                         </div>
                         <div class="input-group">
                             <label>Purchase Date</label>
                             <input type="date" id="d-date" required>
                         </div>
-                        <div class="input-group">
-                            <label>Duration/Validity</label>
-                            <select id="d-duration">
-                                <option value="">Not Applicable</option>
-                                <option value="1 Month">1 Month</option>
-                                <option value="3 Months">3 Months</option>
-                                <option value="6 Months">6 Months</option>
-                                <option value="1 Year">1 Year</option>
-                                <option value="Lifetime">Lifetime</option>
-                                <option value="Custom">Custom</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label>Expiry Date (Optional)</label>
-                            <input type="date" id="d-expiry">
-                        </div>
-                    </div>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Notes (Optional)</label>
-                            <textarea id="d-notes" placeholder="Account details, redemption code, renewal info, etc..."></textarea>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn">Add Purchase</button>
-                </form>
+                        <button type="submit" class="btn">Add Purchase</button>
+                    </form>
+                </div>
+
+                <div id="digital-list" class="items-grid"></div>
             </div>
 
-            <div class="filter-bar" style="margin-bottom: 25px;">
-                <div class="filter-chip active" onclick="window.filterDigital(event, 'all')">All Purchases</div>
-                <div class="filter-chip" onclick="window.filterDigital(event, 'active')">Active</div>
-                <div class="filter-chip" onclick="window.filterDigital(event, 'expired')">Expired</div>
+            <!-- Settings Section -->
+            <div id="settings" class="section">
+                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 32px;">⚙️ Settings</h1>
+                <div class="add-form">
+                    <h3>Account</h3>
+                    <p style="color: var(--text-secondary); margin: 16px 0;">Signed in as: <span id="userEmail"></span></p>
+                    <button id="signOutBtn" class="btn" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">Sign Out</button>
+                </div>
             </div>
 
-            <div class="items-grid" id="digital-list"></div>
         </div>
 
-        <!-- Settings Section -->
-        <div id="settings" class="section">
-            <div class="header">
-                <h1 style="display: flex; align-items: center; gap: 16px;">
-                    <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <!-- Hexagon background -->
-                        <div style="position: absolute; width: 48px; height: 48px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); opacity: 0.2;"></div>
-                        <!-- Settings icon -->
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#settingsGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 1; filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));">
-                            <defs>
-                                <linearGradient id="settingsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M12 1v6m0 6v6m-5.2-3.8l4.2-4.2m2.8 2.8l4.2-4.2M1 12h6m6 0h6m-3.8 5.2l-4.2-4.2m-2.8 2.8l-4.2 4.2"></path>
-                        </svg>
-                        <!-- Orbiting dot -->
-                        <div style="position: absolute; width: 6px; height: 6px; background: #8b5cf6; border-radius: 50%; box-shadow: 0 0 6px #8b5cf6; animation: orbitSettings 3s linear infinite;"></div>
-                    </div>
-                    <span style="font-weight: 900; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.4));">Settings</span>
-                </h1>
-                <p>Manage your categories, platforms, and icons</p>
-            </div>
-            
-            <style>
-                @keyframes orbitSettings {
-                    0% {
-                        transform: rotate(0deg) translateX(28px) rotate(0deg);
-                    }
-                    100% {
-                        transform: rotate(360deg) translateX(28px) rotate(-360deg);
-                    }
-                }
-            </style>
-
-            <!-- Gadget Categories -->
-            <div class="add-card" style="margin-bottom: 30px;">
-                <h2>📱 Gadget Categories</h2>
-                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove gadget categories. These will be available across all your devices.</p>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" id="new-gadget-category" placeholder="e.g., 🎮 Gaming Console" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                    <button onclick="window.addGadgetCategory()" class="btn">Add Category</button>
+        <!-- Bottom Navigation (Mobile) -->
+        <div class="bottom-nav">
+            <div class="bottom-nav-items">
+                <div class="bottom-nav-item active" data-section="dashboard">
+                    <div class="bottom-nav-icon">🏠</div>
+                    <div class="bottom-nav-label">Home</div>
                 </div>
-                
-                <div id="gadget-categories-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
-            </div>
-
-            <!-- Game Platforms -->
-            <div class="add-card" style="margin-bottom: 30px;">
-                <h2>🎮 Game Platforms</h2>
-                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove gaming platforms. Use emojis for visual icons.</p>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" id="new-game-platform" placeholder="e.g., 🟦 PlayStation 5" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                    <button onclick="window.addGamePlatform()" class="btn">Add Platform</button>
+                <div class="bottom-nav-item" data-section="gadgets">
+                    <div class="bottom-nav-icon">📱</div>
+                    <div class="bottom-nav-label">Gadgets</div>
                 </div>
-                
-                <div id="game-platforms-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
-            </div>
-
-            <!-- Game Genres -->
-            <div class="add-card" style="margin-bottom: 30px;">
-                <h2>🎯 Game Genres</h2>
-                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove game genres.</p>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" id="new-game-genre" placeholder="e.g., 🏃 Adventure" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                    <button onclick="window.addGameGenre()" class="btn">Add Genre</button>
+                <div class="bottom-nav-item" data-section="games">
+                    <div class="bottom-nav-icon">🎮</div>
+                    <div class="bottom-nav-label">Games</div>
                 </div>
-                
-                <div id="game-genres-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
-            </div>
-
-            <!-- Digital Purchase Types -->
-            <div class="add-card" style="margin-bottom: 30px;">
-                <h2>💳 Digital Purchase Types</h2>
-                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Add or remove digital purchase categories.</p>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <input type="text" id="new-digital-type" placeholder="e.g., 🎵 Music Subscription" style="flex: 1; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                    <button onclick="window.addDigitalType()" class="btn">Add Type</button>
+                <div class="bottom-nav-item" data-section="digital">
+                    <div class="bottom-nav-icon">💳</div>
+                    <div class="bottom-nav-label">Digital</div>
                 </div>
-                
-                <div id="digital-types-list" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
-            </div>
-
-            <!-- Custom Icons Section -->
-            <div class="add-card">
-                <h2>🎨 Custom Platform Icons</h2>
-                <p style="color: #888; margin-bottom: 20px; font-size: 14px;">Upload custom icons for your platforms. Supported formats: PNG, JPG, SVG, WebP</p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <div>
-                        <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Platform Name</label>
-                        <div class="custom-select-wrapper" id="icon-platform-select-wrapper">
-                            <select id="icon-platform-name" style="width: 100%; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                                <option value="">Select a platform...</option>
-                            </select>
-                        </div>
-                        <p style="font-size: 11px; color: #666; margin-top: 5px;">Choose from your existing game platforms</p>
-                    </div>
-                    <div>
-                        <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Icon Image (Upload or URL)</label>
-                        <input type="file" id="icon-upload" accept="image/*" style="width: 100%; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 8px 12px; color: #e0e0e0; font-size: 14px;">
-                    </div>
+                <div class="bottom-nav-item" data-section="settings">
+                    <div class="bottom-nav-icon">⚙️</div>
+                    <div class="bottom-nav-label">More</div>
                 </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="font-size: 13px; color: #888; display: block; margin-bottom: 8px;">Or paste image URL</label>
-                    <input type="text" id="icon-url" placeholder="https://example.com/icon.png or data:image/png;base64,..." style="width: 100%; background: #16213e; border: 1px solid #2a2a3e; border-radius: 8px; padding: 12px 15px; color: #e0e0e0; font-size: 14px;">
-                </div>
-                
-                <div id="icon-preview" style="margin-bottom: 20px; display: none; padding: 20px; background: #16213e; border-radius: 8px; text-align: center;">
-                    <label style="font-size: 13px; color: #888; margin-bottom: 10px; display: block;">Preview:</label>
-                    <img id="icon-preview-img" style="width: 64px; height: 64px; object-fit: contain; background: #0f0f23; padding: 10px; border-radius: 8px; border: 1px solid #2a2a3e;">
-                </div>
-                
-                <button class="btn" onclick="window.saveCustomIcon()">💾 Save Custom Icon</button>
-                
-                <div id="saved-icons-section" style="margin-top: 30px;">
-                    <h3 style="font-size: 16px; color: #888; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Saved Custom Icons:</h3>
-                    <div id="icons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px;">
-                        <!-- Custom icons will appear here -->
-                    </div>
-
-                    
-           <!-- Encryption Settings -->
-           <div class="add-card" style="margin-top: 40px;">
-               <h2>🔐 End-to-End Encryption</h2>
-               <p style="color: #888; margin-bottom: 20px; font-size: 14px;">
-                   Encrypt your data with AES-256 encryption before storing it. Only you can decrypt with your master password.
-               </p>
-               
-               <div id="encryption-status" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2);">
-                   <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                       <div id="encryption-status-icon">🔓</div>
-                       <div>
-                           <div style="font-weight: 600; color: #f1f5f9;" id="encryption-status-text">Encryption Disabled</div>
-                           <div style="font-size: 13px; color: #94a3b8;" id="encryption-status-subtitle">Your data is stored without encryption</div>
-                       </div>
-                   </div>
-               </div>
-               
-               <div id="encryption-disabled-view" style="display: block;">
-                   <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
-                       <div style="font-weight: 600; color: #10b981; margin-bottom: 8px;">✓ Benefits of Encryption:</div>
-                       <ul style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin-left: 20px;">
-                           <li>AES-256 military-grade encryption</li>
-                           <li>Your data is encrypted locally before storage</li>
-                           <li>Only you have the decryption key</li>
-                           <li>Even we cannot access your encrypted data</li>
-                       </ul>
-                   </div>
-                   
-                   <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
-                       <div style="font-weight: 600; color: #ef4444; margin-bottom: 8px;">⚠️ Important Warning:</div>
-                       <ul style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin-left: 20px;">
-                           <li>You must remember your master password</li>
-                           <li>If you lose your password, your data CANNOT be recovered</li>
-                           <li>There is no password reset option</li>
-                       </ul>
-                   </div>
-                   
-                   <button class="btn" onclick="showEnableEncryptionForm()" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); width: 100%;">
-                       🔐 Enable Encryption
-                   </button>
-               </div>
-               
-               <div id="encryption-setup-form" style="display: none;">
-                   <div style="margin-bottom: 20px;">
-                       <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Create Master Password</label>
-                       <input type="password" id="settings-master-password" placeholder="Enter a strong password (min 8 characters)" 
-                              style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
-                   </div>
-                   
-                   <div style="margin-bottom: 20px;">
-                       <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Confirm Master Password</label>
-                       <input type="password" id="settings-master-password-confirm" placeholder="Re-enter your password" 
-                              style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
-                   </div>
-                   
-                   <div style="display: flex; gap: 12px;">
-                       <button class="btn" onclick="cancelEnableEncryption()" style="flex: 1; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2);">
-                           Cancel
-                       </button>
-                       <button class="btn" onclick="enableEncryptionFromSettings()" style="flex: 2; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">
-                           🔐 Enable Encryption
-                       </button>
-                   </div>
-               </div>
-               
-               <div id="encryption-enabled-view" style="display: none;">
-                   <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px;">
-                       <div style="color: #10b981; font-size: 14px;">
-                           ✓ All data encrypted with AES-256 before storage
-                       </div>
-                   </div>
-                   
-                   <button class="btn" onclick="disableEncryption()" style="background: rgba(239, 68, 68, 0.9); width: 100%;">
-                       🔓 Disable Encryption
-                   </button>
-                   
-                   <p style="font-size: 12px; color: #94a3b8; margin-top: 10px; text-align: center;">
-                       Warning: Disabling encryption will store your data without encryption
-                   </p>
-               </div>
-           </div>
-           
-           <!-- Account Deletion - Danger Zone -->
-                <div class="add-card" style="border-color: #ff0055; margin-top: 40px; margin-bottom: 150px;">
-                <h2 style="color: #ff0055;">⚠️ Danger Zone</h2>
-                <p style="color: #888; margin-bottom: 15px;">
-            Permanently delete your account and all data. This action cannot be undone.
-            </p>
-            <button class="btn" onclick="requestAccountDeletion()" 
-            style="background: linear-gradient(45deg, #ff0055, #ff5500);">
-            Delete My Account
-        </button>
-        </div>
-        </div>              <!-- Closes the #settings section -->
-        </div>              <!-- Actually closes settings -->
-        </div>              <!-- Closes settings for real! -->
-
-        <!-- Admin Section -->
-        <div id="admin" class="section">
-            <div class="header">
-                <h1 style="display: flex; align-items: center; gap: 16px;">
-                    <div style="position: relative; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <!-- Hexagon background -->
-                        <div style="position: absolute; width: 48px; height: 48px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); opacity: 0.2;"></div>
-                        <!-- Shield icon -->
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#adminGradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 1; filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));">
-                            <defs>
-                                <linearGradient id="adminGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                        <!-- Orbiting dot -->
-                        <div style="position: absolute; width: 6px; height: 6px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 6px #06b6d4; animation: orbitAdmin 3s linear infinite;"></div>
-                    </div>
-                    <span style="font-weight: 900; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.4));">Admin Panel</span>
-                </h1>
-                <p>Manage users and app health</p>
-            </div>
-            
-            <style>
-                @keyframes orbitAdmin {
-                    0% {
-                        transform: rotate(0deg) translateX(28px) rotate(0deg);
-                    }
-                    100% {
-                        transform: rotate(360deg) translateX(28px) rotate(-360deg);
-                    }
-                }
-            </style>
-
-            <div class="add-card">
-                <h2>User Management</h2>
-                
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label>Search User by Email</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="email" id="admin-search-email" placeholder="user@example.com" style="flex: 1;">
-                        <button class="btn" onclick="searchUser()">Search</button>
-                    </div>
-                </div>
-
-                <div id="admin-user-details" style="display: none; margin-top: 20px;">
-                    <h3 style="font-weight: 900; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.4)); margin-bottom: 15px;">User Details</h3>
-                    <div id="admin-user-info"></div>
-                    
-                    <div style="margin-top: 20px; display: flex; gap: 10px;">
-                        <button class="btn" onclick="blockUser()" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                            Block User
-                        </button>
-                        <button class="btn" onclick="unblockUser()">
-                            Unblock User
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="add-card">
-                <h2>All Users</h2>
-                <button class="btn" onclick="loadAllUsers()" style="margin-bottom: 15px;">Load Users List</button>
-                <div id="admin-users-list"></div>
             </div>
         </div>
-    </div> <!-- Closes main-content -->
-    </div> <!-- Closes settings -->
-    </div> <!-- Closes main-content (ACTUALLY) -->
-</div> <!-- Closes #mainApp (ACTUALLY) -->
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal" id="deleteModal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">⚠️ Confirm Delete</div>
-            <div class="modal-body" id="deleteMessage">
-                Are you sure you want to delete this item? This action cannot be undone.
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="window.closeDeleteModal()">Cancel</button>
-                <button class="btn-delete" onclick="window.confirmDelete()">Delete</button>
-            </div>
-        </div>
     </div>
 
-    <!-- Login Screen -->
-    <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a1628 0%, #162447 50%, #1f1b3d 100%); z-index: 10000; display: flex;">
-        
-        <!-- Left Side - Branding -->
-        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 80px; position: relative;">
-            
-            <!-- Logo -->
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 80px;">
-                <!-- Modern Sci-Fi Animated Logo -->
-                <div class="scifi-logo-container" style="position: relative; width: 80px; height: 80px;">
-                    <!-- Outer rotating ring -->
-                    <div class="outer-ring" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; border: 2px solid rgba(13, 202, 240, 0.3); border-radius: 50%; animation: rotateRing 8s linear infinite;"></div>
-                    
-                    <!-- Middle pulsing ring -->
-                    <div class="middle-ring" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; border: 2px solid rgba(139, 92, 246, 0.4); border-radius: 50%; animation: pulseRing 2s ease-in-out infinite;"></div>
-                    
-                    <!-- Core hexagon -->
-                    <div class="hex-core" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: linear-gradient(135deg, #0dcaf0 0%, #8b5cf6 100%); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); box-shadow: 0 0 30px rgba(13, 202, 240, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.2); animation: hexFloat 3s ease-in-out infinite;">
-                        <!-- Inner glow -->
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%); animation: innerGlow 2s ease-in-out infinite;"></div>
-                    </div>
-                    
-                    <!-- Orbiting particles -->
-                    <div class="particle" style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #0dcaf0; border-radius: 50%; box-shadow: 0 0 8px #0dcaf0; animation: orbit1 3s linear infinite;"></div>
-                    <div class="particle" style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #8b5cf6; border-radius: 50%; box-shadow: 0 0 8px #8b5cf6; animation: orbit2 3s linear infinite;"></div>
-                    <div class="particle" style="position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; background: #d946ef; border-radius: 50%; box-shadow: 0 0 8px #d946ef; animation: orbit3 3s linear infinite;"></div>
-                    
-                    <!-- Corner accents -->
-                    <div style="position: absolute; top: 0; left: 0; width: 12px; height: 2px; background: linear-gradient(90deg, #0dcaf0, transparent); animation: scanLine 2s ease-in-out infinite;"></div>
-                    <div style="position: absolute; top: 0; right: 0; width: 2px; height: 12px; background: linear-gradient(180deg, #0dcaf0, transparent); animation: scanLine 2s ease-in-out infinite; animation-delay: 0.5s;"></div>
-                    <div style="position: absolute; bottom: 0; right: 0; width: 12px; height: 2px; background: linear-gradient(270deg, #8b5cf6, transparent); animation: scanLine 2s ease-in-out infinite; animation-delay: 1s;"></div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 2px; height: 12px; background: linear-gradient(0deg, #8b5cf6, transparent); animation: scanLine 2s ease-in-out infinite; animation-delay: 1.5s;"></div>
-                </div>
-                
-                <!-- Futuristic Text -->
-                <div style="display: flex; flex-direction: column; gap: 2px;">
-                    <span style="font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #0dcaf0 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; text-transform: uppercase; filter: drop-shadow(0 0 10px rgba(13, 202, 240, 0.3));">NexaVault</span>
-                    <span style="font-size: 11px; font-weight: 600; color: #0dcaf0; letter-spacing: 3px; text-transform: uppercase; opacity: 0.8;">Digital Archives</span>
-                </div>
-            </div>
-            
-            <style>
-                @keyframes rotateRing {
-                    0% {
-                        transform: translate(-50%, -50%) rotate(0deg);
-                    }
-                    100% {
-                        transform: translate(-50%, -50%) rotate(360deg);
-                    }
-                }
-                
-                @keyframes pulseRing {
-                    0%, 100% {
-                        transform: translate(-50%, -50%) scale(1);
-                        opacity: 0.4;
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) scale(1.1);
-                        opacity: 0.8;
-                    }
-                }
-                
-                @keyframes hexFloat {
-                    0%, 100% {
-                        transform: translate(-50%, -50%) rotate(0deg);
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) rotate(180deg);
-                    }
-                }
-                
-                @keyframes innerGlow {
-                    0%, 100% {
-                        opacity: 0.6;
-                        transform: translate(-50%, -50%) scale(1);
-                    }
-                    50% {
-                        opacity: 1;
-                        transform: translate(-50%, -50%) scale(1.2);
-                    }
-                }
-                
-                @keyframes orbit1 {
-                    0% {
-                        transform: translate(-50%, -50%) rotate(0deg) translateX(35px) rotate(0deg);
-                    }
-                    100% {
-                        transform: translate(-50%, -50%) rotate(360deg) translateX(35px) rotate(-360deg);
-                    }
-                }
-                
-                @keyframes orbit2 {
-                    0% {
-                        transform: translate(-50%, -50%) rotate(120deg) translateX(35px) rotate(-120deg);
-                    }
-                    100% {
-                        transform: translate(-50%, -50%) rotate(480deg) translateX(35px) rotate(-480deg);
-                    }
-                }
-                
-                @keyframes orbit3 {
-                    0% {
-                        transform: translate(-50%, -50%) rotate(240deg) translateX(35px) rotate(-240deg);
-                    }
-                    100% {
-                        transform: translate(-50%, -50%) rotate(600deg) translateX(35px) rotate(-600deg);
-                    }
-                }
-                
-                @keyframes scanLine {
-                    0%, 100% {
-                        opacity: 0.3;
-                    }
-                    50% {
-                        opacity: 1;
-                    }
-                }
-            </style>
-            
-            <!-- Main Heading -->
-            <h1 style="font-size: 64px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -2px;">
-                <span style="color: #f8f9fa;">Track Your</span><br>
-                <span style="background: linear-gradient(90deg, #0dcaf0 0%, #a78bfa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tech & Gaming</span><br>
-                <span style="color: #f8f9fa;">Legacy.</span>
-            </h1>
-            
-            <!-- Subheading -->
-            <p style="color: #adb5bd; font-size: 16px; line-height: 1.6; margin-bottom: 50px; max-width: 480px; font-weight: 400;">
-                A secure, private vault for your gadgets, game library,<br>and digital purchases. Built for collectors, by collectors.
-            </p>
-            
-            <!-- Category Tags -->
-            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <div class="category-badge" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: transparent; border: 1px solid rgba(13, 202, 240, 0.5); border-radius: 6px; position: relative; overflow: visible;">
-                    <div style="position: relative; width: 24px; height: 24px;">
-                        <svg class="floating-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0dcaf0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float1 3s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(13, 202, 240, 0.4));">
-                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-                            <line x1="12" y1="18" x2="12.01" y2="18"></line>
-                        </svg>
-                    </div>
-                    <span style="color: #adb5bd; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Hardware</span>
-                </div>
-                
-                <div class="category-badge" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: transparent; border: 1px solid rgba(236, 72, 153, 0.5); border-radius: 6px; position: relative; overflow: visible;">
-                    <div style="position: relative; width: 24px; height: 24px;">
-                        <svg class="floating-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float2 3s ease-in-out infinite; animation-delay: 0.3s; filter: drop-shadow(0 2px 4px rgba(236, 72, 153, 0.4));">
-                            <line x1="6" y1="11" x2="10" y2="11"></line>
-                            <line x1="8" y1="9" x2="8" y2="13"></line>
-                            <line x1="15" y1="12" x2="15.01" y2="12"></line>
-                            <line x1="18" y1="10" x2="18.01" y2="10"></line>
-                            <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"></path>
-                        </svg>
-                    </div>
-                    <span style="color: #adb5bd; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Gaming</span>
-                </div>
-                
-                <div class="category-badge" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: transparent; border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 6px; position: relative; overflow: visible;">
-                    <div style="position: relative; width: 24px; height: 24px;">
-                        <svg class="floating-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float3 3s ease-in-out infinite; animation-delay: 0.6s; filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4));">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                    </div>
-                    <span style="color: #adb5bd; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Digital</span>
-                </div>
-            </div>
-            
-            <style>
-                @keyframes float1 {
-                    0%, 100% {
-                        transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) translateY(-4px) rotate(5deg);
-                    }
-                }
-                
-                @keyframes float2 {
-                    0%, 100% {
-                        transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) translateY(-5px) rotate(-5deg);
-                    }
-                }
-                
-                @keyframes float3 {
-                    0%, 100% {
-                        transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-                    }
-                    50% {
-                        transform: translate(-50%, -50%) translateY(-4px) rotate(3deg);
-                    }
-                }
-                
-                .category-badge {
-                    transition: all 0.3s ease;
-                }
-                
-                .category-badge:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
-                }
-                
-                .category-badge:hover .floating-icon {
-                    animation-play-state: paused;
-                    transform: translate(-50%, -50%) scale(1.2);
-                }
-            </style>
-        </div>
-        
-        <!-- Right Side - Auth -->
-        <div style="width: 520px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 60px; background: rgba(25, 30, 50, 0.5); backdrop-filter: blur(20px);">
-            
-            <!-- Shield Icon -->
-            <div style="width: 90px; height: 90px; border-radius: 50%; background: transparent; display: flex; align-items: center; justify-content: center; margin-bottom: 36px; border: 2px solid rgba(13, 202, 240, 0.6); box-shadow: 0 0 40px rgba(13, 202, 240, 0.4);">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0dcaf0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-            </div>
-            
-            <!-- System Access Heading -->
-            <h2 style="color: #f8f9fa; font-size: 28px; font-weight: 700; margin-bottom: 10px; text-align: center; letter-spacing: -0.5px;">System Access</h2>
-            <p style="color: #adb5bd; font-size: 14px; margin-bottom: 44px; text-align: center; font-weight: 400;">Initialize secure session to manage your assets</p>
-            
-            <!-- Sign In Button -->
-            <button id="googleSignInBtn" style="width: 100%; max-width: 340px; background: linear-gradient(90deg, #0dcaf0 0%, #d946ef 100%); color: white; border: none; padding: 16px 32px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(13, 202, 240, 0.4); position: relative; overflow: hidden;" 
-                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(13, 202, 240, 0.5)'" 
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(13, 202, 240, 0.4)'">
-                <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path fill="white" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
-                    <path fill="white" d="M13.46 15.13c-.83.59-1.96 1-3.46 1-2.64 0-4.88-1.74-5.68-4.15H1.07v2.52C2.72 17.75 6.09 20 10 20c2.7 0 4.96-.89 6.62-2.42l-3.16-2.45z"/>
-                    <path fill="white" d="M3.99 10c0-.69.12-1.35.32-1.97V5.51H1.07A9.973 9.973 0 000 10c0 1.61.39 3.14 1.07 4.49l3.24-2.52c-.2-.62-.32-1.28-.32-1.97z"/>
-                    <path fill="white" d="M10 3.88c1.88 0 3.13.81 3.85 1.48l2.84-2.76C14.96.99 12.7 0 10 0 6.09 0 2.72 2.25 1.07 5.51l3.24 2.52C5.12 5.62 7.36 3.88 10 3.88z"/>
-                </svg>
-                <span>Sign in with Google</span>
-            </button>
-            
-            <div id="loginError" style="color: #ef4444; margin-top: 24px; font-size: 14px; text-align: center; display: none;"></div>
-            
-            <!-- Security Badge -->
-            <div style="margin-top: 44px; display: flex; align-items: center; gap: 6px; color: #6c757d; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;">
-                <span>Verified Security // Google Auth Protocol</span>
-            </div>
-        </div>
-        
-        <!-- Responsive Styles -->
-        <style>
-            /* Tablet optimization */
-            @media (max-width: 1024px) {
-                #loginScreen > div:first-child {
-                    padding: 60px 40px !important;
-                }
-                #loginScreen > div:first-child h1 {
-                    font-size: 52px !important;
-                }
-                #loginScreen > div:last-child {
-                    width: 420px !important;
-                    padding: 60px 40px !important;
-                }
-            }
-            
-            /* Mobile optimization - completely rethought layout */
-            @media (max-width: 768px) {
-                #loginScreen {
-                    flex-direction: column !important;
-                    justify-content: flex-start !important;
-                    align-items: center !important;
-                    padding: 0 !important;
-                    overflow-y: auto !important;
-                    -webkit-overflow-scrolling: touch !important;
-                    background: linear-gradient(135deg, #0a1628 0%, #162447 100%) !important;
-                }
-                
-                /* Compact branding section */
-                #loginScreen > div:first-child {
-                    flex: 0 0 auto !important;
-                    width: 100% !important;
-                    padding: 40px 24px 24px 24px !important;
-                    text-align: center !important;
-                    background: transparent !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    align-items: center !important;
-                }
-                
-                /* Logo - smaller and centered */
-                #loginScreen > div:first-child > div:first-child {
-                    justify-content: center !important;
-                    margin-bottom: 24px !important;
-                    transform: scale(0.75) !important;
-                }
-                
-                /* Heading - compact and centered */
-                #loginScreen > div:first-child h1 {
-                    font-size: 32px !important;
-                    line-height: 1.2 !important;
-                    margin-bottom: 12px !important;
-                    text-align: center !important;
-                }
-                
-                /* Description - shorter */
-                #loginScreen > div:first-child p {
-                    font-size: 14px !important;
-                    line-height: 1.5 !important;
-                    margin-bottom: 0 !important;
-                    max-width: 320px !important;
-                    text-align: center !important;
-                }
-                
-                /* Hide category badges */
-                #loginScreen > div:first-child > div:last-of-type {
-                    display: none !important;
-                }
-                
-                /* Login card - beautiful card design */
-                #loginScreen > div:last-child {
-                    flex: 0 0 auto !important;
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    padding: 40px 24px 50px 24px !important;
-                    border-left: none !important;
-                    border-top: none !important;
-                    background: rgba(30, 41, 59, 0.95) !important;
-                    backdrop-filter: blur(20px) !important;
-                    border-radius: 32px 32px 0 0 !important;
-                    margin-top: 24px !important;
-                    border: none !important;
-                    border-top: 1px solid rgba(148, 163, 184, 0.2) !important;
-                    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3) !important;
-                    min-height: auto !important;
-                }
-                
-                /* Shield icon */
-                #loginScreen > div:last-child > div:first-child {
-                    width: 70px !important;
-                    height: 70px !important;
-                    margin-bottom: 24px !important;
-                }
-                
-                #loginScreen > div:last-child > div:first-child svg {
-                    width: 32px !important;
-                    height: 32px !important;
-                }
-                
-                /* Login heading */
-                #loginScreen > div:last-child h2 {
-                    font-size: 24px !important;
-                    margin-bottom: 8px !important;
-                }
-                
-                #loginScreen > div:last-child > p {
-                    font-size: 13px !important;
-                    margin-bottom: 32px !important;
-                    line-height: 1.4 !important;
-                }
-                
-                /* Login button - full width and touch optimized */
-                #googleSignInBtn {
-                    max-width: 100% !important;
-                    width: 100% !important;
-                    padding: 18px 32px !important;
-                    font-size: 16px !important;
-                    border-radius: 12px !important;
-                }
-                
-                /* Security badge */
-                #loginScreen > div:last-child > div:last-child {
-                    margin-top: 32px !important;
-                    font-size: 9px !important;
-                }
-            }
-            
-            /* Extra small devices - ultra compact */
-            @media (max-width: 480px) {
-                #loginScreen > div:first-child {
-                    padding: 32px 20px 20px 20px !important;
-                }
-                
-                #loginScreen > div:first-child > div:first-child {
-                    transform: scale(0.7) !important;
-                    margin-bottom: 20px !important;
-                }
-                
-                #loginScreen > div:first-child h1 {
-                    font-size: 28px !important;
-                }
-                
-                #loginScreen > div:first-child p {
-                    font-size: 13px !important;
-                }
-                
-                #loginScreen > div:last-child {
-                    padding: 36px 20px 44px 20px !important;
-                    border-radius: 28px 28px 0 0 !important;
-                }
-                
-                #loginScreen > div:last-child h2 {
-                    font-size: 22px !important;
-                }
-                
-                #googleSignInBtn {
-                    padding: 16px 28px !important;
-                    font-size: 15px !important;
-                }
-            }
-            
-            /* Landscape mobile - special handling */
-            @media (max-width: 768px) and (orientation: landscape) {
-                #loginScreen {
-                    flex-direction: row !important;
-                    overflow-x: hidden !important;
-                }
-                
-                #loginScreen > div:first-child {
-                    width: 50% !important;
-                    padding: 30px 24px !important;
-                }
-                
-                #loginScreen > div:first-child h1 {
-                    font-size: 28px !important;
-                }
-                
-                #loginScreen > div:last-child {
-                    width: 50% !important;
-                    border-radius: 0 !important;
-                    border-left: 1px solid rgba(148, 163, 184, 0.2) !important;
-                    border-top: none !important;
-                    margin-top: 0 !important;
-                    padding: 30px 24px !important;
-                }
-            }
-        </style>
-    </div>
-
-    <!-- Loading Screen -->
-    <div id="loadingScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); z-index: 10001; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-        <!-- Animated Loading Icon -->
-        <div style="position: relative; width: 80px; height: 80px; margin-bottom: 30px;">
-            <div class="loading-spinner"></div>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                </svg>
-            </div>
-        </div>
-        
-        <h1 style="font-size: 28px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; margin-bottom: 12px;">
-            Loading Your Collection
-        </h1>
-        <div class="loading-dots" style="display: flex; gap: 8px;">
-            <div class="dot" style="animation-delay: 0s;"></div>
-            <div class="dot" style="animation-delay: 0.2s;"></div>
-            <div class="dot" style="animation-delay: 0.4s;"></div>
-        </div>
-        
-        <style>
-            .loading-spinner {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 80px;
-                height: 80px;
-                border: 3px solid rgba(148, 163, 184, 0.2);
-                border-top: 3px solid #10b981;
-                border-radius: 50%;
-                animation: spin 0.6s linear infinite;
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            
-            .dot {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
-                animation: bounce 0.8s ease-in-out infinite;
-            }
-            
-            @keyframes bounce {
-                0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
-                40% { transform: scale(1); opacity: 1; }
-            }
-        </style>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script>
-        console.log('✅ Regular script works');
-        window.addEventListener('error', (e) => {
-            console.error('🔥 Global error:', e.message, e.filename);
-        });
-        
-        // IMMEDIATE FIX: Force loginScreen to be visible on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const loginScreen = document.getElementById('loginScreen');
-            if (loginScreen) {
-                console.log('🔧 DOM loaded - forcing loginScreen dimensions');
-                loginScreen.style.width = window.innerWidth + 'px';
-                loginScreen.style.height = window.innerHeight + 'px';
-                loginScreen.style.display = 'flex';
-                loginScreen.style.visibility = 'visible';
-                console.log('✅ loginScreen dimensions set:', loginScreen.getBoundingClientRect());
-            }
-        });
-    </script>
     <script type="module">
         console.log('🚀 Module script started');
         
@@ -5982,5 +4478,37 @@ window.importDigitalCSV = async function (event) {
     }
 </style>
 
+</body>
+</html>
+
+    <script>
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update bottom nav
+            document.querySelectorAll('.bottom-nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === sectionId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Bottom navigation click handlers
+        document.querySelectorAll('.bottom-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const section = this.dataset.section;
+                showSection(section);
+            });
+        });
+
+        // Make showSection available globally
+        window.showSection = showSection;
+    </script>
 </body>
 </html>
