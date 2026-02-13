@@ -26,9 +26,9 @@
             --glass-shadow: rgba(0, 0, 0, 0.3);
             
             /* Gradients */
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-success: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-primary: linear-gradient(135deg, #0dcaf0 0%, #8b5cf6 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --gradient-info: linear-gradient(135deg, #0dcaf0 0%, #d946ef 100%);
             --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             
             /* Text */
@@ -37,9 +37,9 @@
             --text-muted: rgba(255, 255, 255, 0.4);
             
             /* Accents */
-            --accent-purple: #667eea;
-            --accent-pink: #f093fb;
-            --accent-blue: #4facfe;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #d946ef;
+            --accent-blue: #0dcaf0;
         }
 
         * {
@@ -66,9 +66,9 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(13, 202, 240, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(217, 70, 239, 0.08) 0%, transparent 50%);
             z-index: 0;
             animation: bgShift 20s ease-in-out infinite;
         }
@@ -140,23 +140,26 @@
             color: var(--accent-purple);
         }
 
-        /* Fix custom icons grid — prevent huge images */
+        /* Fix custom icons grid */
         #icons-grid {
-            display: flex;
+            display: flex !important;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             margin-top: 16px;
         }
 
         #icons-grid > div {
-            width: 100px;
-            flex-shrink: 0;
+            width: 90px !important;
+            flex: 0 0 90px !important;
+            box-sizing: border-box;
         }
 
         #icons-grid img {
-            width: 48px !important;
-            height: 48px !important;
-            max-width: 48px !important;
+            display: block;
+            width: 40px !important;
+            height: 40px !important;
+            max-width: 40px !important;
+            max-height: 40px !important;
             object-fit: contain;
         }
 
@@ -2970,15 +2973,15 @@ async function loadSettings() {
             console.log('Rendering custom icons:', customIcons);
             
             if (customIcons.length === 0) {
-                iconsGrid.innerHTML = '<p style="color: #666; grid-column: 1/-1; text-align: center; padding: 20px;">No custom icons yet. Add one above!</p>';
+                iconsGrid.innerHTML = '<p style="color: rgba(255,255,255,0.4); text-align: center; padding: 20px; width:100%;">No custom icons yet. Add one above!</p>';
                 return;
             }
             
             iconsGrid.innerHTML = customIcons.map((icon, index) => `
-                <div style="background: #16213e; border: 1px solid #2a2a3e; border-radius: 10px; padding: 15px; text-align: center;">
-                    <img src="${icon.iconUrl}" alt="${icon.platform}" style="width: 48px; height: 48px; object-fit: contain; margin-bottom: 10px; padding: 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.95); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
-                    <div style="font-size: 13px; color: #e0e0e0; margin-bottom: 10px; font-weight: 500;">${icon.platform}</div>
-                    <button onclick="window.removeCustomIconByIndex(${index})" style="background: #f44336; border: none; padding: 6px 12px; border-radius: 5px; color: white; font-size: 11px; cursor: pointer; font-weight: 600;">Remove</button>
+                <div style="width:90px; flex:0 0 90px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 8px; text-align: center;">
+                    <img src="${icon.iconUrl}" alt="${icon.platform}" style="display:block; width:40px !important; height:40px !important; max-width:40px !important; max-height:40px !important; object-fit:contain; margin: 0 auto 8px; padding: 6px; border-radius: 8px; background: rgba(255,255,255,0.95);">
+                    <div style="font-size:11px; color:rgba(255,255,255,0.8); margin-bottom:8px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${icon.platform}</div>
+                    <button onclick="window.removeCustomIconByIndex(${index})" style="background: rgba(239,68,68,0.8); border: none; padding: 4px 8px; border-radius: 6px; color: white; font-size: 10px; cursor: pointer; font-weight: 600; width:100%;">Remove</button>
                 </div>
             `).join('');
         }
@@ -3029,7 +3032,7 @@ async function loadSettings() {
             if (customIcon) {
                 // Remove emoji from platform name when displaying with custom icon
                 const platformWithoutEmoji = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
-                return '<img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="width: 40px; height: 40px; object-fit: contain; vertical-align: middle; margin-right: 8px; padding: 6px; border-radius: 6px; background: rgba(255, 255, 255, 0.95); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);">' + platformWithoutEmoji;
+                return '<span style="display:inline-flex;align-items:center;gap:6px;"><img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="display:inline-block;width:18px;height:18px;max-width:18px;max-height:18px;object-fit:contain;vertical-align:middle;padding:2px;border-radius:4px;background:rgba(255,255,255,0.95);flex-shrink:0;">' + platformWithoutEmoji + '</span>';
             }
             return platform; // Return plain text if no custom icon
         }
@@ -3037,7 +3040,7 @@ async function loadSettings() {
         function getPlatformIcon(platform) {
             const customIcon = customIcons.find(icon => icon.platform === platform);
             if (customIcon) {
-                return `<img src="${customIcon.iconUrl}" alt="${platform}" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; padding: 2px; border-radius: 4px; background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);">`;
+                return `<img src="${customIcon.iconUrl}" alt="${platform}" style="display:inline-block;width:20px;height:20px;max-width:20px;max-height:20px;object-fit:contain;vertical-align:middle;padding:2px;border-radius:4px;background:rgba(255,255,255,0.95);flex-shrink:0;">`;
             }
             return ''; // Return empty if no custom icon
         }
