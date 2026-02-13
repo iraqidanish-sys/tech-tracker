@@ -2475,19 +2475,26 @@
         };
 
         window.decryptData = async function(encryptedDoc) {
-            if (!encryptedDoc.encrypted) {
+            // If data is not encrypted, return as-is
+            if (!encryptedDoc || !encryptedDoc.encrypted) {
                 return encryptedDoc;
             }
             
+            // If data IS encrypted but user hasn't unlocked
             if (!encryptionManager.isUnlocked) {
-                throw new Error('Data is locked');
+                console.warn('Data is encrypted but not unlocked yet');
+                // Return the encrypted doc without decrypting
+                // This allows the app to load, user just won't see decrypted data
+                return encryptedDoc;
             }
             
+            // Try to decrypt
             try {
                 return await encryptionManager.decrypt(encryptedDoc.data);
             } catch (error) {
                 console.error('Decryption error:', error);
-                throw error;
+                // Return original doc if decryption fails
+                return encryptedDoc;
             }
         };
 
@@ -2834,76 +2841,116 @@ async function loadData() {
         // ----------------
         // Gadgets
         // ----------------
-        const gadgetsQuery = query(
-            collection(db, 'users', currentUserUID, 'gadgets'),
-            orderBy('timestamp', 'desc')
+        // Remove orderBy to avoid timestamp errors - sort client-side instead
+        const gadgetsSnapshot = await getDocs(
+            collection(db, 'users', currentUserUID, 'gadgets')
         );
 
-        const gadgetsSnapshot = await getDocs(gadgetsQuery);
-
         gadgets = await Promise.all(gadgetsSnapshot.docs.map(async doc => {
-            const encryptedData = doc.data();
-            const data = await decryptData(encryptedData);
-            // Set status for old gadgets that don't have it
-            if (!data.status) {
-                data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+            try {
+                const encryptedData = doc.data();
+                const data = await decryptData(encryptedData);
+                // Set status for old gadgets that don't have it
+                if (!data.status) {
+                    data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+                }
+                return {
+                    firestoreId: doc.id,
+                    ...data
+                };
+            } catch (error) {
+                console.error('Error processing gadget:', doc.id, error);
+                // Return basic data if decryption fails
+                return {
+                    firestoreId: doc.id,
+                    ...doc.data()
+                };
             }
-            return {
-                firestoreId: doc.id,
-                ...data
-            };
         }));
+
+        // Sort by timestamp client-side (newest first)
+        gadgets.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
 
         // ----------------
         // Games
         // ----------------
-        const gamesQuery = query(
-            collection(db, 'users', currentUserUID, 'games'),
-            orderBy('timestamp', 'desc')
+        const gamesSnapshot = await getDocs(
+            collection(db, 'users', currentUserUID, 'games')
         );
 
-        const gamesSnapshot = await getDocs(gamesQuery);
-
         games = await Promise.all(gamesSnapshot.docs.map(async doc => {
-            const encryptedData = doc.data();
-            const data = await decryptData(encryptedData);
-            // Set status for old games that don't have it
-            if (!data.status) {
-                data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+            try {
+                const encryptedData = doc.data();
+                const data = await decryptData(encryptedData);
+                // Set status for old games that don't have it
+                if (!data.status) {
+                    data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+                }
+                return {
+                    firestoreId: doc.id,
+                    ...data
+                };
+            } catch (error) {
+                console.error('Error processing game:', doc.id, error);
+                // Return basic data if decryption fails
+                return {
+                    firestoreId: doc.id,
+                    ...doc.data()
+                };
             }
-            return {
-                firestoreId: doc.id,
-                ...data
-            };
         }));
+
+        // Sort by timestamp client-side (newest first)
+        games.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
 
         // ----------------
         // Digital Purchases
         // ----------------
-        const digitalQuery = query(
-            collection(db, 'users', currentUserUID, 'digitalPurchases'),
-            orderBy('timestamp', 'desc')
+        const digitalSnapshot = await getDocs(
+            collection(db, 'users', currentUserUID, 'digitalPurchases')
         );
 
-        const digitalSnapshot = await getDocs(digitalQuery);
-
         digitalPurchases = await Promise.all(digitalSnapshot.docs.map(async doc => {
-            const encryptedData = doc.data();
-            const data = await decryptData(encryptedData);
-            return {
-                firestoreId: doc.id,
-                ...data
-            };
+            try {
+                const encryptedData = doc.data();
+                const data = await decryptData(encryptedData);
+                return {
+                    firestoreId: doc.id,
+                    ...data
+                };
+            } catch (error) {
+                console.error('Error processing digital purchase:', doc.id, error);
+                // Return basic data if decryption fails
+                return {
+                    firestoreId: doc.id,
+                    ...doc.data()
+                };
+            }
         }));
+
+        // Sort by timestamp client-side (newest first)
+        digitalPurchases.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
 
         updateAll();
 
     } catch (error) {
         console.error('Error loading data:', error);
-        alert('Error loading data. Please refresh the page.');
+        console.error('Error details:', error.message, error.code);
+        
+        // More detailed error message
+        let errorMsg = 'Error loading data. ';
+        if (error.code === 'failed-precondition') {
+            errorMsg += 'Database index missing. Please contact support.';
+        } else if (error.message.includes('locked')) {
+            errorMsg += 'Please unlock your data first.';
+        } else {
+            errorMsg += 'Please refresh the page. If the problem persists, clear your browser cache.';
+        }
+        
+        alert(errorMsg);
     }
 }
 
