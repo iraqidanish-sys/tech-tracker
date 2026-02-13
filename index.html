@@ -5016,12 +5016,28 @@ window.importDigitalCSV = async function (event) {
             }
 
             try {
+                console.log('🔐 Setting up encryption...');
+                
+                if (!currentUserUID) {
+                    throw new Error('User not authenticated. Please sign in again.');
+                }
+                
                 await encryptionManager.setupNewUser(password);
+                console.log('✅ Encryption setup successful');
+                
                 document.getElementById('encryptionSetupModal').style.display = 'none';
                 document.body.classList.add('encrypted');
-                alert('✅ Encryption enabled! Your data is now protected.');
                 
-                await loadData();
+                // Clear password fields
+                document.getElementById('masterPassword').value = '';
+                document.getElementById('masterPasswordConfirm').value = '';
+                
+                alert('✅ Encryption enabled! Your data is now protected. You will need to enter your password on next login.');
+                
+                // Update encryption status in settings
+                if (window.updateEncryptionStatus) {
+                    updateEncryptionStatus();
+                }
                 
             } catch (error) {
                 console.error('Encryption setup error:', error);
@@ -5030,13 +5046,14 @@ window.importDigitalCSV = async function (event) {
         };
 
         window.skipEncryptionSetup = async function() {
-            // Store the current timestamp to prevent showing the popup again for 24 hours
-            localStorage.setItem('encryptionSkipTime', Date.now().toString());
-            console.log('ℹ️ User skipped encryption setup - will not show again for 24 hours');
-            
-            // Close the modal and load data
+            // Just close the modal - no need to track skip time anymore
+            console.log('ℹ️ User closed encryption setup modal');
             document.getElementById('encryptionSetupModal').style.display = 'none';
-            await loadData();
+            
+            // If data hasn't loaded yet, load it now
+            if (gadgets.length === 0 && games.length === 0 && digitalPurchases.length === 0) {
+                await loadData();
+            }
         };
 
         // ========== ENCRYPTION SETTINGS FUNCTIONS (FROM SETTINGS PANEL) ==========
@@ -5679,7 +5696,7 @@ window.importDigitalCSV = async function (event) {
         <div style="display: flex; gap: 12px;">
             <button onclick="skipEncryptionSetup()" 
                     style="flex: 1; padding: 16px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;">
-                Skip for Now
+                Cancel
             </button>
             <button onclick="setupEncryption()" 
                     style="flex: 2; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
