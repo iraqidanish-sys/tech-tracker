@@ -152,15 +152,59 @@
             width: 90px !important;
             flex: 0 0 90px !important;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
-        #icons-grid img {
-            display: block;
-            width: 40px !important;
-            height: 40px !important;
-            max-width: 40px !important;
-            max-height: 40px !important;
+        /* Universal icon image wrapper - overflow:hidden is the only bulletproof size fix */
+        .icon-img-wrap {
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.95);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+
+        .icon-img-wrap img {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
             object-fit: contain;
+            display: block;
+        }
+
+        .icon-img-wrap-sm {
+            width: 22px;
+            height: 22px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.9);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .icon-img-wrap-sm img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Form grid class - properly responsive */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
         }
 
         @media (max-width: 768px) {
@@ -654,25 +698,56 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .bottom-nav {
-                display: block;
-            }
+            .bottom-nav { display: block; }
+            .desktop-nav-links { display: none; }
 
             .container {
-                padding-bottom: 90px;
+                padding: 72px 12px 90px !important;
+            }
+
+            .section h1 {
+                font-size: 26px !important;
+                margin-bottom: 14px !important;
             }
 
             .items-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
+                gap: 10px;
+                margin-top: 10px;
             }
+
+            .item-card { padding: 12px; }
+            .item-title { font-size: 14px; }
+            .info-label { font-size: 10px; }
+            .info-value { font-size: 12px; }
 
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px;
             }
 
-            .fab {
-                bottom: 80px;
+            .stat-card { padding: 12px; }
+            .stat-value { font-size: 20px !important; }
+            .stat-label { font-size: 10px; }
+
+            .add-form { padding: 14px; margin-bottom: 14px; }
+
+            /* This is the key - form-grid class collapses to single column */
+            .form-grid {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
             }
+
+            .filter-chip { padding: 6px 12px; font-size: 12px; }
+
+            .fab { bottom: 80px; }
+
+            .top-nav { padding: 0 12px; height: 54px; }
+            .logo { font-size: 17px; }
+
+            .user-avatar { width: 32px; height: 32px; font-size: 12px; }
+
+            #profileMenu { right: -8px !important; min-width: 190px !important; }
         }
 
         /* Modals */
@@ -897,7 +972,7 @@
 
                 <div style="margin-bottom:24px;">
                     <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">📱 Gadgets</h3>
-                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+                    <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-gadgets">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-gadgets-value">₹0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Sold</div><div class="stat-value" id="dash-gadgets-sold">0</div></div></div>
@@ -907,7 +982,7 @@
 
                 <div style="margin-bottom:24px;">
                     <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🎮 Games</h3>
-                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+                    <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-games">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-games-value">₹0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Sold</div><div class="stat-value" id="dash-games-sold">0</div></div></div>
@@ -917,7 +992,7 @@
 
                 <div style="margin-bottom:24px;">
                     <h3 style="font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">💳 Digital</h3>
-                    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+                    <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Purchases</div><div class="stat-value" id="dash-total-digital">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Spent</div><div class="stat-value" style="font-size:22px;" id="dash-digital-spent">₹0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Profit/Loss</div><div class="stat-value" style="font-size:22px;" id="dash-total-profit">₹0</div></div></div>
@@ -936,7 +1011,7 @@
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add / Edit Gadget</h3>
                     <form id="gadget-form">
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                        <div class="form-grid">
                             <div class="input-group"><label>Name</label><input type="text" id="g-name" placeholder="e.g. iPhone 15 Pro" required></div>
                             <div class="input-group"><label>Category</label><select id="g-category"></select></div>
                             <div class="input-group"><label>Buy Price (₹)</label><input type="number" id="g-price" placeholder="0" required></div>
@@ -962,7 +1037,7 @@
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add / Edit Game</h3>
                     <form id="game-form">
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                        <div class="form-grid">
                             <div class="input-group"><label>Title</label><input type="text" id="gm-title" placeholder="e.g. Elden Ring" required></div>
                             <div class="input-group"><label>Platform</label>
                                 <div id="platform-select-wrapper" style="position:relative;">
@@ -993,7 +1068,7 @@
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add Digital Purchase</h3>
                     <form id="digital-form">
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                        <div class="form-grid">
                             <div class="input-group"><label>Name</label><input type="text" id="d-name" placeholder="e.g. Netflix" required></div>
                             <div class="input-group"><label>Type</label><select id="d-type"></select></div>
                             <div class="input-group"><label>Amount (₹)</label><input type="number" id="d-amount" placeholder="0" required></div>
@@ -1073,7 +1148,7 @@
 
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">🖼️ Custom Platform Icons</h3>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
+                    <div class="form-grid">
                         <div class="input-group"><label>Platform</label>
                             <div id="icon-platform-select-wrapper">
                                 <select id="icon-platform-name"><option value="">Select a platform...</option></select>
@@ -2755,9 +2830,9 @@ async function loadSettings() {
                 if (type === 'gamePlatform') {
                     const customIcon = getCustomIconForPlatform(item);
                     if (customIcon) {
-                        // Show custom uploaded icon
+                        // Show custom uploaded icon — force size with both attribute AND style
                         const textWithoutEmoji = removeEmojiFromText(item);
-                        displayContent = `<img src="${customIcon.iconUrl}" style="width: 28px; height: 28px; object-fit: contain; padding: 4px; border-radius: 6px; background: rgba(255, 255, 255, 0.95); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);"> <span style="font-size: 14px;">${textWithoutEmoji}</span>`;
+                        displayContent = `<span class="icon-img-wrap-sm"><img src="${customIcon.iconUrl}" alt="${item}"></span> <span style="font-size:14px;">${textWithoutEmoji}</span>`;
                     } else {
                         // Use SVG icon
                         const animationDelay = (index * 0.1) % 1;
@@ -2978,10 +3053,12 @@ async function loadSettings() {
             }
             
             iconsGrid.innerHTML = customIcons.map((icon, index) => `
-                <div style="width:90px; flex:0 0 90px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 8px; text-align: center;">
-                    <img src="${icon.iconUrl}" alt="${icon.platform}" style="display:block; width:40px !important; height:40px !important; max-width:40px !important; max-height:40px !important; object-fit:contain; margin: 0 auto 8px; padding: 6px; border-radius: 8px; background: rgba(255,255,255,0.95);">
-                    <div style="font-size:11px; color:rgba(255,255,255,0.8); margin-bottom:8px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${icon.platform}</div>
-                    <button onclick="window.removeCustomIconByIndex(${index})" style="background: rgba(239,68,68,0.8); border: none; padding: 4px 8px; border-radius: 6px; color: white; font-size: 10px; cursor: pointer; font-weight: 600; width:100%;">Remove</button>
+                <div style="width:90px;flex:0 0 90px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 8px;text-align:center;overflow:hidden;">
+                    <div class="icon-img-wrap" style="margin:0 auto 8px;">
+                        <img src="${icon.iconUrl}" alt="${icon.platform}">
+                    </div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.8);margin-bottom:8px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${icon.platform}</div>
+                    <button onclick="window.removeCustomIconByIndex(${index})" style="background:rgba(239,68,68,0.8);border:none;padding:4px 8px;border-radius:6px;color:white;font-size:10px;cursor:pointer;font-weight:600;width:100%;">Remove</button>
                 </div>
             `).join('');
         }
@@ -3032,7 +3109,7 @@ async function loadSettings() {
             if (customIcon) {
                 // Remove emoji from platform name when displaying with custom icon
                 const platformWithoutEmoji = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
-                return '<span style="display:inline-flex;align-items:center;gap:6px;"><img src="' + customIcon.iconUrl + '" alt="' + platform + '" style="display:inline-block;width:18px;height:18px;max-width:18px;max-height:18px;object-fit:contain;vertical-align:middle;padding:2px;border-radius:4px;background:rgba(255,255,255,0.95);flex-shrink:0;">' + platformWithoutEmoji + '</span>';
+                return '<span style="display:inline-flex;align-items:center;gap:5px;"><span class="icon-img-wrap-sm"><img src="' + customIcon.iconUrl + '" alt="' + platform + '"></span>' + platformWithoutEmoji + '</span>';
             }
             return platform; // Return plain text if no custom icon
         }
@@ -3040,9 +3117,9 @@ async function loadSettings() {
         function getPlatformIcon(platform) {
             const customIcon = customIcons.find(icon => icon.platform === platform);
             if (customIcon) {
-                return `<img src="${customIcon.iconUrl}" alt="${platform}" style="display:inline-block;width:20px;height:20px;max-width:20px;max-height:20px;object-fit:contain;vertical-align:middle;padding:2px;border-radius:4px;background:rgba(255,255,255,0.95);flex-shrink:0;">`;
+                return `<span class="icon-img-wrap-sm"><img src="${customIcon.iconUrl}" alt="${platform}"></span>`;
             }
-            return ''; // Return empty if no custom icon
+            return '';
         }
 
         // Section navigation
