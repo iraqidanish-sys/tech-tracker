@@ -5090,37 +5090,60 @@ window.importDigitalCSV = async function (event) {
         window.updateEncryptionStatus = function() {
             const isEnabled = encryptionManager.isEncryptionEnabled();
             
+            // Safety check - only update if elements exist
+            const statusIcon = document.getElementById('encryption-status-icon');
+            const statusText = document.getElementById('encryption-status-text');
+            const statusSubtitle = document.getElementById('encryption-status-subtitle');
+            const statusContainer = document.getElementById('encryption-status');
+            const disabledView = document.getElementById('encryption-disabled-view');
+            const enabledView = document.getElementById('encryption-enabled-view');
+            const setupForm = document.getElementById('encryption-setup-form');
+            
+            // If essential elements don't exist, skip update
+            if (!statusIcon || !statusText || !statusSubtitle || !statusContainer) {
+                console.log('ℹ️ Encryption status elements not found, skipping update');
+                return;
+            }
+            
             if (isEnabled) {
-                document.getElementById('encryption-status-icon').textContent = '🔐';
-                document.getElementById('encryption-status-text').textContent = 'Encryption Enabled';
-                document.getElementById('encryption-status-subtitle').textContent = 'Your data is protected with end-to-end encryption';
-                document.getElementById('encryption-status').style.background = 'rgba(16, 185, 129, 0.15)';
-                document.getElementById('encryption-status').style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                document.getElementById('encryption-disabled-view').style.display = 'none';
-                document.getElementById('encryption-enabled-view').style.display = 'block';
-                document.getElementById('encryption-setup-form').style.display = 'none';
+                statusIcon.textContent = '🔐';
+                statusText.textContent = 'Encryption Enabled';
+                statusSubtitle.textContent = 'Your data is protected with end-to-end encryption';
+                statusContainer.style.background = 'rgba(16, 185, 129, 0.15)';
+                statusContainer.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                if (disabledView) disabledView.style.display = 'none';
+                if (enabledView) enabledView.style.display = 'block';
+                if (setupForm) setupForm.style.display = 'none';
             } else {
-                document.getElementById('encryption-status-icon').textContent = '🔓';
-                document.getElementById('encryption-status-text').textContent = 'Encryption Disabled';
-                document.getElementById('encryption-status-subtitle').textContent = 'Your data is stored without encryption';
-                document.getElementById('encryption-status').style.background = 'rgba(148, 163, 184, 0.1)';
-                document.getElementById('encryption-status').style.borderColor = 'rgba(148, 163, 184, 0.2)';
-                document.getElementById('encryption-disabled-view').style.display = 'block';
-                document.getElementById('encryption-enabled-view').style.display = 'none';
-                document.getElementById('encryption-setup-form').style.display = 'none';
+                statusIcon.textContent = '🔓';
+                statusText.textContent = 'Encryption Disabled';
+                statusSubtitle.textContent = 'Your data is stored without encryption';
+                statusContainer.style.background = 'rgba(148, 163, 184, 0.1)';
+                statusContainer.style.borderColor = 'rgba(148, 163, 184, 0.2)';
+                if (disabledView) disabledView.style.display = 'block';
+                if (enabledView) enabledView.style.display = 'none';
+                if (setupForm) setupForm.style.display = 'none';
             }
         };
         
         window.showEnableEncryptionForm = function() {
-            document.getElementById('encryption-disabled-view').style.display = 'none';
-            document.getElementById('encryption-setup-form').style.display = 'block';
+            const disabledView = document.getElementById('encryption-disabled-view');
+            const setupForm = document.getElementById('encryption-setup-form');
+            
+            if (disabledView) disabledView.style.display = 'none';
+            if (setupForm) setupForm.style.display = 'block';
         };
         
         window.cancelEnableEncryption = function() {
-            document.getElementById('encryption-setup-form').style.display = 'none';
-            document.getElementById('encryption-disabled-view').style.display = 'block';
-            document.getElementById('settings-master-password').value = '';
-            document.getElementById('settings-master-password-confirm').value = '';
+            const setupForm = document.getElementById('encryption-setup-form');
+            const disabledView = document.getElementById('encryption-disabled-view');
+            const masterPassword = document.getElementById('settings-master-password');
+            const confirmPassword = document.getElementById('settings-master-password-confirm');
+            
+            if (setupForm) setupForm.style.display = 'none';
+            if (disabledView) disabledView.style.display = 'block';
+            if (masterPassword) masterPassword.value = '';
+            if (confirmPassword) confirmPassword.value = '';
         };
         
         window.enableEncryptionFromSettings = async function() {
