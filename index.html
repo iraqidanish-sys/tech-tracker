@@ -392,21 +392,21 @@
 
         .image-tabs {
             display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
+            gap: 4px;
+            margin-bottom: 8px;
             border-bottom: 1px solid rgba(16, 185, 129, 0.15);
-            padding-bottom: 8px;
+            padding-bottom: 4px;
         }
 
         .tab-btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.2s ease;
         }
 
@@ -431,17 +431,18 @@
 
         .upload-area {
             position: relative;
-            min-height: 120px;
+            min-height: 80px;
         }
 
         .upload-placeholder {
             border: 2px dashed rgba(16, 185, 129, 0.3);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             background: rgba(16, 185, 129, 0.05);
+            font-size: 13px;
         }
 
         .upload-placeholder:hover {
@@ -453,8 +454,8 @@
             position: relative;
             display: inline-block;
             width: 100%;
-            max-width: 200px;
-            border-radius: 12px;
+            max-width: 150px;
+            border-radius: 8px;
             overflow: hidden;
             border: 2px solid rgba(16, 185, 129, 0.3);
         }
@@ -467,15 +468,15 @@
 
         .remove-image {
             position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 28px;
-            height: 28px;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             background: rgba(239, 68, 68, 0.9);
             color: white;
             border: none;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -489,27 +490,27 @@
         }
 
         .btn-search {
-            padding: 8px 16px;
+            padding: 6px 12px;
             background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             color: white;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .btn-search:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .search-results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 8px;
-            max-height: 300px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 6px;
+            max-height: 200px;
             overflow-y: auto;
         }
 
@@ -722,14 +723,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
-            color: #10b981;
-        }
-        
-        .product-image-placeholder svg {
-            width: 56px;
-            height: 56px;
-            stroke: #10b981;
+            font-size: 56px;
         }
 
         /* Card Info Section */
@@ -744,15 +738,18 @@
             align-items: flex-start;
             margin-bottom: 8px;
         }
+        
+        .expand-arrow {
+            display: none;
+        }
 
         .item-title {
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 6px;
             color: var(--text-primary);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            line-height: 1.3;
+            word-break: break-word;
         }
 
         .item-meta {
@@ -771,15 +768,6 @@
             border-radius: 6px;
             color: #10b981;
             border: 1px solid rgba(16, 185, 129, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .item-category svg {
-            width: 16px;
-            height: 16px;
-            stroke: currentColor;
         }
 
         /* Status and Price Badges */
@@ -1886,7 +1874,7 @@
                         </div>
                         
                         <!-- Image Upload Section -->
-                        <div class="input-group" style="margin-top: 16px;">
+                        <div class="input-group" style="margin-top: 8px;">
                             <label>Product Image</label>
                             <div class="image-upload-container">
                                 <div class="image-tabs">
@@ -1900,9 +1888,9 @@
                                     <div class="upload-area" id="g-upload-area">
                                         <input type="file" id="g-file-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event, 'gadget')">
                                         <div class="upload-placeholder" onclick="document.getElementById('g-file-input').click()">
-                                            <div style="font-size: 48px; margin-bottom: 12px;">📷</div>
-                                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Click to upload</div>
-                                            <div style="font-size: 12px; color: var(--text-muted);">or drag and drop</div>
+                                            <div style="font-size: 32px; margin-bottom: 6px;">📷</div>
+                                            <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">Click to upload</div>
+                                            <div style="font-size: 11px; color: var(--text-muted);">or drag and drop</div>
                                         </div>
                                         <div id="g-upload-preview" class="upload-preview" style="display: none;">
                                             <img id="g-preview-img" src="" alt="Preview">
@@ -1914,7 +1902,7 @@
                                 <!-- Tab 2: URL -->
                                 <div id="g-url" class="tab-content">
                                     <input type="text" id="g-image-url" placeholder="Paste image URL here..." onchange="handleUrlImage(this.value, 'gadget')">
-                                    <div id="g-url-preview" class="upload-preview" style="display: none; margin-top: 12px;">
+                                    <div id="g-url-preview" class="upload-preview" style="display: none; margin-top: 8px;">
                                         <img id="g-url-img" src="" alt="Preview">
                                         <button type="button" class="remove-image" onclick="removeUrlImage('gadget')">✕</button>
                                     </div>
@@ -1922,7 +1910,7 @@
                                 
                                 <!-- Tab 3: Search (Unsplash) -->
                                 <div id="g-search" class="tab-content">
-                                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
                                         <input type="text" id="g-search-query" placeholder="Search for product images..." style="flex: 1;">
                                         <button type="button" class="btn-search" onclick="searchImages('gadget')">🔍 Search</button>
                                     </div>
@@ -1934,7 +1922,7 @@
                         </div>
                         
                         <!-- Condition/Rating Field -->
-                        <div class="input-group" style="margin-top: 16px;">
+                        <div class="input-group" style="margin-top: 8px;">
                             <label>Condition/Rating <span style="color:var(--text-muted);font-size:11px;">(0-100, optional)</span></label>
                             <input type="number" id="g-condition" min="0" max="100" placeholder="e.g. 90">
                         </div>
@@ -4261,7 +4249,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 <!-- Product Image -->
                 ${productImage ? 
                     `<img src="${sanitizeURL(productImage)}" alt="${sanitizeText(g.name)}" class="product-image">` :
-                    `<div class="product-image-placeholder">${getCategoryIcon(g.category)}</div>`
+                    `<div class="product-image-placeholder">${getCategoryEmoji(g.category)}</div>`
                 }
                 
                 <!-- Card Info -->
@@ -4270,7 +4258,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                         <div style="flex: 1;">
                             <div class="item-title">${sanitizeText(g.name)}</div>
                             <div class="item-meta">
-                                <span class="item-category">${getCategoryIcon(g.category)} ${sanitizeText(g.category)}</span>
+                                <span class="item-category">${sanitizeText(g.category)}</span>
                             </div>
                         </div>
                         <div class="expand-arrow">▼</div>
