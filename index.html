@@ -4133,6 +4133,9 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
     const imageUrl = document.getElementById('g-final-image-url').value;
     const condition = document.getElementById('g-condition').value;
 
+    console.log('🟢 Gadget form submitted');
+    console.log('  Raw imageUrl from hidden input:', imageUrl);
+
     const gadget = {
         name: sanitizeText(document.getElementById('g-name').value),           // ← SANITIZED
         category: sanitizeText(document.getElementById('g-category').value),   // ← SANITIZED
@@ -4146,6 +4149,9 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         condition: condition ? sanitizeNumber(parseInt(condition)) : null,     // ← NEW: Condition/Rating
         timestamp: Date.now()
     };
+    
+    console.log('  Gadget object to save:', gadget);
+    console.log('  imageUrl after sanitization:', gadget.imageUrl);
 
     try {
         if (window.editingGadgetId) {
@@ -4238,7 +4244,13 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         const productImage = g.imageUrl;
         
         // Debug: Check if image is being saved
-        if (index === 0) console.log('First gadget imageUrl:', g.imageUrl, 'Category:', g.category);
+        if (index === 0) {
+            console.log('🟡 First gadget in renderGadgets:');
+            console.log('  imageUrl:', g.imageUrl);
+            console.log('  name:', g.name);
+            console.log('  category:', g.category);
+            console.log('  Full gadget object:', g);
+        }
         
         return `
         <div class="item-card" id="${cardId}" onclick="toggleCard('${cardId}')">
@@ -6700,9 +6712,15 @@ window.importDigitalCSV = async function (event) {
                 // Attach click listeners via delegation (safe with any URL)
                 resultsContainer.querySelectorAll('.search-result-item').forEach(item => {
                     item.addEventListener('click', function() {
+                        const imageUrl = this.getAttribute('data-full-url');
+                        console.log('🔴 Search result clicked');
+                        console.log('  imageUrl:', imageUrl);
+                        
                         resultsContainer.querySelectorAll('.search-result-item').forEach(i => i.classList.remove('selected'));
                         this.classList.add('selected');
-                        currentPickerImageUrl = this.getAttribute('data-full-url');
+                        currentPickerImageUrl = imageUrl;
+                        
+                        console.log('  currentPickerImageUrl set to:', currentPickerImageUrl);
                     });
                 });
                 
@@ -6739,6 +6757,10 @@ window.importDigitalCSV = async function (event) {
         
         // Save the picked image
         window.savePickedImage = function() {
+            console.log('🔵 savePickedImage called');
+            console.log('  currentPickerImageUrl:', currentPickerImageUrl);
+            console.log('  currentPickerTarget:', currentPickerTarget);
+            
             if (!currentPickerImageUrl) {
                 alert('Please select or enter an image first');
                 return;
@@ -6755,9 +6777,18 @@ window.importDigitalCSV = async function (event) {
                           currentPickerTarget === 'game' ? 'gm' :
                           currentPickerTarget === 'edit-game' ? 'edit-gm' : '';
             
+            console.log('  Determined prefix:', prefix);
+            
             if (prefix) {
                 // Update hidden input
-                document.getElementById(`${prefix}-final-image-url`).value = currentPickerImageUrl;
+                const hiddenInput = document.getElementById(`${prefix}-final-image-url`);
+                console.log('  Hidden input element:', hiddenInput);
+                if (hiddenInput) {
+                    hiddenInput.value = currentPickerImageUrl;
+                    console.log('  ✅ Set hidden input value to:', hiddenInput.value);
+                } else {
+                    console.error('  ❌ Hidden input not found!');
+                }
                 
                 // Update preview container with horizontal layout
                 const container = document.getElementById(`${prefix}-image-preview-container`);
@@ -6766,6 +6797,9 @@ window.importDigitalCSV = async function (event) {
                         <img src="${currentPickerImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
                         <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added ✓</div>
                     `;
+                    console.log('  ✅ Updated preview container');
+                } else {
+                    console.error('  ❌ Preview container not found!');
                 }
             }
             
