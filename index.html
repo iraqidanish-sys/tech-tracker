@@ -123,8 +123,13 @@
         }
         
         .logo::before {
-            content: '🏠';
-            font-size: 32px;
+            content: '';
+            display: none;
+        }
+        
+        .logo-icon {
+            display: inline-flex;
+            align-items: center;
             animation: iconPulse 2s ease-in-out infinite;
             filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
         }
@@ -1766,7 +1771,20 @@
         
         <!-- Top Navigation -->
         <nav class="top-nav">
-            <div class="logo">GearNest</div>
+            <div class="logo">
+                <span class="logo-icon">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke:url(#logoGradDef);">
+                        <defs>
+                            <linearGradient id="logoGradDef" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981"/>
+                                <stop offset="100%" stop-color="#06b6d4"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </span>
+                GearNest
+            </div>
             <div class="desktop-nav-links" id="desktopNavLinks">
                 <div class="desktop-nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
                     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
@@ -1811,9 +1829,9 @@
                     <div id="profileMenu" style="display:none; position:absolute; top:52px; right:0; min-width:220px; background:rgba(15,23,42,0.98); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:8px; z-index:9999; box-shadow:0 16px 48px rgba(0,0,0,0.5);">
                         <div id="profileMenuName" style="padding:12px 14px 4px; font-weight:700; font-size:15px; color:#fff;"></div>
                         <div id="profileMenuEmail" style="padding:0 14px 12px; font-size:12px; color:rgba(255,255,255,0.5); border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:8px; word-break:break-all;"></div>
-                        <div id="profileMenuAdmin" onclick="showSection('admin'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:14px; display:none; align-items:center; gap:10px; border:1px solid rgba(251, 191, 36, 0.2); margin-bottom:8px;" onmouseover="this.style.background='rgba(251, 191, 36, 0.1)'; this.style.borderColor='rgba(251, 191, 36, 0.4)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(251, 191, 36, 0.2)'">👑 Admin Panel</div>
+                        <div id="profileMenuAdmin" onclick="showSection('admin'); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:14px; display:none; align-items:center; gap:10px; border:1px solid rgba(251, 191, 36, 0.2); margin-bottom:8px;" onmouseover="this.style.background='rgba(251, 191, 36, 0.1)'; this.style.borderColor='rgba(251, 191, 36, 0.4)'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(251, 191, 36, 0.2)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" style="flex-shrink:0;"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg> Admin Panel</div>
                         <div style="border-top:1px solid rgba(255,255,255,0.08); margin:8px 0;"></div>
-                        <div onclick="document.getElementById('signOutBtn').click(); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#ef4444; font-size:14px; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">🚪 Sign Out</div>
+                        <div onclick="document.getElementById('signOutBtn').click(); toggleProfileMenu();" style="padding:10px 14px; cursor:pointer; border-radius:10px; color:#ef4444; font-size:14px; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</div>
                     </div>
                 </div>
             </div>
@@ -1828,7 +1846,7 @@
                 <p style="color:var(--text-secondary);margin-bottom:28px;">Welcome back!</p>
 
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">📱 Gadgets</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Gadgets</h3>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-gadgets">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-gadgets-value">₹0</div></div></div>
@@ -1838,7 +1856,7 @@
                 </div>
 
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🎮 Games</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg> Games</h3>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-games">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-games-value">₹0</div></div></div>
@@ -1848,7 +1866,7 @@
                 </div>
 
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">💳 Digital</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Digital</h3>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Purchases</div><div class="stat-value" id="dash-total-digital">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Spent</div><div class="stat-value" style="font-size:22px;" id="dash-digital-spent">₹0</div></div></div>
@@ -1857,14 +1875,14 @@
                 </div>
 
                 <div>
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🕐 Recent Activity</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Recent Activity</h3>
                     <div id="recent-items" class="items-grid"></div>
                 </div>
             </div>
 
             <!-- ==================== GADGETS ==================== -->
             <div id="gadgets" class="section">
-                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">📱 Gadgets</h1>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:12px;"><span style="display:inline-flex;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);border-radius:12px;padding:8px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span> Gadgets</h1>
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add / Edit Gadget</h3>
                     <form id="gadget-form">
@@ -1887,7 +1905,7 @@
                                 <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
                                 <div onclick="openImagePicker('gadget')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                                     <div id="g-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                                        <div style="font-size: 24px;">📷</div>
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                                         <div style="font-size: 13px; color: var(--text-muted);">Click to add image</div>
                                     </div>
                                     <input type="hidden" id="g-final-image-url" value="">
@@ -1909,7 +1927,7 @@
 
             <!-- ==================== GAMES ==================== -->
             <div id="games" class="section">
-                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">🎮 Games</h1>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:12px;"><span style="display:inline-flex;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);border-radius:12px;padding:8px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg></span> Games</h1>
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add / Edit Game</h3>
                     <form id="game-form">
@@ -1932,7 +1950,7 @@
                                 <label>Game Cover <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
                                 <div onclick="openImagePicker('game')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                                     <div id="gm-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                                        <div style="font-size: 24px;">🎮</div>
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>
                                         <div style="font-size: 13px; color: var(--text-muted);">Click to add cover</div>
                                     </div>
                                     <input type="hidden" id="gm-final-image-url" value="">
@@ -1953,7 +1971,7 @@
 
             <!-- ==================== DIGITAL ==================== -->
             <div id="digital" class="section">
-                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">💳 Digital</h1>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:12px;"><span style="display:inline-flex;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);border-radius:12px;padding:8px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span> Digital</h1>
                 <div class="add-form">
                     <h3 style="margin-bottom:20px;">Add Digital Purchase</h3>
                     <form id="digital-form">
@@ -1979,7 +1997,7 @@
 
             <!-- ==================== SETTINGS ==================== -->
             <div id="settings" class="section">
-                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">⚙️ Settings</h1>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:12px;"><span style="display:inline-flex;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);border-radius:12px;padding:8px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Settings</h1>
 
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;">👤 Account</h3>
@@ -1988,20 +2006,20 @@
                     <!-- Account Actions Row -->
                     <div style="display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;">
                         <!-- Sign Out Button (Left) -->
-                        <button id="signOutBtn" class="btn" style="flex:1;min-width:140px;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);">🚪 Sign Out</button>
+                        <button id="signOutBtn" class="btn" style="flex:1;min-width:140px;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
                         
                         <!-- Encryption Button (Right) - Show when DISABLED -->
-                        <button id="encryption-disabled-controls" onclick="const modal = document.getElementById('encryptionSetupModal'); modal.style.display='flex'; modal.classList.add('active'); console.log('Modal opened');" class="btn" style="flex:1;min-width:160px;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);display:block;">🔐 Setup Encryption</button>
+                        <button id="encryption-disabled-controls" onclick="const modal = document.getElementById('encryptionSetupModal'); modal.style.display='flex'; modal.classList.add('active'); console.log('Modal opened');" class="btn" style="flex:1;min-width:160px;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);display:block;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Setup Encryption</button>
                         
                         <!-- Encryption Button (Right) - Show when ENABLED -->
                         <button id="encryption-enabled-controls" onclick="if(confirm('⚠️ Are you sure you want to disable encryption?\\n\\nYour data will no longer be encrypted.')) { disableEncryption(); }" class="btn" style="flex:1;min-width:160px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);display:none;">
-                            🔓 Disable Encryption
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Disable Encryption
                         </button>
                     </div>
                     
                     <!-- Encryption Status Display -->
                     <div id="encryption-status" style="padding:12px 16px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.1);margin-top:12px;display:flex;align-items:center;gap:10px;">
-                        <span id="encryption-status-icon" style="font-size:20px;">🔓</span>
+                        <span id="encryption-status-icon" style="font-size:20px; display:inline-flex; align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span>
                         <div style="flex:1;">
                             <div id="encryption-status-text" style="font-weight:600;font-size:13px;">Encryption Disabled</div>
                             <div id="encryption-status-subtitle" style="font-size:11px;color:var(--text-muted);">Your data is stored without encryption</div>
@@ -2010,7 +2028,7 @@
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:16px;">📱 Gadget Categories</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Gadget Categories</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
                         <input type="text" id="new-gadget-category" placeholder="New category" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addGadgetCategory()">Add</button>
@@ -2019,7 +2037,7 @@
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:16px;">🎮 Game Platforms</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>Game Platforms</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
                         <input type="text" id="new-game-platform" placeholder="New platform" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addGamePlatform()">Add</button>
@@ -2037,7 +2055,7 @@
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:16px;">💳 Digital Types</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Digital Types</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
                         <input type="text" id="new-digital-type" placeholder="New type" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addDigitalType()">Add</button>
@@ -2060,16 +2078,16 @@
                         <img id="icon-preview-img" style="width:48px;height:48px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.9);padding:4px;" alt="Preview">
                         <span style="color:var(--text-secondary);font-size:14px;">Preview</span>
                     </div>
-                    <button class="btn" onclick="saveCustomIcon()" style="margin-bottom:16px;">💾 Save Icon</button>
+                    <button class="btn" onclick="saveCustomIcon()" style="margin-bottom:16px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Icon</button>
                     <div id="icons-grid"></div>
                 </div>
             </div>
 
             <!-- ==================== ADMIN ==================== -->
             <div id="admin" class="section">
-                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;">👑 Admin Panel</h1>
+                <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:12px;"><span style="display:inline-flex;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);border-radius:12px;padding:8px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg></span> Admin Panel</h1>
                 <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:16px;">🔍 Find User</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Find User</h3>
                     <div style="display:flex;gap:8px;margin-bottom:16px;">
                         <input type="email" id="admin-search-email" placeholder="user@email.com" style="flex:1;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="searchUser()">Search</button>
@@ -4157,7 +4175,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         const container = document.getElementById('g-image-preview-container');
         if (container) {
             container.innerHTML = `
-                <div style="font-size: 24px;">📷</div>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 <div style="font-size: 13px; color: var(--text-muted);">Click to add image</div>
             `;
         }
@@ -4218,7 +4236,6 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         
         // Determine product image
         const productImage = g.imageUrl;
-        const categoryEmoji = getCategoryEmoji(g.category);
         
         // Debug: Check if image is being saved
         if (index === 0) console.log('First gadget imageUrl:', g.imageUrl, 'Category:', g.category);
@@ -4236,7 +4253,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                         <!-- Product Image -->
                         ${productImage ? 
                             `<img src="${sanitizeURL(productImage)}" alt="${sanitizeText(g.name)}" class="product-image">` :
-                            `<div class="product-image-placeholder">${getCategoryEmoji(g.category)}</div>`
+                            `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;">${getCategoryIcon(g.category)}</div>`
                         }
                         
                         <!-- Info beside image -->
@@ -4248,7 +4265,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                             <!-- Badges Row -->
                             <div class="badge-row">
                                 <span class="status-badge status-${g.status || 'owned'}">
-                                    ${g.status === 'sold' ? '💰' : '✅'} ${(g.status || 'owned').toUpperCase()}
+                                    ${g.status === 'sold' ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'} ${(g.status || 'owned').toUpperCase()}
                                 </span>
                                 ${g.condition ? `<span class="rating-badge">${g.condition}</span>` : ''}
                             </div>
@@ -4291,10 +4308,10 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 <!-- Action Buttons -->
                 <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
                     <button class="btn-edit" onclick="editGadget('${g.firestoreId}')" style="flex: 1;">
-                        ✏️ Edit
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
                     </button>
                     <button class="btn-delete" onclick="deleteGadget('${g.firestoreId}', '${sanitizeText(g.name).replace(/'/g, "\\'")}')" style="flex: 1;">
-                        🗑️ Delete
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete
                     </button>
                 </div>
             </div>
@@ -4348,7 +4365,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 `;
             } else {
                 container.innerHTML = `
-                    <div style="font-size: 24px;">📷</div>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                     <div style="font-size: 13px; color: var(--text-muted);">Click to add/change image</div>
                 `;
             }
@@ -4460,7 +4477,7 @@ document.getElementById('gm-final-image-url').value = '';
 const gmContainer = document.getElementById('gm-image-preview-container');
 if (gmContainer) {
     gmContainer.innerHTML = `
-        <div style="font-size: 24px;">🎮</div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>
         <div style="font-size: 13px; color: var(--text-muted);">Click to add cover</div>
     `;
 }
@@ -4489,7 +4506,7 @@ if (gmContainer) {
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🎮</div>
+                        <div class="empty-state-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4;"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg></div>
                         <p>No games in this category yet!</p>
                     </div>
                 `;
@@ -4517,7 +4534,7 @@ if (gmContainer) {
                                     <!-- Game Cover Image -->
                                     ${g.imageUrl ? 
                                         `<img src="${sanitizeURL(g.imageUrl)}" alt="${sanitizeText(g.title)}" class="product-image">` :
-                                        `<div class="product-image-placeholder">🎮</div>`
+                                        `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg></div>`
                                     }
                                     
                                     <!-- Info -->
@@ -4530,7 +4547,7 @@ if (gmContainer) {
                                         <!-- Badges Row -->
                                         <div class="badge-row">
                                             <span class="status-badge status-${g.status}">
-                                                ${g.status === 'sold' ? '💰' : '✅'} ${g.status.toUpperCase()}
+                                                ${g.status === 'sold' ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'} ${g.status.toUpperCase()}
                                             </span>
                                         </div>
                                     </div>
@@ -4566,12 +4583,12 @@ if (gmContainer) {
                                 </div>
                                 <div class="info-row">
                                     <span class="info-label">Held For</span>
-                                    <span class="info-value" style="color: #00f5ff; font-weight: 600;">⏱️ ${duration}</span>
+                                    <span class="info-value" style="color: #00f5ff; font-weight: 600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</span>
                                 </div>
                                 ` : `
                                 <div class="info-row">
                                     <span class="info-label">Owned For</span>
-                                    <span class="info-value" style="color: #00f5ff; font-weight: 600;">⏱️ ${duration}</span>
+                                    <span class="info-value" style="color: #00f5ff; font-weight: 600;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</span>
                                 </div>
                                 `}
                                 ${g.notes ? `
@@ -4585,10 +4602,10 @@ if (gmContainer) {
                             <!-- Action Buttons -->
                             <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
                                 <button class="btn-edit" onclick="editGame('${g.firestoreId}')" style="flex: 1;">
-                                    ✏️ Edit
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
                                 </button>
                                 <button class="btn-delete" onclick="deleteGame('${g.firestoreId}', '${sanitizeText(g.title).replace(/'/g, "\\'")}')" style="flex: 1;">
-                                    🗑️ Delete
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete
                                 </button>
                             </div>
                         </div>
@@ -4632,6 +4649,24 @@ if (gmContainer) {
             document.getElementById('edit-gm-sell-date').value = game.sellDate || '';
             document.getElementById('edit-gm-notes').value = game.notes || '';
 
+            // Populate image preview
+            const editGmImageUrl = game.imageUrl || '';
+            document.getElementById('edit-gm-final-image-url').value = editGmImageUrl;
+            const editGmContainer = document.getElementById('edit-gm-image-preview-container');
+            if (editGmContainer) {
+                if (editGmImageUrl) {
+                    editGmContainer.innerHTML = `
+                        <img src="${editGmImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                        <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Cover added ✓</div>
+                    `;
+                } else {
+                    editGmContainer.innerHTML = `
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        <div style="font-size: 13px; color: var(--text-muted);">Click to add/change cover</div>
+                    `;
+                }
+            }
+
             // Store editing ID
             window.editingGameId = firestoreId;
             
@@ -4653,6 +4688,7 @@ if (gmContainer) {
             
             const sellPrice = document.getElementById('edit-gm-sell-price').value;
             const sellDate = document.getElementById('edit-gm-sell-date').value;
+            const editGmImageUrl = document.getElementById('edit-gm-final-image-url').value;
 
             const game = {
                 title: sanitizeText(document.getElementById('edit-gm-title').value),
@@ -4664,6 +4700,7 @@ if (gmContainer) {
                 sellPrice: sellPrice ? sanitizeNumber(parseFloat(sellPrice)) : null,
                 sellDate: sellDate || null,
                 notes: sanitizeHTML(document.getElementById('edit-gm-notes').value),
+                imageUrl: editGmImageUrl ? sanitizeURL(editGmImageUrl) : null,
                 status: (sellPrice && sellDate) ? 'sold' : 'owned',
                 timestamp: Date.now()
             };
@@ -4769,7 +4806,7 @@ if (gmContainer) {
             if (recent.length === 0) {
                 recentContainer.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🚀</div>
+                        <div class="empty-state-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div>
                         <p>Start adding gadgets and games to build your collection!</p>
                     </div>
                 `;
@@ -4791,7 +4828,7 @@ if (gmContainer) {
                                 </div>
                                 <div style="margin-top: 10px;">
                                     <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
-                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px;">⏱️ ${duration}</div>
+                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</div>
                                 </div>
                             </div>
                         `;
@@ -4828,7 +4865,7 @@ if (gmContainer) {
                                 </div>
                                 <div style="margin-top: 10px;">
                                     <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
-                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px;">⏱️ ${duration}</div>
+                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</div>
                                 </div>
                             </div>
                         `;
@@ -4921,7 +4958,7 @@ if (gmContainer) {
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">💳</div>
+                        <div class="empty-state-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
                         <p>No digital purchases in this category yet!</p>
                     </div>
                 `;
@@ -4951,7 +4988,7 @@ if (gmContainer) {
                                     <!-- Badges Row -->
                                     <div class="badge-row">
                                         <span class="status-badge ${isExpired ? 'status-sold' : 'status-owned'}">
-                                            ${isExpired ? '⏰ EXPIRED' : '✅ ACTIVE'}
+                                            ${isExpired ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> EXPIRED' : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> ACTIVE'}
                                         </span>
                                     </div>
                                 </div>
@@ -4989,10 +5026,10 @@ if (gmContainer) {
                         <!-- Action Buttons -->
                         <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
                             <button class="btn-edit" onclick="editDigital('${d.firestoreId}')" style="flex: 1;">
-                                ✏️ Edit
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
                             </button>
                             <button class="btn-delete" onclick="deleteDigital('${d.firestoreId}', '${sanitizeText(d.name).replace(/'/g, "\\'")}')" style="flex: 1;">
-                                🗑️ Delete
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete
                             </button>
                         </div>
                     </div>
@@ -5663,7 +5700,7 @@ window.importDigitalCSV = async function (event) {
             }
             
             if (isEnabled) {
-                statusIcon.textContent = '🔐';
+                statusIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
                 statusText.textContent = 'Encryption Enabled';
                 statusSubtitle.textContent = 'Your data is protected with end-to-end encryption';
                 statusContainer.style.background = 'rgba(16, 185, 129, 0.15)';
@@ -5673,7 +5710,7 @@ window.importDigitalCSV = async function (event) {
                 if (disabledBtn) disabledBtn.style.display = 'none';
                 if (enabledBtn) enabledBtn.style.display = 'block';
             } else {
-                statusIcon.textContent = '🔓';
+                statusIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
                 statusText.textContent = 'Encryption Disabled';
                 statusSubtitle.textContent = 'Your data is stored without encryption';
                 statusContainer.style.background = 'rgba(148, 163, 184, 0.1)';
@@ -5951,7 +5988,7 @@ window.importDigitalCSV = async function (event) {
                             <div>
                                 <strong style="color: #f1f5f9; font-size: 15px;">${data.email}</strong>
                                 <span style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 10px; background: ${data.blocked ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%)' : 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%)'}; color: ${data.blocked ? '#fbbf24' : '#10b981'}; border: 1px solid ${data.blocked ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.4)'};">
-                                    ${data.blocked ? '🚫 BLOCKED' : '✅ ACTIVE'}
+                                    ${data.blocked ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> BLOCKED' : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> ACTIVE'}
                                 </span>
                             </div>
                             <div>
@@ -6095,7 +6132,7 @@ window.importDigitalCSV = async function (event) {
 <div id="gameEditModal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 30px; border: 1px solid rgba(16, 185, 129, 0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">🎮 Edit Game</h2>
+            <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>Edit Game</h2>
             <button onclick="closeGameEditModal()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
         
@@ -6144,15 +6181,27 @@ window.importDigitalCSV = async function (event) {
                     <label>Notes</label>
                     <textarea id="edit-gm-notes" rows="2" placeholder="Any notes..."></textarea>
                 </div>
+                
+                <!-- Game Image Upload -->
+                <div class="input-group">
+                    <label>Game Cover <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
+                    <div onclick="openImagePicker('edit-game')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+                        <div id="edit-gm-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            <div style="font-size: 13px; color: var(--text-muted);">Click to add/change cover</div>
+                        </div>
+                        <input type="hidden" id="edit-gm-final-image-url" value="">
+                    </div>
+                </div> 
             </div>
             <div style="display: flex; gap: 12px; margin-top: 24px;">
-                <button type="button" onclick="closeGameEditModal()" 
+                <button type="button" onclick="closeGameEditModal()"
                         style="flex: 1; padding: 14px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
                     Cancel
                 </button>
                 <button type="submit" 
                         style="flex: 2; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
-                    💾 Save Changes
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Changes
                 </button>
             </div>
         </form>
@@ -6163,7 +6212,7 @@ window.importDigitalCSV = async function (event) {
 <div id="gadgetEditModal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 30px; border: 1px solid rgba(16, 185, 129, 0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">📱 Edit Gadget</h2>
+            <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Edit Gadget</h2>
             <button onclick="closeGadgetEditModal()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
         
@@ -6199,7 +6248,7 @@ window.importDigitalCSV = async function (event) {
                     <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
                     <div onclick="openImagePicker('edit-gadget')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                         <div id="edit-g-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                            <div style="font-size: 24px;">📷</div>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                             <div style="font-size: 13px; color: var(--text-muted);">Click to add/change image</div>
                         </div>
                         <input type="hidden" id="edit-g-final-image-url" value="">
@@ -6224,7 +6273,7 @@ window.importDigitalCSV = async function (event) {
                 </button>
                 <button type="submit" 
                         style="flex: 2; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
-                    💾 Save Changes
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Changes
                 </button>
             </div>
         </form>
@@ -6235,7 +6284,7 @@ window.importDigitalCSV = async function (event) {
 <div id="digitalEditModal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 30px; border: 1px solid rgba(16, 185, 129, 0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">💳 Edit Digital Purchase</h2>
+            <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Edit Digital Purchase</h2>
             <button onclick="closeDigitalEditModal()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
         
@@ -6273,7 +6322,7 @@ window.importDigitalCSV = async function (event) {
                 </button>
                 <button type="submit" 
                         style="flex: 2; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
-                    💾 Save Changes
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Changes
                 </button>
             </div>
         </form>
@@ -6328,7 +6377,7 @@ window.importDigitalCSV = async function (event) {
                     style="flex: 2; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;"
                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(16, 185, 129, 0.5)'"
                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.3)'">
-                🔐 Enable Encryption
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Enable Encryption
             </button>
         </div>
 
@@ -6366,7 +6415,7 @@ window.importDigitalCSV = async function (event) {
 
         <button onclick="unlockData()" 
                 style="width: 100%; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
-            🔓 Unlock My Data
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Unlock My Data
         </button>
 
         <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(148, 163, 184, 0.1);">
@@ -6789,10 +6838,19 @@ window.importDigitalCSV = async function (event) {
                 }
                 
                 resultsContainer.innerHTML = data.results.map(photo => `
-                    <div class="search-result-item" onclick="pickerSelectImage('${photo.urls.regular}', this)">
+                    <div class="search-result-item" data-full-url="${photo.urls.regular.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
                         <img src="${photo.urls.thumb}" alt="${photo.alt_description || 'Photo'}">
                     </div>
                 `).join('');
+                
+                // Attach click listeners via delegation (safe with any URL)
+                resultsContainer.querySelectorAll('.search-result-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        resultsContainer.querySelectorAll('.search-result-item').forEach(i => i.classList.remove('selected'));
+                        this.classList.add('selected');
+                        currentPickerImageUrl = this.getAttribute('data-full-url');
+                    });
+                });
                 
             } catch (error) {
                 console.error('Search error:', error);
@@ -6869,15 +6927,15 @@ window.importDigitalCSV = async function (event) {
 <div id="imagePickerModal" class="modal" style="display: none;">
     <div class="modal-content" style="max-width: 500px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 24px; border: 1px solid rgba(16, 185, 129, 0.3);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="font-size: 20px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">📷 Add Product Image</h2>
+            <h2 style="font-size: 20px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Add Product Image</h2>
             <button onclick="closeImagePicker()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 8px; font-size: 18px; cursor: pointer;">×</button>
         </div>
         
         <!-- Image Tabs -->
         <div class="image-tabs">
-            <button type="button" class="tab-btn active" onclick="switchImageTab(event, 'picker-url')">🔗 URL</button>
-            <button type="button" class="tab-btn" onclick="switchImageTab(event, 'picker-search')">🔍 Search</button>
-            <button type="button" class="tab-btn" onclick="switchImageTab(event, 'picker-upload')">📷 Upload</button>
+            <button type="button" class="tab-btn active" onclick="switchImageTab(event, 'picker-url')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>URL</button>
+            <button type="button" class="tab-btn" onclick="switchImageTab(event, 'picker-search')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search</button>
+            <button type="button" class="tab-btn" onclick="switchImageTab(event, 'picker-upload')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button>
         </div>
         
         <!-- Tab 1: URL (Default) -->
@@ -6892,7 +6950,7 @@ window.importDigitalCSV = async function (event) {
         <div id="picker-search" class="tab-content">
             <div style="display: flex; gap: 6px; margin-bottom: 8px;">
                 <input type="text" id="picker-search-query" placeholder="Search for product images..." style="flex: 1;">
-                <button type="button" class="btn-search" onclick="pickerSearchImages()">🔍</button>
+                <button type="button" class="btn-search" onclick="pickerSearchImages()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
             </div>
             <div id="picker-search-results" class="search-results"></div>
         </div>
@@ -6901,7 +6959,7 @@ window.importDigitalCSV = async function (event) {
         <div id="picker-upload" class="tab-content">
             <input type="file" id="picker-file-input" accept="image/*" style="display: none;" onchange="pickerHandleUpload(event)">
             <div class="upload-placeholder" onclick="document.getElementById('picker-file-input').click()">
-                <div style="font-size: 32px; margin-bottom: 6px;">📷</div>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:6px;color:#10b981;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
                 <div style="font-size: 12px; font-weight: 600; margin-bottom: 4px;">Click to upload</div>
                 <div style="font-size: 11px; color: var(--text-muted);">or drag and drop</div>
             </div>
