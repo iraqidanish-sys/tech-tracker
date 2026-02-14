@@ -1875,26 +1875,26 @@
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="g-date" required></div>
                             <div class="input-group"><label>Sell Price (₹) <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="number" id="g-sell-price" placeholder="Leave blank if owned"></div>
                             <div class="input-group"><label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="g-sell-date"></div>
-                        </div>
-                        
-                        <!-- Clickable Image Icon -->
-                        <div class="input-group" style="margin-top: 8px;">
-                            <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
-                            <div onclick="openImagePicker('gadget')" style="cursor: pointer;">
-                                <div id="g-image-preview-container">
-                                    <div class="product-image-placeholder" style="margin: 0;">
-                                        <div style="font-size: 32px;">📷</div>
-                                        <div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Click to add image</div>
-                                    </div>
-                                </div>
-                                <input type="hidden" id="g-final-image-url" value="">
+                            
+                            <!-- Condition/Rating Field -->
+                            <div class="input-group">
+                                <label>Condition/Rating <span style="color:var(--text-muted);font-size:11px;">(0-100, optional)</span></label>
+                                <input type="number" id="g-condition" min="0" max="100" placeholder="e.g. 90">
                             </div>
-                        </div>
-                        
-                        <!-- Condition/Rating Field -->
-                        <div class="input-group" style="margin-top: 8px;">
-                            <label>Condition/Rating <span style="color:var(--text-muted);font-size:11px;">(0-100, optional)</span></label>
-                            <input type="number" id="g-condition" min="0" max="100" placeholder="e.g. 90">
+                            
+                            <!-- Clickable Image Icon -->
+                            <div class="input-group">
+                                <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
+                                <div onclick="openImagePicker('gadget')" style="cursor: pointer; display: flex; justify-content: center;">
+                                    <div id="g-image-preview-container">
+                                        <div class="product-image-placeholder" style="margin: 0;">
+                                            <div style="font-size: 32px;">📷</div>
+                                            <div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Click to add</div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="g-final-image-url" value="">
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="g-notes" rows="2" placeholder="Any notes..."></textarea></div>
@@ -1923,10 +1923,25 @@
                                 </div>
                             </div>
                             <div class="input-group"><label>Genre</label><select id="gm-genre"></select></div>
+                            <div class="input-group"><label>Condition</label><select id="gm-condition"></select></div>
                             <div class="input-group"><label>Buy Price (₹)</label><input type="number" id="gm-buy-price" placeholder="0" required></div>
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="gm-buy-date" required></div>
                             <div class="input-group"><label>Sell Price (₹) <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="number" id="gm-sell-price" placeholder="Leave blank if owned"></div>
                             <div class="input-group"><label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="gm-sell-date"></div>
+                            
+                            <!-- Clickable Image Icon for Games -->
+                            <div class="input-group">
+                                <label>Game Cover <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
+                                <div onclick="openImagePicker('game')" style="cursor: pointer; display: flex; justify-content: center;">
+                                    <div id="gm-image-preview-container">
+                                        <div class="product-image-placeholder" style="margin: 0;">
+                                            <div style="font-size: 32px;">🎮</div>
+                                            <div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Click to add</div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="gm-final-image-url" value="">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="gm-notes" rows="2" placeholder="Any notes..."></textarea></div>
                         <button type="submit" class="btn">Add to Collection</button>
@@ -4396,6 +4411,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             
             const sellPrice = document.getElementById('gm-sell-price').value;
             const sellDate = document.getElementById('gm-sell-date').value;
+            const imageUrl = document.getElementById('gm-final-image-url').value;
 
             const game = {
                 title: document.getElementById('gm-title').value,
@@ -4408,6 +4424,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 sellDate: sellDate || null,
                 notes: document.getElementById('gm-notes').value,
                 status: (sellPrice && sellDate) ? 'sold' : 'owned',
+                imageUrl: imageUrl ? sanitizeURL(imageUrl) : null,
                 timestamp: Date.now()
             };
 
@@ -4437,6 +4454,17 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 await loadData();
 e.target.reset();
 document.getElementById('gm-buy-date').valueAsDate = new Date();
+
+// Reset image preview
+document.getElementById('gm-final-image-url').value = '';
+const gmContainer = document.getElementById('gm-image-preview-container');
+if (gmContainer) {
+    gmContainer.innerHTML = `
+        <div class="product-image-placeholder" style="margin: 0;">
+            <div style="font-size: 32px;">🎮</div>
+            <div style="font-size: 11px; margin-top: 4px; color: var(--text-muted);">Click to add</div>
+        </div>`;
+}
             } catch (error) {
                 console.error('Error adding game:', error);
                 alert('Error adding game. Please try again.');
@@ -4485,8 +4513,14 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
                                 <!-- Title Above Everything -->
                                 <div class="item-title" style="margin-bottom: 12px;">${sanitizeText(g.title)}</div>
                                 
-                                <!-- Content Row: Info Only (no placeholder) -->
-                                <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                <!-- Content Row: Image + Info -->
+                                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                    <!-- Game Cover Image -->
+                                    ${g.imageUrl ? 
+                                        `<img src="${sanitizeURL(g.imageUrl)}" alt="${sanitizeText(g.title)}" class="product-image">` :
+                                        `<div class="product-image-placeholder">🎮</div>`
+                                    }
+                                    
                                     <!-- Info -->
                                     <div style="flex: 1; min-width: 0;">
                                         <div class="item-meta" style="margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
@@ -6492,17 +6526,23 @@ window.importDigitalCSV = async function (event) {
         function switchImageTab(event, tabId) {
             event.preventDefault();
             
-            // Get the form prefix (g- or gm-)
-            const prefix = tabId.split('-')[0];
+            // Get the parent container (either image-upload-container or modal-content)
+            const container = event.target.closest('.image-upload-container') || event.target.closest('.modal-content');
             
-            // Remove active class from all tabs and contents
-            const container = event.target.closest('.image-upload-container');
+            if (!container) return;
+            
+            // Remove active class from all tabs and contents in this container
             container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
             // Add active class to clicked tab
             event.target.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+            
+            // Show the corresponding tab content
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
         }
 
         // Handle file upload
@@ -6802,7 +6842,9 @@ window.importDigitalCSV = async function (event) {
             
             // Determine which form to update
             const prefix = currentPickerTarget === 'gadget' ? 'g' : 
-                          currentPickerTarget === 'edit-gadget' ? 'edit-g' : '';
+                          currentPickerTarget === 'edit-gadget' ? 'edit-g' : 
+                          currentPickerTarget === 'game' ? 'gm' :
+                          currentPickerTarget === 'edit-game' ? 'edit-gm' : '';
             
             if (prefix) {
                 // Update hidden input
