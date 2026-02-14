@@ -2463,6 +2463,17 @@ function sanitizeText(text) {
 function sanitizeURL(url) {
     if (!url) return '';
     const trimmed = url.trim();
+    
+    // Allow data: URLs for base64 encoded images
+    if (trimmed.startsWith('data:image/')) {
+        // Basic validation: check if it's a valid data URL format
+        if (trimmed.match(/^data:image\/(png|jpeg|jpg|gif|webp);base64,/i)) {
+            return trimmed;
+        }
+        return '';
+    }
+    
+    // For HTTP/HTTPS URLs, check against allowed domains
     if (!trimmed.match(/^https?:\/\//i)) {
         return '';
     }
@@ -2472,7 +2483,8 @@ function sanitizeURL(url) {
             'imgur.com', 'i.imgur.com',
             'cloudinary.com',
             'firebasestorage.googleapis.com',
-            'cdn.jsdelivr.net'
+            'cdn.jsdelivr.net',
+            'images.unsplash.com'
         ];
         const isAllowed = allowedDomains.some(domain => 
             parsed.hostname === domain || parsed.hostname.endsWith('.' + domain)
@@ -4424,10 +4436,22 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         window.updateGadgetFromModal = async function(e) {
             e.preventDefault();
             
+            console.log('🔵 updateGadgetFromModal called');
+            
+            const hiddenInput = document.getElementById('edit-g-final-image-url');
+            console.log('  Hidden input element exists:', !!hiddenInput);
+            if (hiddenInput) {
+                console.log('  Hidden input value:', hiddenInput.value);
+                console.log('  Hidden input value length:', hiddenInput.value.length);
+            }
+            
             const sellPrice = document.getElementById('edit-g-sell-price').value;
             const sellDate = document.getElementById('edit-g-sell-date').value;
-            const imageUrl = document.getElementById('edit-g-final-image-url').value;
+            const imageUrl = hiddenInput ? hiddenInput.value : '';
             const condition = document.getElementById('edit-g-condition').value;
+            
+            console.log('  imageUrl variable:', imageUrl);
+            console.log('  imageUrl length:', imageUrl ? imageUrl.length : 0);
 
             const gadget = {
                 name: sanitizeText(document.getElementById('edit-g-name').value),
@@ -4442,6 +4466,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 condition: condition ? sanitizeNumber(parseInt(condition)) : null,
                 timestamp: Date.now()
             };
+            
+            console.log('  📦 Gadget object created:');
+            console.log('    - name:', gadget.name);
+            console.log('    - imageUrl:', gadget.imageUrl);
+            console.log('    - imageUrl type:', typeof gadget.imageUrl);
+            console.log('    - imageUrl length:', gadget.imageUrl ? gadget.imageUrl.length : 0);
 
             try {
                 const gadgetToSave = await encryptData(gadget);
