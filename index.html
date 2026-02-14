@@ -431,13 +431,13 @@
 
         .upload-area {
             position: relative;
-            min-height: 180px;
+            min-height: 120px;
         }
 
         .upload-placeholder {
             border: 2px dashed rgba(16, 185, 129, 0.3);
             border-radius: 12px;
-            padding: 32px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -453,7 +453,7 @@
             position: relative;
             display: inline-block;
             width: 100%;
-            max-width: 300px;
+            max-width: 200px;
             border-radius: 12px;
             overflow: hidden;
             border: 2px solid rgba(16, 185, 129, 0.3);
@@ -469,13 +469,13 @@
             position: absolute;
             top: 8px;
             right: 8px;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: rgba(239, 68, 68, 0.9);
             color: white;
             border: none;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -489,12 +489,13 @@
         }
 
         .btn-search {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
             border: none;
             border-radius: 8px;
             color: white;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -506,9 +507,9 @@
 
         .search-results {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 12px;
-            max-height: 400px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -722,6 +723,13 @@
             align-items: center;
             justify-content: center;
             font-size: 48px;
+            color: #10b981;
+        }
+        
+        .product-image-placeholder svg {
+            width: 56px;
+            height: 56px;
+            stroke: #10b981;
         }
 
         /* Card Info Section */
@@ -763,6 +771,15 @@
             border-radius: 6px;
             color: #10b981;
             border: 1px solid rgba(16, 185, 129, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .item-category svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
         }
 
         /* Status and Price Badges */
@@ -4244,7 +4261,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 <!-- Product Image -->
                 ${productImage ? 
                     `<img src="${sanitizeURL(productImage)}" alt="${sanitizeText(g.name)}" class="product-image">` :
-                    `<div class="product-image-placeholder">${categoryEmoji}</div>`
+                    `<div class="product-image-placeholder">${getCategoryIcon(g.category)}</div>`
                 }
                 
                 <!-- Card Info -->
@@ -4253,7 +4270,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                         <div style="flex: 1;">
                             <div class="item-title">${sanitizeText(g.name)}</div>
                             <div class="item-meta">
-                                <span class="item-category">📱 ${sanitizeText(g.category)}</span>
+                                <span class="item-category">${getCategoryIcon(g.category)} ${sanitizeText(g.category)}</span>
                             </div>
                         </div>
                         <div class="expand-arrow">▼</div>
@@ -4476,76 +4493,97 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
                 return;
             }
 
-            container.innerHTML = filtered.map(g => {
+            container.innerHTML = filtered.map((g, index) => {
                 const profit = g.sellPrice ? g.sellPrice - g.buyPrice : 0;
                 const profitClass = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : '';
                 const duration = calculateOwnershipDuration(g.buyDate, g.sellDate);
                 const platformDisplay = getPlatformDisplay(g.platform);
                 const genreDisplay = g.genre || '';
+                const cardId = `game-card-${index}`;
                 
                 return `
-                    <div class="item-card">
-                        <div class="item-header">
-                            <div>
-                                <div class="item-title">${g.title}</div>
-                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
-                                    <span class="item-category">${platformDisplay}</span>
-                                    ${g.genre ? `<span class="item-category">${genreDisplay}</span>` : ''}
+                    <div class="item-card" id="${cardId}" onclick="toggleCard('${cardId}')">
+                        <!-- Main Card Content (Always Visible) -->
+                        <div class="card-main">
+                            <!-- Game Icon (Platform) -->
+                            <div class="product-image-placeholder">🎮</div>
+                            
+                            <!-- Card Info -->
+                            <div class="card-info">
+                                <div class="card-top-row">
+                                    <div style="flex: 1;">
+                                        <div class="item-title">${sanitizeText(g.title)}</div>
+                                        <div class="item-meta">
+                                            <span class="item-category">${platformDisplay}</span>
+                                            ${g.genre ? `<span class="item-category">${genreDisplay}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="expand-arrow">▼</div>
+                                </div>
+                                
+                                <!-- Badges Row -->
+                                <div class="badge-row">
+                                    <span class="status-badge status-${g.status}">
+                                        ${g.status === 'sold' ? '💰' : '✅'} ${g.status.toUpperCase()}
+                                    </span>
+                                    <span class="price-badge">₹${g.buyPrice.toFixed(0)}</span>
                                 </div>
                             </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="edit-icon" onclick="window.editGame('${g.firestoreId}')" title="Edit">✏️</button>
-                                <button class="delete-icon" onclick="window.deleteGame('${g.firestoreId}', '${g.title}')">×</button>
-                            </div>
                         </div>
-                        <div class="item-info">
-                            <div class="info-row">
-                                <span class="info-label">Status</span>
-                                <span class="status-${g.status}">${g.status.toUpperCase()}</span>
+                        
+                        <!-- Expandable Details Section -->
+                        <div class="card-details">
+                            <div class="item-info">
+                                <div class="info-row">
+                                    <span class="info-label">Condition</span>
+                                    <span class="info-value">${sanitizeText(g.condition)}</span>
+                                </div>
+                                ${g.sellPrice ? `
+                                <div class="info-row">
+                                    <span class="info-label">Sell Price</span>
+                                    <span class="info-value">₹${g.sellPrice.toFixed(2)}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Profit/Loss</span>
+                                    <span class="info-value ${profitClass}">₹${profit.toFixed(2)}</span>
+                                </div>
+                                ` : ''}
+                                <div class="info-row">
+                                    <span class="info-label">Bought</span>
+                                    <span class="info-value">${new Date(g.buyDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                                </div>
+                                ${g.sellDate ? `
+                                <div class="info-row">
+                                    <span class="info-label">Sold</span>
+                                    <span class="info-value">${new Date(g.sellDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Held For</span>
+                                    <span class="info-value" style="color: #00f5ff; font-weight: 600;">⏱️ ${duration}</span>
+                                </div>
+                                ` : `
+                                <div class="info-row">
+                                    <span class="info-label">Owned For</span>
+                                    <span class="info-value" style="color: #00f5ff; font-weight: 600;">⏱️ ${duration}</span>
+                                </div>
+                                `}
+                                ${g.notes ? `
+                                <div class="info-row">
+                                    <span class="info-label">Notes</span>
+                                    <span class="info-value">${sanitizeHTML(g.notes)}</span>
+                                </div>
+                                ` : ''}
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">Condition</span>
-                                <span class="info-value">${g.condition}</span>
+                            
+                            <!-- Action Buttons -->
+                            <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
+                                <button class="btn-edit" onclick="editGame('${g.firestoreId}')" style="flex: 1;">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn-delete" onclick="deleteGame('${g.firestoreId}', '${sanitizeText(g.title).replace(/'/g, "\\'")}')" style="flex: 1;">
+                                    🗑️ Delete
+                                </button>
                             </div>
-                            <div class="info-row">
-                                <span class="info-label">Buy Price</span>
-                                <span class="info-value">₹${g.buyPrice.toFixed(2)}</span>
-                            </div>
-                            ${g.sellPrice ? `
-                            <div class="info-row">
-                                <span class="info-label">Sell Price</span>
-                                <span class="info-value">₹${g.sellPrice.toFixed(2)}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Profit/Loss</span>
-                                <span class="info-value ${profitClass}">₹${profit.toFixed(2)}</span>
-                            </div>
-                            ` : ''}
-                            <div class="info-row">
-                                <span class="info-label">Bought</span>
-                                <span class="info-value">${new Date(g.buyDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
-                            </div>
-                            ${g.sellDate ? `
-                            <div class="info-row">
-                                <span class="info-label">Sold</span>
-                                <span class="info-value">${new Date(g.sellDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="info-label">Held For</span>
-                                <span class="info-value" style="color: #00f5ff; font-weight: 600;">⏱️ ${duration}</span>
-                            </div>
-                            ` : `
-                            <div class="info-row">
-                                <span class="info-label">Owned For</span>
-                                <span class="info-value" style="color: #00f5ff; font-weight: 600;">⏱️ ${duration}</span>
-                            </div>
-                            `}
-                            ${g.notes ? `
-                            <div class="info-row">
-                                <span class="info-label">Notes</span>
-                                <span class="info-value">${g.notes}</span>
-                            </div>
-                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -4883,52 +4921,75 @@ document.getElementById('gm-buy-date').valueAsDate = new Date();
                 return;
             }
 
-            container.innerHTML = filtered.map(d => {
+            container.innerHTML = filtered.map((d, index) => {
                 const isExpired = d.expiryDate && new Date(d.expiryDate) < today;
-                const statusBadge = isExpired ? 
-                    '<span class="status-sold" style="margin-left: 5px;">EXPIRED</span>' : 
-                    '<span class="status-owned" style="margin-left: 5px;">ACTIVE</span>';
+                const cardId = `digital-card-${index}`;
                 
                 return `
-                <div class="item-card">
-                    <div class="item-header">
-                        <div>
-                            <div class="item-title">${d.name}</div>
-                            <span class="item-category">${d.type}</span>
-                            ${statusBadge}
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="edit-icon" onclick="window.editDigital('${d.firestoreId}')" title="Edit">✏️</button>
-                            <button class="delete-icon" onclick="window.deleteDigital('${d.firestoreId}', '${d.name}')">×</button>
+                <div class="item-card" id="${cardId}" onclick="toggleCard('${cardId}')">
+                    <!-- Main Card Content (Always Visible) -->
+                    <div class="card-main">
+                        <!-- Digital Icon -->
+                        <div class="product-image-placeholder">💳</div>
+                        
+                        <!-- Card Info -->
+                        <div class="card-info">
+                            <div class="card-top-row">
+                                <div style="flex: 1;">
+                                    <div class="item-title">${sanitizeText(d.name)}</div>
+                                    <div class="item-meta">
+                                        <span class="item-category">${sanitizeText(d.type)}</span>
+                                    </div>
+                                </div>
+                                <div class="expand-arrow">▼</div>
+                            </div>
+                            
+                            <!-- Badges Row -->
+                            <div class="badge-row">
+                                <span class="status-badge ${isExpired ? 'status-sold' : 'status-owned'}">
+                                    ${isExpired ? '⏰ EXPIRED' : '✅ ACTIVE'}
+                                </span>
+                                <span class="price-badge">₹${d.amount.toFixed(0)}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="item-info">
-                        <div class="info-row">
-                            <span class="info-label">Amount</span>
-                            <span class="info-value">₹${d.amount.toFixed(2)}</span>
+                    
+                    <!-- Expandable Details Section -->
+                    <div class="card-details">
+                        <div class="item-info">
+                            <div class="info-row">
+                                <span class="info-label">Purchase Date</span>
+                                <span class="info-value">${new Date(d.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                            </div>
+                            ${d.duration ? `
+                            <div class="info-row">
+                                <span class="info-label">Duration</span>
+                                <span class="info-value">${sanitizeText(d.duration)}</span>
+                            </div>
+                            ` : ''}
+                            ${d.expiryDate ? `
+                            <div class="info-row">
+                                <span class="info-label">Expiry Date</span>
+                                <span class="info-value ${isExpired ? 'profit-negative' : ''}">${new Date(d.expiryDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                            </div>
+                            ` : ''}
+                            ${d.notes ? `
+                            <div class="info-row">
+                                <span class="info-label">Notes</span>
+                                <span class="info-value">${sanitizeHTML(d.notes)}</span>
+                            </div>
+                            ` : ''}
                         </div>
-                        <div class="info-row">
-                            <span class="info-label">Purchase Date</span>
-                            <span class="info-value">${new Date(d.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                        
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
+                            <button class="btn-edit" onclick="editDigital('${d.firestoreId}')" style="flex: 1;">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn-delete" onclick="deleteDigital('${d.firestoreId}', '${sanitizeText(d.name).replace(/'/g, "\\'")}')" style="flex: 1;">
+                                🗑️ Delete
+                            </button>
                         </div>
-                        ${d.duration ? `
-                        <div class="info-row">
-                            <span class="info-label">Duration</span>
-                            <span class="info-value">${d.duration}</span>
-                        </div>
-                        ` : ''}
-                        ${d.expiryDate ? `
-                        <div class="info-row">
-                            <span class="info-label">Expiry Date</span>
-                            <span class="info-value ${isExpired ? 'profit-negative' : ''}">${new Date(d.expiryDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
-                        </div>
-                        ` : ''}
-                        ${d.notes ? `
-                        <div class="info-row">
-                            <span class="info-label">Notes</span>
-                            <span class="info-value">${d.notes}</span>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
             `;
@@ -6391,6 +6452,23 @@ window.importDigitalCSV = async function (event) {
             card.classList.toggle('expanded');
         }
 
+        function getCategoryIcon(category) {
+            const icons = {
+                'Mobile': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+                'Laptop': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+                'Watch': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="7" width="6" height="10" rx="1"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M9 17v3a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-3"/></svg>`,
+                'Headphones': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>`,
+                'Camera': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+                'Gaming': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 11h4M8 9v4m5-2h.01M18 11h.01M8 2h8l4 10-4 10H8L4 12z"/></svg>`,
+                'Tablet': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
+                'TV': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>`,
+                'Audio': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
+                'Smart Home': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+                'Accessories': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="3"/></svg>`
+            };
+            return icons[category] || `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>`;
+        }
+        
         function getCategoryEmoji(category) {
             const emojis = {
                 'Mobile': '📱',
@@ -6411,6 +6489,7 @@ window.importDigitalCSV = async function (event) {
         // Make functions global
         window.toggleCard = toggleCard;
         window.getCategoryEmoji = getCategoryEmoji;
+        window.getCategoryIcon = getCategoryIcon;
 
         // ==========================================
         // IMAGE UPLOAD FUNCTIONS
