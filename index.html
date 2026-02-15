@@ -1437,6 +1437,72 @@
             transform: translateY(-1px);
         }
 
+        .import-preview-modal-content {
+            width: min(960px, 94vw);
+            max-width: 960px;
+            max-height: 88vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .import-preview-summary {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .import-preview-table-wrap {
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            overflow: auto;
+            max-height: 50vh;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .import-preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+            font-size: 12px;
+        }
+
+        .import-preview-table th,
+        .import-preview-table td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+            white-space: nowrap;
+        }
+
+        .import-preview-table th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            font-size: 11px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .import-preview-table tbody tr:nth-child(even) {
+            background: rgba(148, 163, 184, 0.05);
+        }
+
+        .import-preview-footnote {
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .import-preview-table {
+                min-width: 560px;
+            }
+        }
+
         /* Loading */
         #loadingScreen {
             position: fixed;
@@ -2644,33 +2710,34 @@
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:24px;">
                     <div class="add-form" style="margin-bottom:0;">
                         <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Data Encryption</h3>
-                        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Signed in as <strong id="userEmail" style="color:var(--text-secondary);font-weight:500;"></strong></p>
 
-                        <div style="display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-bottom:12px;">
+                        <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;">
+                            <div style="font-size:12px;color:var(--text-muted);">Signed in: <strong id="userEmail" style="color:var(--text-secondary);font-weight:500;"></strong></div>
                             <!-- Encryption Button - Show when ENABLED -->
-                            <button id="encryption-enabled-controls" onclick="if(confirm('⚠️ Are you sure you want to disable encryption?\\n\\nYour data will no longer be encrypted.')) { disableEncryption(); }" class="btn" style="flex:1;min-width:160px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);display:none;">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Disable Encryption
+                            <button id="encryption-enabled-controls" onclick="if(confirm('⚠️ Are you sure you want to disable encryption?\\n\\nYour data will no longer be encrypted.')) { disableEncryption(); }" class="btn" style="padding:8px 12px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);display:none;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Disable
                             </button>
                         </div>
 
                         <!-- Encryption Status Display -->
-                        <div id="encryption-status" style="padding:12px 16px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.1);display:flex;align-items:center;gap:10px;">
-                            <span id="encryption-status-icon" style="font-size:20px; display:inline-flex; align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span>
-                            <div style="flex:1;">
-                                <div id="encryption-status-text" style="font-weight:600;font-size:13px;">Encryption Disabled</div>
-                                <div id="encryption-status-subtitle" style="font-size:11px;color:var(--text-muted);">Your data is stored without encryption</div>
-                            </div>
+                        <div id="encryption-status" style="padding:10px 12px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.1);display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <span id="encryption-status-icon" style="display:inline-flex;align-items:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span>
+                            <span id="encryption-status-text" style="font-weight:600;font-size:12px;">Encryption Off</span>
+                            <span id="encryption-status-subtitle" style="font-size:11px;color:var(--text-muted);">Not encrypted</span>
                         </div>
                     </div>
 
                     <div class="add-form" style="margin-bottom:0;">
                         <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 10h8"/></svg>Install App</h3>
-                        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Keep GearNest on your home screen for faster access.</p>
-                        <div style="padding:12px 16px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.08);display:grid;gap:10px;">
-                            <div id="pwa-install-status" style="font-size:12px;color:var(--text-secondary);">Checking install support...</div>
-                            <button id="pwa-install-btn" class="pwa-install-btn" type="button">Install on this device</button>
-                            <div style="font-size:12px;color:var(--text-muted);line-height:1.5;"><strong style="color:var(--text-secondary);">iPhone/iPad:</strong> Open in Safari, tap Share, then Add to Home Screen.</div>
-                            <div style="font-size:12px;color:var(--text-muted);line-height:1.5;"><strong style="color:var(--text-secondary);">Android/Desktop:</strong> Use the install button above when available, or the browser install menu.</div>
+                        <div style="padding:10px 12px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.08);display:grid;gap:8px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                                <div id="pwa-install-status" style="font-size:12px;color:var(--text-secondary);">Checking support...</div>
+                                <button id="pwa-install-btn" class="pwa-install-btn" type="button" style="margin:0;">Install</button>
+                            </div>
+                            <details style="font-size:11px;color:var(--text-muted);">
+                                <summary style="cursor:pointer;color:var(--text-secondary);">How to install</summary>
+                                <div style="margin-top:6px;line-height:1.45;">iPhone/iPad: Safari -> Share -> Add to Home Screen. Android/Desktop: use Install button or browser install menu.</div>
+                            </details>
                         </div>
                     </div>
                 </div>
@@ -3556,6 +3623,7 @@ async function initializeUser(user) {
         var currentGadgetFilter = 'all';
         var currentDigitalFilter = 'all';
         var deleteCallback = null;
+        var pendingCsvImport = null;
 
         // Ensure modals are hidden on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -6624,6 +6692,404 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             }
         };
 
+        const IMPORT_PREVIEW_LIMIT = 25;
+
+        function normalizeImportText(rawText) {
+            if (typeof rawText !== 'string') return '';
+            let text = rawText;
+            if (text.charCodeAt(0) === 0xFEFF) {
+                text = text.slice(1);
+            }
+            return text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        }
+
+        function detectImportDelimiter(lines) {
+            const sample = lines.find(line => line && line.trim().length > 0) || '';
+            return sample.includes('\t') ? '\t' : ',';
+        }
+
+        function parseDelimitedRow(line, delimiter) {
+            const values = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (ch === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i += 1;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (ch === delimiter && !inQuotes) {
+                    values.push(current.trim());
+                    current = '';
+                } else {
+                    current += ch;
+                }
+            }
+
+            values.push(current.trim());
+            return values;
+        }
+
+        function parseImportDataRows(text) {
+            const normalized = normalizeImportText(text);
+            const lines = normalized
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            if (lines.length <= 1) {
+                return [];
+            }
+
+            const delimiter = detectImportDelimiter(lines);
+            return lines.slice(1).map(line => parseDelimitedRow(line, delimiter));
+        }
+
+        function parseImportNumber(value) {
+            const parsed = parseFloat(String(value || '').replace(/[^\d.-]/g, ''));
+            return Number.isFinite(parsed) ? parsed : NaN;
+        }
+
+        function parseImportDate(value) {
+            const raw = String(value || '').trim();
+            if (!raw) return '';
+
+            if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+                return raw;
+            }
+
+            const slashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+            if (slashMatch) {
+                const day = parseInt(slashMatch[1], 10);
+                const month = parseInt(slashMatch[2], 10);
+                let year = parseInt(slashMatch[3], 10);
+                if (year < 100) year += 2000;
+                const parsed = new Date(year, month - 1, day);
+                if (!Number.isNaN(parsed.getTime())) {
+                    return parsed.toISOString().split('T')[0];
+                }
+            }
+
+            const parsed = new Date(raw);
+            if (Number.isNaN(parsed.getTime())) {
+                return '';
+            }
+
+            return parsed.toISOString().split('T')[0];
+        }
+
+        function buildGadgetImportPayload(fileName, text) {
+            const rows = parseImportDataRows(text);
+            const today = new Date().toISOString().split('T')[0];
+            const items = [];
+            let skipped = 0;
+
+            rows.forEach(values => {
+                const name = (values[0] || '').trim();
+                const category = (values[1] || '🔧 Other').trim() || '🔧 Other';
+                const price = parseImportNumber(values[2]);
+                if (!name || !Number.isFinite(price)) {
+                    skipped += 1;
+                    return;
+                }
+
+                const sellPriceRaw = parseImportNumber(values[4]);
+                const sellPrice = Number.isFinite(sellPriceRaw) ? sellPriceRaw : null;
+                const sellDate = parseImportDate(values[5]) || null;
+                const statusRaw = String(values[6] || '').trim().toLowerCase();
+                const status = (statusRaw === 'sold' || statusRaw === 'owned')
+                    ? statusRaw
+                    : ((sellPrice !== null && sellDate) ? 'sold' : 'owned');
+
+                items.push({
+                    name,
+                    category,
+                    price,
+                    date: parseImportDate(values[3]) || today,
+                    sellPrice,
+                    sellDate,
+                    status,
+                    notes: (values[7] || '').trim(),
+                    timestamp: Date.now() + items.length
+                });
+            });
+
+            return {
+                type: 'gadgets',
+                label: 'Gadgets',
+                collectionName: 'gadgets',
+                fileName,
+                items,
+                skipped,
+                columns: ['Name', 'Category', 'Price', 'Purchase Date', 'Sell Price', 'Sell Date', 'Status', 'Notes'],
+                previewRows: items.slice(0, IMPORT_PREVIEW_LIMIT).map(item => [
+                    item.name,
+                    item.category,
+                    item.price,
+                    item.date,
+                    item.sellPrice == null ? '' : item.sellPrice,
+                    item.sellDate || '',
+                    item.status,
+                    item.notes || ''
+                ])
+            };
+        }
+
+        function buildGameImportPayload(fileName, text) {
+            const rows = parseImportDataRows(text);
+            const today = new Date().toISOString().split('T')[0];
+            const items = [];
+            let skipped = 0;
+
+            rows.forEach(values => {
+                const title = (values[0] || '').trim();
+                const buyPrice = parseImportNumber(values[3]);
+                if (!title || !Number.isFinite(buyPrice) || buyPrice <= 0) {
+                    skipped += 1;
+                    return;
+                }
+
+                const sellPriceRaw = parseImportNumber(values[6]);
+                const sellPrice = Number.isFinite(sellPriceRaw) ? sellPriceRaw : null;
+                const sellDate = parseImportDate(values[7]) || null;
+                const statusRaw = String(values[8] || '').trim().toLowerCase();
+                const status = (statusRaw === 'sold' || statusRaw === 'owned')
+                    ? statusRaw
+                    : ((sellPrice !== null && sellDate) ? 'sold' : 'owned');
+
+                let notes = (values[9] || '').trim();
+                if (!notes && values[8] && statusRaw !== 'sold' && statusRaw !== 'owned') {
+                    notes = String(values[8]).trim();
+                }
+
+                items.push({
+                    title,
+                    platform: (values[1] || '🟦 PlayStation 5').trim() || '🟦 PlayStation 5',
+                    genre: (values[2] || '🎯 Action').trim() || '🎯 Action',
+                    buyPrice,
+                    buyDate: parseImportDate(values[4]) || today,
+                    condition: (values[5] || '✨ New/Sealed').trim() || '✨ New/Sealed',
+                    sellPrice,
+                    sellDate,
+                    status,
+                    notes,
+                    timestamp: Date.now() + items.length
+                });
+            });
+
+            return {
+                type: 'games',
+                label: 'Games',
+                collectionName: 'games',
+                fileName,
+                items,
+                skipped,
+                columns: ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'],
+                previewRows: items.slice(0, IMPORT_PREVIEW_LIMIT).map(item => [
+                    item.title,
+                    item.platform,
+                    item.genre,
+                    item.buyPrice,
+                    item.buyDate,
+                    item.condition,
+                    item.sellPrice == null ? '' : item.sellPrice,
+                    item.sellDate || '',
+                    item.status,
+                    item.notes || ''
+                ])
+            };
+        }
+
+        function buildDigitalImportPayload(fileName, text) {
+            const rows = parseImportDataRows(text);
+            const today = new Date().toISOString().split('T')[0];
+            const items = [];
+            let skipped = 0;
+
+            rows.forEach(values => {
+                const name = (values[0] || '').trim();
+                const amount = parseImportNumber(values[2]);
+                if (!name || !Number.isFinite(amount)) {
+                    skipped += 1;
+                    return;
+                }
+
+                items.push({
+                    name,
+                    type: (values[1] || '💳 Other').trim() || '💳 Other',
+                    amount,
+                    date: parseImportDate(values[3]) || today,
+                    duration: (values[4] || '').trim(),
+                    expiryDate: parseImportDate(values[5]) || null,
+                    notes: (values[6] || '').trim(),
+                    timestamp: Date.now() + items.length
+                });
+            });
+
+            return {
+                type: 'digital',
+                label: 'Digital Purchases',
+                collectionName: 'digitalPurchases',
+                fileName,
+                items,
+                skipped,
+                columns: ['Name', 'Type', 'Amount', 'Purchase Date', 'Duration', 'Expiry Date', 'Notes'],
+                previewRows: items.slice(0, IMPORT_PREVIEW_LIMIT).map(item => [
+                    item.name,
+                    item.type,
+                    item.amount,
+                    item.date,
+                    item.duration || '',
+                    item.expiryDate || '',
+                    item.notes || ''
+                ])
+            };
+        }
+
+        function escapeImportPreviewCell(value) {
+            const safe = document.createElement('div');
+            safe.textContent = String(value == null ? '' : value);
+            return safe.innerHTML;
+        }
+
+        function openImportPreviewModal(payload) {
+            if (!payload || !Array.isArray(payload.items)) return;
+            if (payload.items.length === 0) {
+                alert('No valid rows found to import. Please check your file format.');
+                return;
+            }
+
+            pendingCsvImport = payload;
+
+            const modal = document.getElementById('importPreviewModal');
+            const titleEl = document.getElementById('import-preview-title');
+            const summaryEl = document.getElementById('import-preview-summary');
+            const headEl = document.getElementById('import-preview-head');
+            const bodyEl = document.getElementById('import-preview-body');
+            const footnoteEl = document.getElementById('import-preview-footnote');
+            const confirmBtn = document.getElementById('import-preview-confirm-btn');
+
+            if (!modal || !titleEl || !summaryEl || !headEl || !bodyEl || !footnoteEl || !confirmBtn) {
+                alert('Import preview is not available right now. Please refresh and try again.');
+                pendingCsvImport = null;
+                return;
+            }
+
+            titleEl.textContent = `${payload.label} Import Preview`;
+            const skippedText = payload.skipped > 0
+                ? ` ${payload.skipped} invalid row${payload.skipped === 1 ? '' : 's'} will be skipped.`
+                : '';
+            summaryEl.textContent = `${payload.items.length} row${payload.items.length === 1 ? '' : 's'} ready from ${payload.fileName}.${skippedText}`;
+
+            headEl.innerHTML = `<tr>${payload.columns.map(col => `<th>${escapeImportPreviewCell(col)}</th>`).join('')}</tr>`;
+            bodyEl.innerHTML = payload.previewRows
+                .map(row => `<tr>${row.map(cell => `<td>${escapeImportPreviewCell(cell)}</td>`).join('')}</tr>`)
+                .join('');
+
+            footnoteEl.textContent = payload.items.length > IMPORT_PREVIEW_LIMIT
+                ? `Showing first ${IMPORT_PREVIEW_LIMIT} rows for preview. All ${payload.items.length} rows will be imported after confirmation.`
+                : 'This preview shows exactly what will be imported.';
+
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = `Import ${payload.items.length} row${payload.items.length === 1 ? '' : 's'}`;
+
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => modal.classList.add('active'));
+        }
+
+        window.closeImportPreview = function() {
+            const modal = document.getElementById('importPreviewModal');
+            if (!modal) return;
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 180);
+            pendingCsvImport = null;
+        };
+
+        async function persistImportItems(collectionName, items) {
+            const imported = [];
+            const batchSize = 200;
+
+            for (let i = 0; i < items.length; i += batchSize) {
+                const chunk = items.slice(i, i + batchSize);
+                const batch = writeBatch(db);
+                const refs = [];
+
+                for (const item of chunk) {
+                    const ref = doc(collection(db, 'users', currentUserUID, collectionName));
+                    const itemToSave = await encryptData(item);
+                    batch.set(ref, itemToSave);
+                    refs.push({ ref, item });
+                }
+
+                await batch.commit();
+                refs.forEach(entry => {
+                    imported.push({ firestoreId: entry.ref.id, ...entry.item });
+                });
+            }
+
+            return imported;
+        }
+
+        function applyImportedItemsToLocalState(type, importedItems) {
+            if (!Array.isArray(importedItems) || importedItems.length === 0) return;
+            if (type === 'gadgets') {
+                gadgets = sortByTimestampDesc(gadgets.concat(importedItems));
+            } else if (type === 'games') {
+                games = sortByTimestampDesc(games.concat(importedItems));
+            } else if (type === 'digital') {
+                digitalPurchases = sortByTimestampDesc(digitalPurchases.concat(importedItems));
+            }
+        }
+
+        window.confirmImportFromPreview = async function() {
+            if (!pendingCsvImport || !currentUserUID) {
+                alert('No pending import found. Please choose a file again.');
+                return;
+            }
+
+            const payload = pendingCsvImport;
+            const confirmBtn = document.getElementById('import-preview-confirm-btn');
+            const summaryEl = document.getElementById('import-preview-summary');
+            const originalBtnText = confirmBtn ? confirmBtn.textContent : '';
+            const originalSummary = summaryEl ? summaryEl.textContent : '';
+
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Importing...';
+            }
+            if (summaryEl) {
+                summaryEl.textContent = `Importing ${payload.items.length} row${payload.items.length === 1 ? '' : 's'} from ${payload.fileName}...`;
+            }
+
+            try {
+                const importedItems = await persistImportItems(payload.collectionName, payload.items);
+                applyImportedItemsToLocalState(payload.type, importedItems);
+                updateAll();
+
+                const skippedText = payload.skipped > 0
+                    ? ` ${payload.skipped} invalid row${payload.skipped === 1 ? '' : 's'} were skipped.`
+                    : '';
+                alert(`Imported ${importedItems.length} ${payload.label.toLowerCase()} successfully.${skippedText}`);
+
+                window.closeImportPreview();
+            } catch (error) {
+                if (summaryEl) {
+                    summaryEl.textContent = originalSummary;
+                }
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = originalBtnText;
+                }
+                alert('Import failed. Please try again.');
+            }
+        };
+
         window.triggerSettingsImport = function(inputId) {
             const input = document.getElementById(inputId);
             if (!input) return;
@@ -6699,10 +7165,9 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one item per row), and import it back.');
         };
 
-       window.importGadgetsCSV = async function(event) {
-
+       window.importGadgetsCSV = function(event) {
     if (!currentUserUID) {
-        alert("User not logged in");
+        alert('User not logged in');
         return;
     }
 
@@ -6710,78 +7175,19 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
     if (!file) return;
 
     const reader = new FileReader();
-
-    reader.onload = async function(e) {
-
+    reader.onload = function(e) {
         try {
-            let text = e.target.result;
-
-            // Remove BOM
-            if (text.charCodeAt(0) === 0xFEFF) {
-                text = text.slice(1);
-            }
-
-            const lines = text.split('\n').filter(l => l.trim());
-            const dataLines = lines.slice(1); // Skip header
-
-            let imported = 0;
-            const importedGadgets = [];
-
-
-            for (const line of dataLines) {
-                // Detect delimiter (tab or comma)
-                const delimiter = line.includes('\t') ? '\t' : ',';
-
-                const values = line
-                    .split(delimiter)
-                    .map(v => v.replace('\r', '').trim());
-
-                const name = values[0]?.trim() || '';
-                const category = values[1]?.trim() || '🔧 Other';
-                const price = parseFloat(values[2]?.replace(/[^\d.]/g, ''));
-
-                if (!name || isNaN(price)) {
-                    continue;
-                }
-
-                const sellPrice = values[4] ? parseFloat(values[4]?.replace(/[^\d.]/g, '')) : null;
-
-                const gadget = {
-                    name,
-                    category,
-                    price,
-                    date: values[3] || new Date().toISOString().split('T')[0],
-                    sellPrice,
-                    sellDate: values[5] || null,
-                    notes: values[6] || '',
-                    status: (sellPrice && values[5]) ? 'sold' : 'owned',
-                    timestamp: Date.now()
-                };
-
-                const gadgetDocRef = await addDoc(
-                    collection(db, 'users', currentUserUID, 'gadgets'),
-                    gadget
-                );
-                importedGadgets.push({ firestoreId: gadgetDocRef.id, ...gadget });
-
-                imported++;
-            }
-
-            alert(`Imported ${imported} gadgets successfully`);
-            if (importedGadgets.length > 0) {
-                gadgets = sortByTimestampDesc(gadgets.concat(importedGadgets));
-                updateAll();
-            }
-
-        } catch (err) {
-            alert("Import failed");
+            const payload = buildGadgetImportPayload(file.name, e.target.result || '');
+            openImportPreviewModal(payload);
+        } catch (error) {
+            alert('Could not parse this file. Please check the template and try again.');
         }
-
         event.target.value = '';
     };
 
     reader.readAsText(file, 'UTF-8');
 };
+
 
         // TSV/CSV Export for Games
         window.exportGamesCSV = function() {
@@ -6854,10 +7260,9 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
         };
 
         // TSV Import for Games (Multi-User Safe)
-window.importGamesCSV = async function(event) {
-
+window.importGamesCSV = function(event) {
     if (!currentUserUID) {
-        alert("User not logged in");
+        alert('User not logged in');
         return;
     }
 
@@ -6865,84 +7270,19 @@ window.importGamesCSV = async function(event) {
     if (!file) return;
 
     const reader = new FileReader();
-
-    reader.onload = async function(e) {
-
+    reader.onload = function(e) {
         try {
-
-            let text = e.target.result;
-
-            // Remove BOM
-            if (text.charCodeAt(0) === 0xFEFF) {
-                text = text.slice(1);
-            }
-
-            const lines = text.split('\n').filter(l => l.trim());
-            const dataLines = lines.slice(1); // Skip header
-
-            let imported = 0;
-            const importedGames = [];
-
-
-            for (const line of dataLines) {
-                // Detect delimiter (tab or comma)
-                const delimiter = line.includes('\t') ? '\t' : ',';
-
-                const values = line
-                    .split(delimiter)
-                    .map(v => v.replace('\r', '').trim());
-
-                // Skip if not enough data
-                if (values.length < 3) continue;
-
-                const title = values[0]?.trim();
-                const buyPrice = parseFloat(values[3]?.replace(/[^\d.]/g, ''));
-
-                // Skip if missing required fields
-                if (!title || isNaN(buyPrice) || buyPrice === 0) {
-                    continue;
-                }
-
-                const sellPrice = values[6] ? parseFloat(values[6]?.replace(/[^\d.]/g, '')) : null;
-
-                const game = {
-                    title,
-                    platform: values[1]?.trim() || '🟦 PlayStation 5',
-                    genre: values[2]?.trim() || '🎯 Action',
-                    buyPrice,
-                    buyDate: values[4] || new Date().toISOString().split('T')[0],
-                    condition: values[5]?.trim() || '✨ New/Sealed',
-                    sellPrice,
-                    sellDate: values[7] || null,
-                    status: (sellPrice && values[7]) ? 'sold' : 'owned',
-                    notes: values[8]?.trim() || '',
-                    timestamp: Date.now()
-                };
-
-                const gameDocRef = await addDoc(
-                    collection(db, 'users', currentUserUID, 'games'),
-                    game
-                );
-                importedGames.push({ firestoreId: gameDocRef.id, ...game });
-
-                imported++;
-            }
-
-            alert(`Imported ${imported} games successfully`);
-            if (importedGames.length > 0) {
-                games = sortByTimestampDesc(games.concat(importedGames));
-                updateAll();
-            }
-
-        } catch (err) {
-            alert("Import failed");
+            const payload = buildGameImportPayload(file.name, e.target.result || '');
+            openImportPreviewModal(payload);
+        } catch (error) {
+            alert('Could not parse this file. Please check the template and try again.');
         }
-
         event.target.value = '';
     };
 
     reader.readAsText(file, 'UTF-8');
 };
+
 
         // TSV/CSV Export for Digital Purchases
         window.exportDigitalCSV = function() {
@@ -7011,10 +7351,9 @@ window.importGamesCSV = async function(event) {
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one purchase per row), and import it back.');
         };
 // TSV/CSV Import for Digital Purchases (GLOBAL SAFE)
-window.importDigitalCSV = async function (event) {
-
+window.importDigitalCSV = function(event) {
     if (!currentUserUID) {
-        alert("User not logged in");
+        alert('User not logged in');
         return;
     }
 
@@ -7022,82 +7361,19 @@ window.importDigitalCSV = async function (event) {
     if (!file) return;
 
     const reader = new FileReader();
-
-    reader.onload = async function (e) {
+    reader.onload = function(e) {
         try {
-            let text = e.target.result;
-
-            // Remove BOM
-            if (text.charCodeAt(0) === 0xFEFF) {
-                text = text.slice(1);
-            }
-
-            const lines = text.split('\n').filter(l => l.trim());
-            const dataLines = lines.slice(1); // skip header
-
-            let imported = 0;
-            const importedDigitalPurchases = [];
-
-            function parseDate(d) {
-                if (!d) return null;
-                if (d.includes('/')) {
-                    const [day, month, year] = d.split('/');
-                    return new Date(`20${year}`, month - 1, day);
-                }
-                return new Date(d);
-            }
-
-           for (const line of dataLines) {
-                // Detect delimiter (tab or comma)
-                const delimiter = line.includes('\t') ? '\t' : ',';
-
-                const values = line
-                    .split(delimiter)
-                    .map(v => v.replace('\r', '').trim());
-
-    const name = values[0] || '';
-    const type = values[1] || '💳 Other';
-    const amount = parseFloat(values[2]);
-
-    if (!name || isNaN(amount)) {
-        continue;
-    }
-
-    const digital = {
-        name,
-        type,
-        amount,
-        date: parseDate(values[3]) || new Date(),
-        duration: values[4] || '',
-        expiryDate: values[5] ? parseDate(values[5]) : null,
-        notes: values[6] || '',
-        timestamp: Date.now()
-    };
-
-    const digitalDocRef = await addDoc(
-        collection(db, 'users', currentUserUID, 'digitalPurchases'),
-        digital
-    );
-    importedDigitalPurchases.push({ firestoreId: digitalDocRef.id, ...digital });
-
-    imported++;
-}
-
-            alert(`Imported ${imported} digital purchases`);
-            if (importedDigitalPurchases.length > 0) {
-                digitalPurchases = sortByTimestampDesc(digitalPurchases.concat(importedDigitalPurchases));
-                updateAll();
-            }
-
-        } catch (err) {
-            alert("Import failed");
+            const payload = buildDigitalImportPayload(file.name, e.target.result || '');
+            openImportPreviewModal(payload);
+        } catch (error) {
+            alert('Could not parse this file. Please check the template and try again.');
         }
-
         event.target.value = '';
     };
 
     reader.readAsText(file, 'UTF-8');
 };
+
 
         // ========== ENCRYPTION UI FUNCTIONS ==========
 
@@ -7192,8 +7468,8 @@ window.importDigitalCSV = async function (event) {
 
             if (isEnabled) {
                 statusIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-                statusText.textContent = 'Encryption Enabled';
-                statusSubtitle.textContent = 'Your data is protected with end-to-end encryption';
+                statusText.textContent = 'Encryption On';
+                statusSubtitle.textContent = 'Protected';
                 statusContainer.style.background = 'rgba(16, 185, 129, 0.15)';
                 statusContainer.style.borderColor = 'rgba(16, 185, 129, 0.3)';
 
@@ -7202,8 +7478,8 @@ window.importDigitalCSV = async function (event) {
                 if (enabledBtn) enabledBtn.style.display = 'block';
             } else {
                 statusIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
-                statusText.textContent = 'Encryption Disabled';
-                statusSubtitle.textContent = 'Your data is stored without encryption';
+                statusText.textContent = 'Encryption Off';
+                statusSubtitle.textContent = 'Not encrypted';
                 statusContainer.style.background = 'rgba(148, 163, 184, 0.1)';
                 statusContainer.style.borderColor = 'rgba(148, 163, 184, 0.2)';
 
@@ -7630,6 +7906,32 @@ window.importDigitalCSV = async function (event) {
                     style="flex: 1; padding: 14px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);">
                 Delete
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- CSV Import Preview Modal -->
+<div id="importPreviewModal" class="modal" style="display: none;" onclick="if(event.target===this){closeImportPreview();}">
+    <div class="modal-content import-preview-modal-content" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 20px; padding: 24px; border: 1px solid rgba(16, 185, 129, 0.3);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;">
+            <h2 id="import-preview-title" style="font-size: 22px; margin: 0; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Import Preview</h2>
+            <button type="button" onclick="closeImportPreview()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 34px; height: 34px; border-radius: 8px; font-size: 20px; cursor: pointer; display:flex;align-items:center;justify-content:center;">×</button>
+        </div>
+
+        <div id="import-preview-summary" class="import-preview-summary">Review parsed rows before importing.</div>
+
+        <div class="import-preview-table-wrap">
+            <table class="import-preview-table">
+                <thead id="import-preview-head"></thead>
+                <tbody id="import-preview-body"></tbody>
+            </table>
+        </div>
+
+        <div id="import-preview-footnote" class="import-preview-footnote"></div>
+
+        <div style="display:flex;gap:12px;margin-top:16px;">
+            <button type="button" onclick="closeImportPreview()" style="flex:1;padding:12px;background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button type="button" id="import-preview-confirm-btn" onclick="confirmImportFromPreview()" style="flex:1.4;padding:12px;background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;">Import</button>
         </div>
     </div>
 </div>
@@ -8505,11 +8807,11 @@ window.importDigitalCSV = async function (event) {
 
         if (installStatus) {
             if (isStandalone) {
-                installStatus.textContent = 'App is already installed on this device.';
+                installStatus.textContent = 'Installed on this device.';
             } else if (isIOS) {
-                installStatus.textContent = 'Install from Safari: Share -> Add to Home Screen.';
+                installStatus.textContent = 'Safari: Share -> Add to Home Screen.';
             } else {
-                installStatus.textContent = 'If supported, the install button will appear below.';
+                installStatus.textContent = 'Tap Install if supported.';
             }
         }
 
@@ -8520,7 +8822,7 @@ window.importDigitalCSV = async function (event) {
                 installButton.classList.add('visible');
             }
             if (installStatus && !isStandalone) {
-                installStatus.textContent = 'Ready to install. Tap "Install on this device".';
+                installStatus.textContent = 'Ready to install.';
             }
         });
 
@@ -8539,7 +8841,7 @@ window.importDigitalCSV = async function (event) {
 
         window.addEventListener('appinstalled', function() {
             if (installButton) installButton.classList.remove('visible');
-            if (installStatus) installStatus.textContent = 'App installed successfully.';
+            if (installStatus) installStatus.textContent = 'Installed successfully.';
         });
     })();
 </script>
