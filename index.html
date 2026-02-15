@@ -2707,7 +2707,7 @@
                 <!-- Hidden sign out button — kept for profile menu click handler & event listener -->
                 <button id="signOutBtn" style="display:none;"></button>
 
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:24px;">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:24px;">
                     <div class="add-form" style="margin-bottom:0;">
                         <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Data Encryption</h3>
 
@@ -2734,22 +2734,21 @@
                                 <div id="pwa-install-status" style="font-size:12px;color:var(--text-secondary);">Checking support...</div>
                                 <button id="pwa-install-btn" class="pwa-install-btn" type="button" style="margin:0;">Install</button>
                             </div>
-                            <details style="font-size:11px;color:var(--text-muted);">
-                                <summary style="cursor:pointer;color:var(--text-secondary);">How to install</summary>
-                                <div style="margin-top:6px;line-height:1.45;">iPhone/iPad: Safari -> Share -> Add to Home Screen. Android/Desktop: use Install button or browser install menu.</div>
+                            <details style="font-size:12px;color:var(--text-muted);line-height:1.5;">
+                                <summary style="cursor:pointer;color:var(--text-secondary);font-size:12px;">How to install</summary>
+                                <div style="margin-top:6px;">iPhone/iPad: Safari -> Share -> Add to Home Screen. Android/Desktop: use Install button or browser install menu.</div>
                             </details>
                         </div>
                     </div>
-                </div>
 
-                <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>Card Image Display</h3>
-                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Choose how uploaded images appear in cards.</p>
-                    <div class="image-fit-mode-row" style="margin-bottom:10px;">
-                        <button type="button" id="image-fit-cover-btn" class="image-fit-mode-btn active">Cover (Recommended)</button>
-                        <button type="button" id="image-fit-contain-btn" class="image-fit-mode-btn">Contain (Show Full)</button>
+                    <div class="add-form" style="margin-bottom:0;">
+                        <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>Card Image Display</h3>
+                        <div class="image-fit-mode-row" style="margin-bottom:8px;">
+                            <button type="button" id="image-fit-cover-btn" class="image-fit-mode-btn active">Cover</button>
+                            <button type="button" id="image-fit-contain-btn" class="image-fit-mode-btn">Contain</button>
+                        </div>
+                        <div id="image-fit-mode-status" style="font-size:12px;color:var(--text-secondary);line-height:1.45;">Cover mode fills the frame and center-crops edges.</div>
                     </div>
-                    <div id="image-fit-mode-status" style="font-size:12px;color:var(--text-secondary);line-height:1.45;">Cover mode fills the frame and center-crops edges.</div>
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
