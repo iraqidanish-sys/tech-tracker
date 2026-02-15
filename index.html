@@ -202,8 +202,53 @@
         .logo-icon {
             display: inline-flex;
             align-items: center;
-            animation: iconPulse 2s ease-in-out infinite;
+            justify-content: center;
+            animation: logoIconLift 4s ease-in-out infinite;
             filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
+            transform-origin: center;
+            will-change: transform, filter;
+        }
+
+        .logo-icon svg {
+            overflow: visible;
+        }
+
+        .logo-orbit-ring {
+            opacity: 0.72;
+            stroke-dasharray: 2.2 2.8;
+            transform-origin: 12px 12px;
+            animation: logoOrbitSpin 8s linear infinite;
+        }
+
+        .logo-orbit-node {
+            transform-origin: 12px 12px;
+            animation: logoOrbitNodeSpin 3.2s linear infinite reverse;
+        }
+
+        .logo-orbit-dot {
+            filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.75));
+            animation: logoNodePulse 1.8s ease-in-out infinite;
+        }
+
+        .logo-core-hex {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: logoCoreBreathe 2.8s ease-in-out infinite;
+        }
+
+        .logo-core-n {
+            transform-box: fill-box;
+            transform-origin: center;
+            stroke-dasharray: 20 6;
+            animation: logoCoreTrace 4.4s ease-in-out infinite;
+        }
+
+        .logo-side-node {
+            animation: logoNodePulse 2.2s ease-in-out infinite;
+        }
+
+        .logo-side-link {
+            opacity: 0.92;
         }
 
         @keyframes logoFloat {
@@ -215,14 +260,52 @@
             }
         }
 
-        @keyframes iconPulse {
+        @keyframes logoIconLift {
             0%, 100% {
-                transform: scale(1);
+                transform: translateY(0) scale(1);
                 filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
             }
             50% {
-                transform: scale(1.1);
-                filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.9));
+                transform: translateY(-1px) scale(1.05);
+                filter: drop-shadow(0 0 18px rgba(6, 182, 212, 0.85));
+            }
+        }
+
+        @keyframes logoOrbitSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes logoOrbitNodeSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes logoCoreBreathe {
+            0%, 100% { transform: scale(1); opacity: 0.98; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+
+        @keyframes logoCoreTrace {
+            0%, 100% { stroke-dashoffset: 20; opacity: 0.88; }
+            50% { stroke-dashoffset: 0; opacity: 1; }
+        }
+
+        @keyframes logoNodePulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.18); opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .logo,
+            .logo-icon,
+            .logo-orbit-ring,
+            .logo-orbit-node,
+            .logo-orbit-dot,
+            .logo-core-hex,
+            .logo-core-n,
+            .logo-side-node {
+                animation: none !important;
             }
         }
 
@@ -2344,19 +2427,27 @@
         <nav class="top-nav">
             <div class="logo" onclick="showSection('dashboard')" style="cursor: pointer;">
                 <span class="logo-icon">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="stroke:url(#logoNestGrad);">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
                         <defs>
                             <linearGradient id="logoNestGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stop-color="#10b981"/>
                                 <stop offset="100%" stop-color="#06b6d4"/>
                             </linearGradient>
+                            <linearGradient id="logoOrbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.9"/>
+                            </linearGradient>
                         </defs>
-                        <path d="M12 2.8 19.2 7v10L12 21.2 4.8 17V7Z"/>
-                        <path d="M8.4 15.4V8.6l7.2 6.8V8.6"/>
-                        <circle cx="6.3" cy="12" r="1.05" fill="#10b981" stroke="none"/>
-                        <circle cx="17.7" cy="12" r="1.05" fill="#06b6d4" stroke="none"/>
-                        <path d="M7.35 12h1.05"/>
-                        <path d="M15.6 12h1.05"/>
+                        <circle class="logo-orbit-ring" cx="12" cy="12" r="10.2" stroke="url(#logoOrbitGrad)"/>
+                        <g class="logo-orbit-node">
+                            <circle class="logo-orbit-dot" cx="12" cy="1.95" r="1.05" fill="#06b6d4" stroke="none"/>
+                        </g>
+                        <path class="logo-core-hex" d="M12 2.8 19.2 7v10L12 21.2 4.8 17V7Z" stroke="url(#logoNestGrad)"/>
+                        <path class="logo-core-n" d="M8.4 15.4V8.6l7.2 6.8V8.6" stroke="url(#logoNestGrad)"/>
+                        <circle class="logo-side-node" cx="6.3" cy="12" r="1.05" fill="#10b981" stroke="none"/>
+                        <circle class="logo-side-node" cx="17.7" cy="12" r="1.05" fill="#06b6d4" stroke="none"/>
+                        <path class="logo-side-link" d="M7.35 12h1.05" stroke="url(#logoNestGrad)"/>
+                        <path class="logo-side-link" d="M15.6 12h1.05" stroke="url(#logoNestGrad)"/>
                     </svg>
                 </span>
                 GearNest
