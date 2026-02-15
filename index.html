@@ -50,6 +50,11 @@
             --accent-purple: #10b981;
             --accent-pink: #06b6d4;
             --accent-blue: #06b6d4;
+
+            /* Unified card image sizing */
+            --card-image-size: 100px;
+            --card-image-radius: 12px;
+            --card-image-placeholder-size: 42px;
         }
 
         * {
@@ -83,6 +88,35 @@
 
         .pwa-install-btn.visible {
             display: inline-flex;
+        }
+
+        .image-fit-mode-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .image-fit-mode-btn {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: rgba(15, 23, 42, 0.55);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .image-fit-mode-btn:hover {
+            border-color: rgba(16, 185, 129, 0.45);
+            color: #ffffff;
+        }
+
+        .image-fit-mode-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(6, 182, 212, 0.22) 100%);
+            border-color: rgba(16, 185, 129, 0.65);
+            color: #ffffff;
         }
 
         /* Animated Background */
@@ -762,26 +796,39 @@
 
         /* Product Image */
         .product-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
+            width: var(--card-image-size);
+            height: var(--card-image-size);
+            border-radius: var(--card-image-radius);
             object-fit: cover;
+            object-position: center;
             flex-shrink: 0;
+            display: block;
             background: rgba(16, 185, 129, 0.1);
             border: 2px solid rgba(16, 185, 129, 0.2);
         }
 
+        .product-image--cover {
+            object-fit: cover;
+        }
+
+        .product-image--contain {
+            object-fit: contain;
+            padding: 8px;
+            background: rgba(15, 23, 42, 0.55);
+        }
+
         .product-image-placeholder {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
+            width: var(--card-image-size);
+            height: var(--card-image-size);
+            border-radius: var(--card-image-radius);
             flex-shrink: 0;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
             border: 2px solid rgba(16, 185, 129, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 48px;
+            font-size: var(--card-image-placeholder-size);
+            overflow: hidden;
         }
 
         /* Card Info Section */
@@ -1669,6 +1716,12 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+            :root {
+                --card-image-size: 88px;
+                --card-image-radius: 10px;
+                --card-image-placeholder-size: 36px;
+            }
+
             .bottom-nav { display: block; }
             .desktop-nav-links { display: none; }
 
@@ -2566,6 +2619,16 @@
                         <div style="font-size:12px;color:var(--text-muted);line-height:1.5;"><strong style="color:var(--text-secondary);">iPhone/iPad:</strong> Open in Safari, tap Share, then Add to Home Screen.</div>
                         <div style="font-size:12px;color:var(--text-muted);line-height:1.5;"><strong style="color:var(--text-secondary);">Android/Desktop:</strong> Use the install button above when available, or the browser install menu.</div>
                     </div>
+                </div>
+
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>Card Image Display</h3>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Choose how uploaded images appear in cards.</p>
+                    <div class="image-fit-mode-row" style="margin-bottom:10px;">
+                        <button type="button" id="image-fit-cover-btn" class="image-fit-mode-btn active">Cover (Recommended)</button>
+                        <button type="button" id="image-fit-contain-btn" class="image-fit-mode-btn">Contain (Show Full)</button>
+                    </div>
+                    <div id="image-fit-mode-status" style="font-size:12px;color:var(--text-secondary);line-height:1.45;">Cover mode fills the frame and center-crops edges.</div>
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
@@ -5132,6 +5195,98 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             return `${diffMonths} months, ${remainingDays} day${remainingDays > 1 ? 's' : ''}`;
         }
 
+        // Global image-fit mode for card media
+        const CARD_IMAGE_FIT_STORAGE_KEY = 'gearnest_card_image_fit_mode';
+        const CARD_IMAGE_FIT_MODES = {
+            cover: 'cover',
+            contain: 'contain'
+        };
+        let currentCardImageFitMode = CARD_IMAGE_FIT_MODES.cover;
+
+        function normalizeCardImageFitMode(mode) {
+            return mode === CARD_IMAGE_FIT_MODES.contain ? CARD_IMAGE_FIT_MODES.contain : CARD_IMAGE_FIT_MODES.cover;
+        }
+
+        function getSavedCardImageFitMode() {
+            try {
+                const saved = localStorage.getItem(CARD_IMAGE_FIT_STORAGE_KEY);
+                return normalizeCardImageFitMode(saved);
+            } catch (error) {
+                return CARD_IMAGE_FIT_MODES.cover;
+            }
+        }
+
+        function syncCardImageFitModeUI() {
+            const coverBtn = document.getElementById('image-fit-cover-btn');
+            const containBtn = document.getElementById('image-fit-contain-btn');
+            const status = document.getElementById('image-fit-mode-status');
+            const isContain = currentCardImageFitMode === CARD_IMAGE_FIT_MODES.contain;
+
+            if (coverBtn) coverBtn.classList.toggle('active', !isContain);
+            if (containBtn) containBtn.classList.toggle('active', isContain);
+            if (status) {
+                status.textContent = isContain
+                    ? 'Contain mode keeps the full image visible with subtle padding.'
+                    : 'Cover mode fills the frame and center-crops edges.';
+            }
+        }
+
+        function setCardImageFitMode(mode, options = {}) {
+            const fitMode = normalizeCardImageFitMode(mode);
+            const persist = options.persist !== false;
+            const rerender = options.rerender !== false;
+
+            currentCardImageFitMode = fitMode;
+
+            if (persist) {
+                try {
+                    localStorage.setItem(CARD_IMAGE_FIT_STORAGE_KEY, fitMode);
+                } catch (error) {
+                }
+            }
+
+            syncCardImageFitModeUI();
+
+            if (rerender) {
+                updateAll();
+            }
+        }
+
+        window.setCardImageFitMode = setCardImageFitMode;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const coverBtn = document.getElementById('image-fit-cover-btn');
+            const containBtn = document.getElementById('image-fit-contain-btn');
+
+            if (coverBtn) {
+                coverBtn.addEventListener('click', function() {
+                    setCardImageFitMode(CARD_IMAGE_FIT_MODES.cover);
+                });
+            }
+
+            if (containBtn) {
+                containBtn.addEventListener('click', function() {
+                    setCardImageFitMode(CARD_IMAGE_FIT_MODES.contain);
+                });
+            }
+
+            setCardImageFitMode(getSavedCardImageFitMode(), { persist: false, rerender: false });
+        });
+
+        function getCardImageMarkup(imageUrl, altText, placeholderMarkup = '', options = {}) {
+            const fitMode = normalizeCardImageFitMode(options.fitMode || currentCardImageFitMode);
+            const shouldProxy = options.useProxy === true;
+            const imageClass = fitMode === 'contain' ? 'product-image product-image--contain' : 'product-image product-image--cover';
+            const safeSrc = imageUrl ? sanitizeURL(imageUrl) : '';
+
+            if (safeSrc) {
+                const resolvedSrc = shouldProxy ? getCORSProxyURL(safeSrc) : safeSrc;
+                return `<img src="${resolvedSrc}" alt="${sanitizeText(altText || 'Item image')}" class="${imageClass}" loading="lazy">`;
+            }
+
+            return `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;">${placeholderMarkup}</div>`;
+        }
+
         // Render gadgets
         function renderGadgets() {
     const container = document.getElementById('gadgets-list');
@@ -5164,10 +5319,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                         <!-- Content Row: Image + Info -->
                         <div style="display: flex; gap: 12px; align-items: flex-start;">
                             <!-- Product Image -->
-                            ${productImage ?
-                                `<img src="${getCORSProxyURL(sanitizeURL(productImage))}" alt="${sanitizeText(g.name)}" class="product-image">` :
-                                `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;">${getCategoryIcon(g.category)}</div>`
-                            }
+                            ${getCardImageMarkup(productImage, g.name, getCategoryIcon(g.category), { useProxy: true })}
 
                             <!-- Info -->
                             <div style="flex: 1; min-width: 0;">
@@ -5498,10 +5650,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 <!-- Content Row: Image + Info -->
                                 <div style="display: flex; gap: 12px; align-items: flex-start;">
                                     <!-- Game Cover Image -->
-                                    ${g.imageUrl ?
-                                        `<img src="${getCORSProxyURL(sanitizeURL(g.imageUrl))}" alt="${sanitizeText(g.title)}" class="product-image">` :
-                                        `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg></div>`
-                                    }
+                                    ${getCardImageMarkup(g.imageUrl, g.title, '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>', { useProxy: true })}
 
                                     <!-- Info -->
                                     <div style="flex: 1; min-width: 0;">
@@ -5785,11 +5934,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                         const status = item.status || 'owned';
                         return `
                             <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${item.imageUrl ? `
-                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
-                                    <img src="${sanitizeURL(item.imageUrl)}" alt="${sanitizeText(item.title)}" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                ` : ''}
+                                ${getCardImageMarkup(item.imageUrl, item.title, '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>')}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.title}</div>
                                     <span class="item-category">${item.platform}</span>
@@ -5810,11 +5955,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                         // Digital purchase item
                         return `
                             <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${item.imageUrl ? `
-                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
-                                    <img src="${sanitizeURL(item.imageUrl)}" alt="${sanitizeText(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                ` : ''}
+                                ${getCardImageMarkup(item.imageUrl, item.name, '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>')}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
                                     <span class="item-category">${item.type}</span>
@@ -5837,11 +5978,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                         const status = item.status || 'owned';
                         return `
                             <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${item.imageUrl ? `
-                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
-                                    <img src="${sanitizeURL(item.imageUrl)}" alt="${sanitizeText(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                ` : ''}
+                                ${getCardImageMarkup(item.imageUrl, item.name, getCategoryIcon(item.category))}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
                                     <span class="item-category">${item.category}</span>
@@ -6080,12 +6217,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
                             <!-- Content Row: Image + Info -->
                             <div style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${d.imageUrl ? `
-                                <!-- Service Icon -->
-                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
-                                    <img src="${sanitizeURL(d.imageUrl)}" alt="${sanitizeText(d.name)}" style="width: 100%; height: 100%; object-fit: cover;">
-                                </div>
-                                ` : ''}
+                                ${getCardImageMarkup(d.imageUrl, d.name, '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>')}
 
                                 <!-- Info -->
                                 <div style="flex: 1; min-width: 0;">
