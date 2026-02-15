@@ -3368,6 +3368,8 @@ function sanitizeURL(url) {
     }
 }
 
+window.sanitizeURL = sanitizeURL;
+
 // CORS proxy helper - bypasses CORS restrictions for external images
 function getCORSProxyURL(imageUrl) {
     if (!imageUrl) return '';
@@ -3399,6 +3401,8 @@ function getCORSProxyURL(imageUrl) {
         return imageUrl;
     }
 }
+
+window.getCORSProxyURL = getCORSProxyURL;
 
 // Sanitize numeric inputs
 function sanitizeNumber(value, defaultValue = 0) {
@@ -8004,7 +8008,9 @@ window.importDigitalCSV = async function (event) {
             const rawUrl = urlInput.value.trim();
             if (!rawUrl) return;
 
-            const sanitizedUrl = sanitizeURL(rawUrl);
+            const sanitizeFn = typeof window.sanitizeURL === 'function' ? window.sanitizeURL : null;
+            const proxyFn = typeof window.getCORSProxyURL === 'function' ? window.getCORSProxyURL : null;
+            const sanitizedUrl = sanitizeFn ? sanitizeFn(rawUrl) : '';
             if (!sanitizedUrl) {
                 preview.style.display = 'none';
                 currentPickerImageUrl = null;
@@ -8012,7 +8018,7 @@ window.importDigitalCSV = async function (event) {
                 return;
             }
 
-            const preferredUrl = getCORSProxyURL(sanitizedUrl);
+            const preferredUrl = proxyFn ? proxyFn(sanitizedUrl) : sanitizedUrl;
             const candidates = preferredUrl === sanitizedUrl ? [sanitizedUrl] : [preferredUrl, sanitizedUrl];
 
             const tryLoad = function(index) {
@@ -8150,7 +8156,8 @@ window.importDigitalCSV = async function (event) {
                 return;
             }
 
-            const sanitizedPickerUrl = sanitizeURL(currentPickerImageUrl);
+            const sanitizeFn = typeof window.sanitizeURL === 'function' ? window.sanitizeURL : null;
+            const sanitizedPickerUrl = sanitizeFn ? sanitizeFn(currentPickerImageUrl) : '';
             if (!sanitizedPickerUrl) {
                 alert('The selected image URL is invalid. Please try another URL.');
                 return;
