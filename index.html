@@ -3761,6 +3761,47 @@ async function loadData() {
     }
 }
 
+        function sortByTimestampDesc(items) {
+            return items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        }
+
+        function upsertLocalCollectionItem(collectionName, item) {
+            if (!item || !item.firestoreId) return;
+
+            if (collectionName === 'gadgets') {
+                const idx = gadgets.findIndex(g => g.firestoreId === item.firestoreId);
+                if (idx === -1) gadgets.push(item);
+                else gadgets[idx] = item;
+                sortByTimestampDesc(gadgets);
+            } else if (collectionName === 'games') {
+                const idx = games.findIndex(g => g.firestoreId === item.firestoreId);
+                if (idx === -1) games.push(item);
+                else games[idx] = item;
+                sortByTimestampDesc(games);
+            } else if (collectionName === 'digitalPurchases') {
+                const idx = digitalPurchases.findIndex(d => d.firestoreId === item.firestoreId);
+                if (idx === -1) digitalPurchases.push(item);
+                else digitalPurchases[idx] = item;
+                sortByTimestampDesc(digitalPurchases);
+            }
+
+            updateAll();
+        }
+
+        function removeLocalCollectionItem(collectionName, firestoreId) {
+            if (!firestoreId) return;
+
+            if (collectionName === 'gadgets') {
+                gadgets = gadgets.filter(g => g.firestoreId !== firestoreId);
+            } else if (collectionName === 'games') {
+                games = games.filter(g => g.firestoreId !== firestoreId);
+            } else if (collectionName === 'digitalPurchases') {
+                digitalPurchases = digitalPurchases.filter(d => d.firestoreId !== firestoreId);
+            }
+
+            updateAll();
+        }
+
         // Default values
         // Colorful SVG Icon Library with gradients
         const iconLibrary = {
@@ -5065,21 +5106,22 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
         if (window.editingGadgetId) {
             // UPDATE existing gadget
+            const editingGadgetId = window.editingGadgetId;
             await updateDoc(
-                doc(db, 'users', currentUserUID, 'gadgets', window.editingGadgetId),
+                doc(db, 'users', currentUserUID, 'gadgets', editingGadgetId),
                 gadgetToSave
             );
             window.editingGadgetId = null;
             if (submitBtn) submitBtn.textContent = 'Add to Collection';
+            upsertLocalCollectionItem('gadgets', { firestoreId: editingGadgetId, ...gadget });
         } else {
             // ADD new gadget
-            await addDoc(
+            const gadgetDocRef = await addDoc(
                 collection(db, 'users', currentUserUID, 'gadgets'),
                 gadgetToSave
             );
+            upsertLocalCollectionItem('gadgets', { firestoreId: gadgetDocRef.id, ...gadget });
         }
-
-        await loadData();
         e.target.reset();
         document.getElementById('g-date').valueAsDate = new Date();
 
@@ -5376,7 +5418,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             deleteCallback = async () => {
                 try {
                     await deleteDoc(doc(db, 'users', currentUserUID, 'gadgets', firestoreId));
-                    await loadData();
+                    removeLocalCollectionItem('gadgets', firestoreId);
                 } catch (error) {
                     alert('Error deleting gadget. Please try again.');
                 }
@@ -5471,11 +5513,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                     throw new Error('Image is too large. Please use a smaller image.');
                 }
                 
+                const gadgetIdToUpdate = window.editingGadgetId;
                 await updateDoc(
-                    doc(db, 'users', currentUserUID, 'gadgets', window.editingGadgetId),
+                    doc(db, 'users', currentUserUID, 'gadgets', gadgetIdToUpdate),
                     gadgetToSave
                 );
-                await loadData();
+                upsertLocalCollectionItem('gadgets', { firestoreId: gadgetIdToUpdate, ...gadget });
                 closeGadgetEditModal();
             } catch (error) {
                 // Re-enable button
@@ -5522,26 +5565,27 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 if (window.editingGameId) {
 
     // ✅ UPDATE existing game (do NOT delete)
+    const editingGameId = window.editingGameId;
     const gameToSave = await encryptData(game);
     await updateDoc(
-        doc(db, 'users', currentUserUID, 'games', window.editingGameId),
+        doc(db, 'users', currentUserUID, 'games', editingGameId),
         gameToSave
     );
 
     window.editingGameId = null;
     document.querySelector('#game-form .btn').textContent = 'Add to Collection';
+    upsertLocalCollectionItem('games', { firestoreId: editingGameId, ...game });
 
 } else {
 
     // ✅ ADD new game
     const gameToSave = await encryptData(game);
-    await addDoc(
+    const gameDocRef = await addDoc(
         collection(db, 'users', currentUserUID, 'games'),
         gameToSave
     );
+    upsertLocalCollectionItem('games', { firestoreId: gameDocRef.id, ...game });
 }
-
-await loadData();
 e.target.reset();
 document.getElementById('gm-buy-date').valueAsDate = new Date();
 
@@ -5705,7 +5749,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             deleteCallback = async () => {
                 try {
                     await deleteDoc(doc(db, 'users', currentUserUID, 'games', firestoreId));
-                    await loadData();
+                    removeLocalCollectionItem('games', firestoreId);
                 } catch (error) {
                     alert('Error deleting game. Please try again.');
                 }
@@ -5786,11 +5830,12 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             try {
                 const gameToSave = await encryptData(game);
+                const gameIdToUpdate = window.editingGameId;
                 await updateDoc(
-                    doc(db, 'users', currentUserUID, 'games', window.editingGameId),
+                    doc(db, 'users', currentUserUID, 'games', gameIdToUpdate),
                     gameToSave
                 );
-                await loadData();
+                upsertLocalCollectionItem('games', { firestoreId: gameIdToUpdate, ...game });
                 closeGameEditModal();
             } catch (error) {
                 alert('Error updating game. Please try again.');
@@ -6112,25 +6157,26 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             try {
                if (window.editingDigitalId) {
 
+                const editingDigitalId = window.editingDigitalId;
                 const digitalToSave = await encryptData(digital);
                 await updateDoc(
-                doc(db, 'users', currentUserUID, 'digitalPurchases', window.editingDigitalId),
+                doc(db, 'users', currentUserUID, 'digitalPurchases', editingDigitalId),
                 digitalToSave
                 );
 
                 window.editingDigitalId = null;
                 document.querySelector('#digital-form .btn').textContent = 'Add Purchase';
+                upsertLocalCollectionItem('digitalPurchases', { firestoreId: editingDigitalId, ...digital });
 
                 } else {
 
                 const digitalToSave = await encryptData(digital);
-                await addDoc(
+                const digitalDocRef = await addDoc(
             collection(db, 'users', currentUserUID, 'digitalPurchases'),
             digitalToSave
             );
+                upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalDocRef.id, ...digital });
             }
-
-            await loadData();
             e.target.reset();
             document.getElementById('d-date').valueAsDate = new Date();
             document.getElementById('custom-validity-group').style.display = 'none';
@@ -6331,7 +6377,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             deleteCallback = async () => {
                 try {
                     await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId));
-                    await loadData();
+                    removeLocalCollectionItem('digitalPurchases', firestoreId);
                 } catch (error) {
                     alert('Error deleting purchase. Please try again.');
                 }
@@ -6486,11 +6532,12 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             try {
                 const digitalToSave = await encryptData(digital);
+                const digitalIdToUpdate = window.editingDigitalId;
                 await updateDoc(
-                    doc(db, 'users', currentUserUID, 'digitalPurchases', window.editingDigitalId),
+                    doc(db, 'users', currentUserUID, 'digitalPurchases', digitalIdToUpdate),
                     digitalToSave
                 );
-                await loadData();
+                upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalIdToUpdate, ...digital });
                 closeDigitalEditModal();
             } catch (error) {
                 alert('Error updating digital purchase. Please try again.');
@@ -6591,6 +6638,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             const dataLines = lines.slice(1); // Skip header
 
             let imported = 0;
+            const importedGadgets = [];
 
 
             for (const line of dataLines) {
@@ -6623,16 +6671,20 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                     timestamp: Date.now()
                 };
 
-                await addDoc(
+                const gadgetDocRef = await addDoc(
                     collection(db, 'users', currentUserUID, 'gadgets'),
                     gadget
                 );
+                importedGadgets.push({ firestoreId: gadgetDocRef.id, ...gadget });
 
                 imported++;
             }
 
             alert(`Imported ${imported} gadgets successfully`);
-            await loadData();
+            if (importedGadgets.length > 0) {
+                gadgets = sortByTimestampDesc(gadgets.concat(importedGadgets));
+                updateAll();
+            }
 
         } catch (err) {
             alert("Import failed");
@@ -6742,6 +6794,7 @@ window.importGamesCSV = async function(event) {
             const dataLines = lines.slice(1); // Skip header
 
             let imported = 0;
+            const importedGames = [];
 
 
             for (const line of dataLines) {
@@ -6779,16 +6832,20 @@ window.importGamesCSV = async function(event) {
                     timestamp: Date.now()
                 };
 
-                await addDoc(
+                const gameDocRef = await addDoc(
                     collection(db, 'users', currentUserUID, 'games'),
                     game
                 );
+                importedGames.push({ firestoreId: gameDocRef.id, ...game });
 
                 imported++;
             }
 
             alert(`Imported ${imported} games successfully`);
-            await loadData();
+            if (importedGames.length > 0) {
+                games = sortByTimestampDesc(games.concat(importedGames));
+                updateAll();
+            }
 
         } catch (err) {
             alert("Import failed");
@@ -6892,6 +6949,7 @@ window.importDigitalCSV = async function (event) {
             const dataLines = lines.slice(1); // skip header
 
             let imported = 0;
+            const importedDigitalPurchases = [];
 
             function parseDate(d) {
                 if (!d) return null;
@@ -6929,16 +6987,20 @@ window.importDigitalCSV = async function (event) {
         timestamp: Date.now()
     };
 
-    await addDoc(
+    const digitalDocRef = await addDoc(
         collection(db, 'users', currentUserUID, 'digitalPurchases'),
         digital
     );
+    importedDigitalPurchases.push({ firestoreId: digitalDocRef.id, ...digital });
 
     imported++;
 }
 
             alert(`Imported ${imported} digital purchases`);
-            await loadData();
+            if (importedDigitalPurchases.length > 0) {
+                digitalPurchases = sortByTimestampDesc(digitalPurchases.concat(importedDigitalPurchases));
+                updateAll();
+            }
 
         } catch (err) {
             alert("Import failed");
