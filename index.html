@@ -1393,6 +1393,50 @@
             flex-shrink: 0;
         }
 
+        .settings-data-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .settings-data-tool-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.85) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .settings-data-tool-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .settings-data-tool-actions {
+            display: grid;
+            gap: 8px;
+        }
+
+        .settings-data-tool-btn {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .settings-data-tool-btn:hover {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
         /* Loading */
         #loadingScreen {
             position: fixed;
@@ -2637,6 +2681,40 @@
                         <button type="button" id="image-fit-contain-btn" class="image-fit-mode-btn">Contain (Show Full)</button>
                     </div>
                     <div id="image-fit-mode-status" style="font-size:12px;color:var(--text-secondary);line-height:1.45;">Cover mode fills the frame and center-crops edges.</div>
+                </div>
+
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 21h8"/><path d="M16 7h4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7h4"/></svg>Data Import / Export</h3>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Download templates, import your CSV files, or export your current data.</p>
+                    <div class="settings-data-tools-grid">
+                        <div class="settings-data-tool-card">
+                            <div class="settings-data-tool-title">Gadgets</div>
+                            <div class="settings-data-tool-actions">
+                                <button type="button" class="settings-data-tool-btn" onclick="downloadGadgetTemplate()">Download Template</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-gadgets')">Import CSV</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="exportGadgetsCSV()">Export CSV</button>
+                            </div>
+                        </div>
+                        <div class="settings-data-tool-card">
+                            <div class="settings-data-tool-title">Games</div>
+                            <div class="settings-data-tool-actions">
+                                <button type="button" class="settings-data-tool-btn" onclick="downloadGameTemplate()">Download Template</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-games')">Import CSV</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="exportGamesCSV()">Export CSV</button>
+                            </div>
+                        </div>
+                        <div class="settings-data-tool-card">
+                            <div class="settings-data-tool-title">Digital Purchases</div>
+                            <div class="settings-data-tool-actions">
+                                <button type="button" class="settings-data-tool-btn" onclick="downloadDigitalTemplate()">Download Template</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-digital')">Import CSV</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="exportDigitalCSV()">Export CSV</button>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="settings-import-gadgets" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGadgetsCSV(event)">
+                    <input type="file" id="settings-import-games" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGamesCSV(event)">
+                    <input type="file" id="settings-import-digital" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importDigitalCSV(event)">
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
@@ -6544,6 +6622,13 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             }
         };
 
+        window.triggerSettingsImport = function(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.value = '';
+            input.click();
+        };
+
         // TSV/CSV Export for Gadgets
         window.exportGadgetsCSV = function() {
             if (gadgets.length === 0) {
@@ -7912,7 +7997,7 @@ window.importDigitalCSV = async function (event) {
 
     <script>
         // Navigation & profile menu (non-module, runs after DOM ready)
-        function showSection(sectionId) {
+        function showSectionFallback(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             const t = document.getElementById(sectionId);
             if (t) t.classList.add('active');
@@ -7927,8 +8012,14 @@ window.importDigitalCSV = async function (event) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        const showSectionHandler = typeof window.showSection === 'function'
+            ? window.showSection
+            : showSectionFallback;
+
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
-            item.addEventListener('click', function() { showSection(this.dataset.section); });
+            if (!item.getAttribute('onclick')) {
+                item.addEventListener('click', function() { showSectionHandler(this.dataset.section); });
+            }
         });
 
         function toggleProfileMenu() {
@@ -8318,7 +8409,9 @@ window.importDigitalCSV = async function (event) {
             closeImagePicker();
         };
 
-        window.showSection = showSection;
+        if (typeof window.showSection !== 'function') {
+            window.showSection = showSectionFallback;
+        }
         window.toggleProfileMenu = toggleProfileMenu;
         window.updateProfileMenu = updateProfileMenu;
 
