@@ -167,7 +167,7 @@
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 34px;
             font-weight: 800;
             color: #10b981;
             background: linear-gradient(90deg, #10b981 0%, #06b6d4 25%, #10b981 50%, #06b6d4 75%, #10b981 100%);
@@ -177,11 +177,11 @@
             background-clip: text;
             animation: shimmer 3s ease-in-out infinite, logoFloat 3s ease-in-out infinite;
             will-change: background-position, transform;
-            letter-spacing: 1px;
+            letter-spacing: 1.1px;
             text-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
             transition: transform 0.2s ease;
         }
@@ -210,6 +210,8 @@
         }
 
         .logo-icon svg {
+            width: 38px;
+            height: 38px;
             overflow: visible;
         }
 
@@ -2061,7 +2063,8 @@
             .fab { bottom: 80px; }
 
             .top-nav { padding: 0 12px; height: 54px; }
-            .logo { font-size: 17px; }
+            .logo { font-size: 17px; gap: 6px; }
+            .logo-icon svg { width: 24px; height: 24px; }
 
             .user-avatar { width: 32px; height: 32px; font-size: 12px; border-width: 1.5px; }
 
