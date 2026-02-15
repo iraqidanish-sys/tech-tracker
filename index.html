@@ -4512,13 +4512,17 @@ async function loadSettings() {
                 optionsContainer.classList.toggle('active');
             };
 
-            // Close on outside click
-            document.addEventListener('click', (e) => {
+            // Close on outside click (cleanup previous handler to avoid listener leaks)
+            if (wrapper._outsideClickHandler) {
+                document.removeEventListener('click', wrapper._outsideClickHandler);
+            }
+            wrapper._outsideClickHandler = function(e) {
                 if (!wrapper.contains(e.target)) {
                     trigger.classList.remove('active');
                     optionsContainer.classList.remove('active');
                 }
-            });
+            };
+            document.addEventListener('click', wrapper._outsideClickHandler);
 
             wrapper.insertBefore(trigger, select);
             wrapper.appendChild(optionsContainer);
@@ -4639,13 +4643,17 @@ async function loadSettings() {
                 optionsContainer.classList.toggle('active');
             };
 
-            // Close on outside click
-            document.addEventListener('click', (e) => {
+            // Close on outside click (cleanup previous handler to avoid listener leaks)
+            if (wrapper._outsideClickHandler) {
+                document.removeEventListener('click', wrapper._outsideClickHandler);
+            }
+            wrapper._outsideClickHandler = function(e) {
                 if (!wrapper.contains(e.target)) {
                     trigger.classList.remove('active');
                     optionsContainer.classList.remove('active');
                 }
-            });
+            };
+            document.addEventListener('click', wrapper._outsideClickHandler);
 
             wrapper.insertBefore(trigger, select);
             wrapper.appendChild(optionsContainer);
@@ -6584,16 +6592,6 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             let imported = 0;
 
-            function parseDate(d) {
-                if (!d) return new Date();
-
-                if (d.includes('/')) {
-                    const [day, month, year] = d.split('/');
-                    return new Date(`20${year}`, month - 1, day);
-                }
-
-                return new Date(d);
-            }
 
             for (const line of dataLines) {
                 // Detect delimiter (tab or comma)
@@ -6745,16 +6743,6 @@ window.importGamesCSV = async function(event) {
 
             let imported = 0;
 
-            function parseDate(d) {
-                if (!d) return new Date();
-
-                if (d.includes('/')) {
-                    const [day, month, year] = d.split('/');
-                    return new Date(`20${year}`, month - 1, day);
-                }
-
-                return new Date(d);
-            }
 
             for (const line of dataLines) {
                 // Detect delimiter (tab or comma)
