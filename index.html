@@ -7,15 +7,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>GearNest - Your Digital Vault</title>
-    
+
     <!-- DOMPurify for XSS Protection -->
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             /* Glassmorphism Colors */
@@ -24,18 +24,18 @@
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --glass-shadow: rgba(0, 0, 0, 0.3);
-            
+
             /* Gradients */
             --gradient-primary: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
             --gradient-success: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
             --gradient-info: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
             --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            
+
             /* Text */
             --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.7);
             --text-muted: rgba(255, 255, 255, 0.4);
-            
+
             /* Accents */
             --accent-purple: #10b981;
             --accent-pink: #06b6d4;
@@ -65,7 +65,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.12) 0%, transparent 50%),
                 radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);
@@ -121,19 +121,19 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .logo::before {
             content: '';
             display: none;
         }
-        
+
         .logo-icon {
             display: inline-flex;
             align-items: center;
             animation: iconPulse 2s ease-in-out infinite;
             filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
         }
-        
+
         @keyframes logoFloat {
             0%, 100% {
                 transform: translateY(0px);
@@ -142,7 +142,7 @@
                 transform: translateY(-3px);
             }
         }
-        
+
         @keyframes iconPulse {
             0%, 100% {
                 transform: scale(1);
@@ -162,7 +162,7 @@
                 background-position: 100% 50%;
             }
         }
-        
+
         @-webkit-keyframes shimmer {
             0%, 100% {
                 background-position: 0% 50%;
@@ -255,7 +255,7 @@
             object-fit: contain !important;
             display: block !important;
         }
-        
+
         /* Smaller icon wrapper for inline use */
         .icon-img-wrap-sm {
             width: 24px !important;
@@ -274,7 +274,7 @@
             padding: 3px;
             box-sizing: border-box;
         }
-        
+
         .icon-img-wrap-sm img {
             width: 100% !important;
             height: 100% !important;
@@ -283,7 +283,7 @@
             object-fit: contain !important;
             display: block !important;
         }
-        
+
         /* Custom select dropdown styling */
         .custom-select-trigger {
             position: relative;
@@ -298,22 +298,22 @@
             gap: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .custom-select-trigger:hover,
         .custom-select-trigger.active {
             border-color: #10b981;
             background: rgba(30, 41, 59, 0.95);
         }
-        
+
         .custom-select-arrow {
             margin-left: auto;
             transition: transform 0.2s;
         }
-        
+
         .custom-select-trigger.active .custom-select-arrow {
             transform: rotate(180deg);
         }
-        
+
         .custom-select-icon {
             width: 24px !important;
             height: 24px !important;
@@ -323,7 +323,7 @@
             padding: 3px;
             flex-shrink: 0;
         }
-        
+
         .custom-select-options {
             position: absolute;
             top: calc(100% + 4px);
@@ -341,13 +341,13 @@
             transition: all 0.2s ease;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         }
-        
+
         .custom-select-options.active {
             opacity: 1;
             transform: translateY(0);
             pointer-events: all;
         }
-        
+
         .custom-select-option {
             padding: 10px 12px;
             cursor: pointer;
@@ -357,21 +357,21 @@
             gap: 8px;
             transition: all 0.2s;
         }
-        
+
         .custom-select-option:hover {
             background: rgba(16, 185, 129, 0.15);
         }
-        
+
         .custom-select-option.selected {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
             font-weight: 600;
         }
-        
+
         #platform-select-wrapper {
             position: relative;
         }
-        
+
         #platform-select-wrapper select {
             display: none;
         }
@@ -386,7 +386,7 @@
         /* ==========================================
            IMAGE UPLOAD INTERFACE
            ========================================== */
-        
+
         .image-upload-container {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(16, 185, 129, 0.2);
@@ -743,7 +743,7 @@
             align-items: flex-start;
             margin-bottom: 8px;
         }
-        
+
         .expand-arrow {
             display: none;
         }
@@ -1104,7 +1104,7 @@
         .bottom-nav-icon {
             font-size: 24px;
         }
-        
+
         .bottom-nav-icon svg {
             display: block;
         }
@@ -1222,13 +1222,13 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             min-height: 44px;
         }
-        
+
         .settings-list-item:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
             border-color: rgba(16, 185, 129, 0.4);
         }
-        
+
         .settings-list-item svg {
             flex-shrink: 0;
         }
@@ -1316,40 +1316,40 @@
                 margin-top: 10px;
             }
 
-            .item-card { 
+            .item-card {
                 padding: 16px;
                 background: rgba(30, 41, 59, 0.9);
                 border: 1px solid rgba(16, 185, 129, 0.2);
             }
-            
-            .item-title { 
+
+            .item-title {
                 font-size: 16px;
                 margin-bottom: 6px;
             }
-            
+
             .item-category {
                 font-size: 12px;
                 color: rgba(16, 185, 129, 0.8);
                 font-weight: 600;
             }
-            
-            .info-label { 
+
+            .info-label {
                 font-size: 11px;
                 font-weight: 700;
                 color: rgba(16, 185, 129, 0.9);
             }
-            
-            .info-value { 
+
+            .info-value {
                 font-size: 13px;
                 color: #ffffff;
                 font-weight: 700;
             }
-            
+
             .info-row {
                 padding: 8px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
-            
+
             .info-row:last-child {
                 border-bottom: none;
             }
@@ -1359,18 +1359,18 @@
                 gap: 12px;
             }
 
-            .stat-card { 
+            .stat-card {
                 padding: 16px;
                 background: rgba(30, 41, 59, 0.9);
             }
-            
-            .stat-value { 
+
+            .stat-value {
                 font-size: 24px !important;
                 color: #ffffff !important;
                 font-weight: 800;
             }
-            
-            .stat-label { 
+
+            .stat-label {
                 font-size: 11px;
                 font-weight: 700;
                 background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
@@ -1378,8 +1378,8 @@
                 -webkit-text-fill-color: transparent;
             }
 
-            .add-form { 
-                padding: 16px; 
+            .add-form {
+                padding: 16px;
                 margin-bottom: 16px;
                 background: rgba(30, 41, 59, 0.8);
                 border: 1px solid rgba(16, 185, 129, 0.2);
@@ -1390,7 +1390,7 @@
                 grid-template-columns: 1fr !important;
                 gap: 12px !important;
             }
-            
+
             /* Settings lists - single column on mobile */
             #gadget-categories-list,
             #game-platforms-list,
@@ -1399,8 +1399,8 @@
                 grid-template-columns: 1fr !important;
             }
 
-            .filter-chip { 
-                padding: 8px 14px; 
+            .filter-chip {
+                padding: 8px 14px;
                 font-size: 12px;
             }
 
@@ -1444,7 +1444,7 @@
             transform: translateY(-20px);
             transition: transform 0.2s ease;
         }
-        
+
         .modal.active .modal-content {
             transform: translateY(0);
         }
@@ -1478,7 +1478,7 @@
                 </svg>
             </div>
         </div>
-        
+
         <h1 style="font-size: 28px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; margin-bottom: 12px;">
             Loading Your Collection
         </h1>
@@ -1487,7 +1487,7 @@
             <div class="dot" style="animation-delay: 0.2s;"></div>
             <div class="dot" style="animation-delay: 0.4s;"></div>
         </div>
-        
+
         <style>
             .loading-spinner {
                 position: absolute;
@@ -1500,12 +1500,12 @@
                 border-radius: 50%;
                 animation: spinLoader 0.6s linear infinite;
             }
-            
+
             @keyframes spinLoader {
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
-            
+
             .dot {
                 width: 8px;
                 height: 8px;
@@ -1513,7 +1513,7 @@
                 background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
                 animation: bounce 0.8s ease-in-out infinite;
             }
-            
+
             @keyframes bounce {
                 0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
                 40% { transform: scale(1); opacity: 1; }
@@ -1526,37 +1526,37 @@
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
-        
+
         @keyframes pulseRing {
             0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
             50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
         }
-        
+
         @keyframes hexFloat {
             0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
             50% { transform: translate(-50%, -50%) translateY(-5px); }
         }
-        
+
         @keyframes innerGlow {
             0%, 100% { opacity: 0.8; }
             50% { opacity: 1; }
         }
-        
+
         @keyframes orbit1 {
             0% { transform: translate(-50%, -50%) rotate(0deg) translateX(35px); }
             100% { transform: translate(-50%, -50%) rotate(360deg) translateX(35px); }
         }
-        
+
         @keyframes orbit2 {
             0% { transform: translate(-50%, -50%) rotate(120deg) translateX(35px); }
             100% { transform: translate(-50%, -50%) rotate(480deg) translateX(35px); }
         }
-        
+
         @keyframes orbit3 {
             0% { transform: translate(-50%, -50%) rotate(240deg) translateX(35px); }
             100% { transform: translate(-50%, -50%) rotate(600deg) translateX(35px); }
         }
-        
+
         @keyframes scanLine {
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
@@ -1565,20 +1565,20 @@
 
     <!-- Login Screen -->
     <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f1729 0%, #1a2332 50%, #0f1729 100%); z-index: 10000; display: none; overflow-y: auto;">
-        
+
         <!-- Background animated elements -->
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
             <div style="position: absolute; top: 10%; left: 15%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float1 8s ease-in-out infinite;"></div>
             <div style="position: absolute; bottom: 15%; right: 10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%); border-radius: 50%; animation: float2 10s ease-in-out infinite;"></div>
         </div>
-        
+
         <div style="position: relative; max-width: 1400px; margin: 0 auto; min-height: 100vh; display: flex; align-items: center; padding: 40px 20px;">
-            
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; width: 100%; align-items: center;">
-                
+
                 <!-- Left Content -->
                 <div style="padding: 40px 20px;">
-                    
+
                     <!-- Logo -->
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 60px; animation: slideInLeft 0.8s ease-out;">
                         <div style="position: relative; width: 50px; height: 50px;">
@@ -1593,19 +1593,19 @@
                             <p style="color: rgba(255,255,255,0.5); font-size: 11px; margin: 0; letter-spacing: 2px; text-transform: uppercase;">Digital Locker</p>
                         </div>
                     </div>
-                    
+
                     <!-- Main Heading -->
                     <h1 style="color: #fff; font-size: 52px; line-height: 1.1; margin-bottom: 24px; font-weight: 800; animation: slideInLeft 0.8s ease-out 0.2s backwards;">
                         Track Your<br>
                         <span style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tech & Gaming</span><br>
                         Legacy.
                     </h1>
-                    
+
                     <!-- Description -->
                     <p style="color: rgba(255,255,255,0.7); font-size: 16px; line-height: 1.6; margin-bottom: 48px; max-width: 500px; animation: slideInLeft 0.8s ease-out 0.4s backwards;">
                         A secure, private vault for your gadgets, game library, and digital purchases. Built for collectors, by collectors.
                     </p>
-                    
+
                     <!-- Category Buttons -->
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; animation: slideInLeft 0.8s ease-out 0.6s backwards;">
                         <div style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.2)'; this.style.borderColor='rgba(16, 185, 129, 0.5)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'">
@@ -1614,14 +1614,14 @@
                             </svg>
                             <span style="color: #10b981; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Hardware</span>
                         </div>
-                        
+
                         <div style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(139, 92, 246, 0.2)'; this.style.borderColor='rgba(139, 92, 246, 0.5)'" onmouseout="this.style.background='rgba(139, 92, 246, 0.1)'; this.style.borderColor='rgba(139, 92, 246, 0.3)'">
                             <svg width="18" height="18" fill="none" stroke="#8b5cf6" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
                             </svg>
                             <span style="color: #8b5cf6; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Gaming</span>
                         </div>
-                        
+
                         <div style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(6, 182, 212, 0.2)'; this.style.borderColor='rgba(6, 182, 212, 0.5)'" onmouseout="this.style.background='rgba(6, 182, 212, 0.1)'; this.style.borderColor='rgba(6, 182, 212, 0.3)'">
                             <svg width="18" height="18" fill="none" stroke="#06b6d4" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -1629,23 +1629,23 @@
                             <span style="color: #06b6d4; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Digital</span>
                         </div>
                     </div>
-                    
+
                 </div>
-                
+
                 <!-- Right Login Box -->
                 <div style="animation: slideInRight 0.8s ease-out 0.4s backwards;">
                     <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%); backdrop-filter: blur(20px); padding: 50px 40px; border-radius: 24px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.2); max-width: 450px; margin-left: auto;">
-                        
+
                         <!-- Shield Icon -->
                         <div style="width: 70px; height: 70px; margin: 0 auto 24px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(16, 185, 129, 0.3); animation: shieldPulse 2s ease-in-out infinite;">
                             <svg width="32" height="32" fill="none" stroke="#10b981" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                             </svg>
                         </div>
-                        
+
                         <h2 style="color: #fff; font-size: 28px; font-weight: 800; margin-bottom: 10px; text-align: center; letter-spacing: -0.5px;">System Access</h2>
                         <p style="color: rgba(255,255,255,0.6); margin-bottom: 35px; text-align: center; font-size: 14px; font-weight: 500;">Initialize secure session to manage your assets</p>
-                        
+
                         <button id="googleSignInBtn" style="width: 100%; background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%); color: white; border: none; padding: 18px 30px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(16, 185, 129, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.4)'">
                             <svg width="20" height="20" viewBox="0 0 20 20">
                                 <path fill="white" d="M19.6 10.23c0-.82-.1-1.42-.25-2.05H10v3.72h5.5c-.15.96-.74 2.31-2.04 3.22v2.45h3.16c1.89-1.73 2.98-4.3 2.98-7.34z"/>
@@ -1655,19 +1655,19 @@
                             </svg>
                             Sign in with Google
                         </button>
-                        
+
                         <p style="color: rgba(255,255,255,0.4); font-size: 11px; text-align: center; margin-top: 24px; letter-spacing: 1px; text-transform: uppercase;">
                             Verified Security // Google Auth Protocol
                         </p>
-                        
+
                         <div id="loginError" style="color: #ef4444; margin-top: 20px; font-size: 14px; text-align: center; display: none;"></div>
                     </div>
                 </div>
-                
+
             </div>
-            
+
         </div>
-        
+
         <!-- Mobile Responsive Layout -->
         <style>
             @media (max-width: 968px) {
@@ -1675,35 +1675,35 @@
                     grid-template-columns: 1fr !important;
                     gap: 40px !important;
                 }
-                
+
                 #loginScreen h1 {
                     font-size: 38px !important;
                 }
-                
+
                 #loginScreen > div > div > div:last-child > div {
                     margin-left: 0 !important;
                     max-width: 100% !important;
                 }
             }
-            
+
             @media (max-width: 640px) {
                 #loginScreen > div {
                     padding: 30px 15px !important;
                 }
-                
+
                 #loginScreen h1 {
                     font-size: 32px !important;
                 }
-                
+
                 #loginScreen > div > div > div:first-child {
                     padding: 20px 10px !important;
                 }
-                
+
                 #loginScreen > div > div > div:last-child > div {
                     padding: 35px 25px !important;
                 }
             }
-            
+
             @keyframes slideInLeft {
                 from {
                     opacity: 0;
@@ -1714,7 +1714,7 @@
                     transform: translateX(0);
                 }
             }
-            
+
             @keyframes slideInRight {
                 from {
                     opacity: 0;
@@ -1725,7 +1725,7 @@
                     transform: translateX(0);
                 }
             }
-            
+
             @keyframes float1 {
                 0%, 100% {
                     transform: translate(0, 0) scale(1);
@@ -1734,7 +1734,7 @@
                     transform: translate(30px, -30px) scale(1.1);
                 }
             }
-            
+
             @keyframes float2 {
                 0%, 100% {
                     transform: translate(0, 0) scale(1);
@@ -1743,7 +1743,7 @@
                     transform: translate(-30px, 30px) scale(1.1);
                 }
             }
-            
+
             @keyframes logoPulse {
                 0%, 100% {
                     box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
@@ -1752,7 +1752,7 @@
                     box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
                 }
             }
-            
+
             @keyframes shieldPulse {
                 0%, 100% {
                     transform: scale(1);
@@ -1768,7 +1768,7 @@
 
     <!-- Main App -->
     <div id="mainApp" style="display: none;">
-        
+
         <!-- Top Navigation -->
         <nav class="top-nav">
             <div class="logo">
@@ -1839,7 +1839,7 @@
 
         <!-- Main Container -->
         <div class="container">
-            
+
             <!-- ==================== DASHBOARD ==================== -->
             <div id="dashboard" class="section active">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:4px;">Dashboard</h1>
@@ -1893,13 +1893,13 @@
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="g-date" required></div>
                             <div class="input-group"><label>Sell Price (₹) <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="number" id="g-sell-price" placeholder="Leave blank if owned"></div>
                             <div class="input-group"><label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="g-sell-date"></div>
-                            
+
                             <!-- Condition/Rating Field -->
                             <div class="input-group">
                                 <label>Condition/Rating <span style="color:var(--text-muted);font-size:11px;">(0-100, optional)</span></label>
                                 <input type="number" id="g-condition" min="0" max="100" placeholder="e.g. 90">
                             </div>
-                            
+
                             <!-- Clickable Image Icon -->
                             <div class="input-group">
                                 <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
@@ -1912,7 +1912,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="g-notes" rows="2" placeholder="Any notes..."></textarea></div>
                         <button type="submit" class="btn">Add to Collection</button>
                     </form>
@@ -1944,7 +1944,7 @@
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="gm-buy-date" required></div>
                             <div class="input-group"><label>Sell Price (₹) <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="number" id="gm-sell-price" placeholder="Leave blank if owned"></div>
                             <div class="input-group"><label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="date" id="gm-sell-date"></div>
-                            
+
                             <!-- Clickable Image Icon for Games -->
                             <div class="input-group">
                                 <label>Game Cover <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
@@ -1995,6 +1995,17 @@
                                 <label>Custom Duration (months)</label>
                                 <input type="number" id="d-custom-months" placeholder="e.g. 18" min="1">
                             </div>
+                            <!-- Clickable Image Icon for Digital -->
+                            <div class="input-group">
+                                <label>Service Icon <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
+                                <div onclick="openImagePicker('digital')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+                                    <div id="d-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                                        <div style="font-size: 13px; color: var(--text-muted);">Click to add icon</div>
+                                    </div>
+                                    <input type="hidden" id="d-final-image-url" value="">
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="d-notes" rows="2" placeholder="Any notes..."></textarea></div>
                         <button type="submit" class="btn">Add Purchase</button>
@@ -2016,21 +2027,20 @@
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account</h3>
                     <p style="color:var(--text-secondary);margin-bottom:16px;">Signed in as: <strong id="userEmail" style="color:#fff;"></strong></p>
-                    
+
                     <!-- Account Actions Row -->
                     <div style="display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;">
                         <!-- Sign Out Button (Left) -->
                         <button id="signOutBtn" class="btn" style="flex:1;min-width:140px;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
-                        
+
                         <!-- Encryption Button (Right) - Show when DISABLED -->
-                        <button id="encryption-disabled-controls" onclick="const modal = document.getElementById('encryptionSetupModal'); modal.style.display='flex'; modal.classList.add('active'); console.log('Modal opened');" class="btn" style="flex:1;min-width:160px;background:linear-gradient(135deg,#10b981 0%,#06b6d4 100%);display:block;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Setup Encryption</button>
-                        
+
                         <!-- Encryption Button (Right) - Show when ENABLED -->
                         <button id="encryption-enabled-controls" onclick="if(confirm('⚠️ Are you sure you want to disable encryption?\\n\\nYour data will no longer be encrypted.')) { disableEncryption(); }" class="btn" style="flex:1;min-width:160px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);display:none;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Disable Encryption
                         </button>
                     </div>
-                    
+
                     <!-- Encryption Status Display -->
                     <div id="encryption-status" style="padding:12px 16px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(148,163,184,0.1);margin-top:12px;display:flex;align-items:center;gap:10px;">
                         <span id="encryption-status-icon" style="font-size:20px; display:inline-flex; align-items:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span>
@@ -2166,8 +2176,15 @@
     </div>
 
     <script type="module">
-        console.log('🚀 Module script started');
-        
+        // Production Mode - Disable Console Logging
+        if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+            console.log = function() {};
+            console.error = function() {};
+            console.warn = function() {};
+            console.info = function() {};
+            console.debug = function() {};
+        }
+
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         // Updated: Fixed syntax errors - Feb 2026
         import {
@@ -2186,16 +2203,15 @@
   limit,      // ← ADD THIS for pagination
   writeBatch  // ← ADD THIS for batch deletion
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import { 
-    getAuth, 
-    signInWithPopup, 
-    GoogleAuthProvider, 
-    onAuthStateChanged, 
+        import {
+    getAuth,
+    signInWithPopup,
+    GoogleAuthProvider,
+    onAuthStateChanged,
     signOut,
     deleteUser  // ← ADD THIS for account deletion
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        console.log('✅ Imports successful');
 
         // ============================================
         // ENCRYPTION MANAGER CLASS - AES-256-GCM
@@ -2209,7 +2225,7 @@
             async deriveKeyFromPassword(password, salt) {
                 const encoder = new TextEncoder();
                 const passwordBuffer = encoder.encode(password);
-                
+
                 const keyMaterial = await window.crypto.subtle.importKey(
                     'raw', passwordBuffer, 'PBKDF2', false, ['deriveBits', 'deriveKey']
                 );
@@ -2240,7 +2256,7 @@
                 const encoder = new TextEncoder();
                 const data = encoder.encode(JSON.stringify(plaintext));
                 const iv = window.crypto.getRandomValues(new Uint8Array(12));
-                
+
                 const encryptedData = await window.crypto.subtle.encrypt(
                     { name: 'AES-GCM', iv: iv },
                     this.encryptionKey,
@@ -2263,7 +2279,7 @@
                     const combined = this.base64ToArrayBuffer(encryptedBase64);
                     const iv = combined.slice(0, 12);
                     const encryptedData = combined.slice(12);
-                    
+
                     const decryptedData = await window.crypto.subtle.decrypt(
                         { name: 'AES-GCM', iv: iv },
                         this.encryptionKey,
@@ -2273,7 +2289,6 @@
                     const decoder = new TextDecoder();
                     return JSON.parse(decoder.decode(decryptedData));
                 } catch (error) {
-                    console.error('Decryption failed:', error);
                     throw new Error('Failed to decrypt. Wrong password or corrupted data.');
                 }
             }
@@ -2338,14 +2353,11 @@
 
         // Helper functions for encryption
         window.encryptData = async function(data) {
-            console.log('🔐 encryptData called with:', data);
-            console.log('  imageUrl present:', !!data.imageUrl, 'value:', data.imageUrl);
-            
+
             if (!encryptionManager.isUnlocked) {
-                console.log('  Encryption not enabled, returning data as-is');
                 return data;
             }
-            
+
             try {
                 const encrypted = await encryptionManager.encrypt(data);
                 const result = {
@@ -2353,45 +2365,35 @@
                     data: encrypted,
                     timestamp: Date.now()
                 };
-                console.log('  ✅ Data encrypted successfully');
                 return result;
             } catch (error) {
-                console.error('Encryption error:', error);
                 return data;
             }
         };
 
         window.decryptData = async function(encryptedDoc) {
-            console.log('🔓 decryptData called');
-            
+
             // If data is null or undefined, return as-is
             if (!encryptedDoc) {
-                console.log('  Data is null/undefined, returning as-is');
                 return encryptedDoc;
             }
-            
+
             // If data is not marked as encrypted, return as-is
             if (!encryptedDoc.encrypted) {
-                console.log('  Data not encrypted, returning as-is');
-                console.log('  imageUrl present:', !!encryptedDoc.imageUrl, 'value:', encryptedDoc.imageUrl);
                 return encryptedDoc;
             }
-            
+
             // If data IS encrypted but user hasn't unlocked yet
             if (!encryptionManager.isUnlocked) {
-                console.warn('Data is encrypted but not unlocked yet');
                 // Return unencrypted placeholder or the encrypted doc
                 return encryptedDoc;
             }
-            
+
             // Try to decrypt
             try {
                 const decrypted = await encryptionManager.decrypt(encryptedDoc.data);
-                console.log('  ✅ Decrypted data:', decrypted);
-                console.log('  imageUrl present:', !!decrypted.imageUrl, 'value:', decrypted.imageUrl);
                 return decrypted;
             } catch (error) {
-                console.error('Decryption error for document:', error);
                 // If decryption fails, this might be old unencrypted data
                 // Return it without the encrypted wrapper
                 if (encryptedDoc.data) {
@@ -2409,7 +2411,6 @@
             }
         };
 
-        console.log('✅ Encryption module loaded');
 
         // Firebase configuration
         const firebaseConfig = {
@@ -2422,13 +2423,11 @@
             measurementId: "G-GSWW5KLR2H"
         };
 
-        console.log('🔧 Initializing Firebase');
 
         // Safety timeout - hide loading screen after 5 seconds if Firebase fails
         setTimeout(() => {
             const loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen && loadingScreen.style.display !== 'none') {
-                console.warn('⚠️ Loading screen timeout - hiding forcefully');
                 loadingScreen.style.display = 'none';
                 document.getElementById('loginScreen').style.display = 'flex';
             }
@@ -2477,28 +2476,23 @@ function sanitizeText(text) {
 function sanitizeURL(url) {
     if (!url) return '';
     const trimmed = url.trim();
-    
-    console.log('🔍 sanitizeURL checking:', trimmed.substring(0, 100) + '...');
-    
+
+
     // Allow data: URLs for base64 encoded images
     if (trimmed.startsWith('data:image/')) {
         // Basic validation: check if it's a valid data URL format
         if (trimmed.match(/^data:image\/(png|jpeg|jpg|gif|webp);base64,/i)) {
-            console.log('  ✅ Valid data: URL (base64 image)');
             return trimmed;
         }
-        console.log('  ❌ Invalid data: URL format');
         return '';
     }
-    
+
     // For HTTP/HTTPS URLs, check against allowed domains
     if (!trimmed.match(/^https?:\/\//i)) {
-        console.log('  ❌ Not an HTTP/HTTPS URL');
         return '';
     }
     try {
         const parsed = new URL(trimmed);
-        console.log('  Checking hostname:', parsed.hostname);
         const allowedDomains = [
             // Image hosting services
             'imgur.com', 'i.imgur.com',
@@ -2506,7 +2500,7 @@ function sanitizeURL(url) {
             'images.unsplash.com',
             'cdn.pixabay.com',
             'pexels.com',
-            
+
             // Gaming sites
             'ignimgs.com', 'assets-prd.ignimgs.com',
             'steamcdn-a.akamaihd.net',
@@ -2516,51 +2510,48 @@ function sanitizeURL(url) {
             'croma.com',
             'flipkart.com',
             'myntra.com',
-            
+
             // General CDNs
             'firebasestorage.googleapis.com',
             'cdn.jsdelivr.net',
             'cloudfront.net',
             'wp-content',
             'wordpress.com',
-            
+
             // E-commerce
             'amazon.com', 'images-na.ssl-images-amazon.com',
             'm.media-amazon.com',
             'amazon.in',
             'shopify.com',
             'woocommerce.com',
-            
+
             // Social media
             'fbcdn.net',
             'cdninstagram.com',
-            
+
             // Tech retailers
             'reliancedigital.in',
             'vijaysales.com',
             'tatacliq.com',
             'snapdeal.com'
         ];
-        const isAllowed = allowedDomains.some(domain => 
+        const isAllowed = allowedDomains.some(domain =>
             parsed.hostname === domain || parsed.hostname.endsWith('.' + domain)
         );
-        
+
         // Also allow URLs that look like direct image links (ending with image extensions)
         const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i;
         const isDirectImage = imageExtensions.test(parsed.pathname);
-        
+
         // Allow WordPress uploads (common pattern: /wp-content/uploads/)
         const isWordPressUpload = parsed.pathname.includes('/wp-content/uploads/');
-        
+
         if (isAllowed || isDirectImage || isWordPressUpload) {
-            console.log('  ✅ Domain/URL is allowed');
             return parsed.href;
         } else {
-            console.log('  ❌ Domain not in allowed list:', parsed.hostname);
             return '';
         }
     } catch (e) {
-        console.log('  ❌ Invalid URL format:', e.message);
         return '';
     }
 }
@@ -2571,16 +2562,14 @@ function sanitizeNumber(value, defaultValue = 0) {
     return isNaN(num) || !isFinite(num) ? defaultValue : num;
 }
 
-        console.log('✅ Firebase initialized');
         // ⭐⭐⭐ INSERT initializeUser() RIGHT HERE ⭐⭐⭐
 async function initializeUser(user) {
     try {
         currentUserUID = user.uid;
         const profileRef = collection(db, "users", user.uid, "profile");
         const profileSnapshot = await getDocs(profileRef);
-        
+
         if (profileSnapshot.empty) {
-            console.log("🆕 Creating user profile");
             await addDoc(collection(db, "users", user.uid, "profile"), {
                 email: user.email,
                 displayName: user.displayName || "User",
@@ -2596,35 +2585,31 @@ async function initializeUser(user) {
                 notifications: true
             });
         }
-        
+
         // ✅ LOAD USER'S CURRENCY SETTING
         const settingsRef = collection(db, "users", user.uid, "settings");
         const settingsSnapshot = await getDocs(settingsRef);
         if (!settingsSnapshot.empty) {
             const userSettings = settingsSnapshot.docs[0].data();
             currentCurrency = userSettings.currency || '₹';
-            console.log('✅ Currency loaded:', currentCurrency);
         }
-        
+
         await loadSettings();
-        
+
         // ============================================
         // ENCRYPTION FLOW - Check if user has encryption enabled
         // ============================================
         if (encryptionManager.isEncryptionEnabled()) {
             // User has encryption - show unlock modal
-            console.log('🔐 Encryption enabled - showing unlock modal');
             const modal = document.getElementById('unlockModal');
             modal.style.display = 'flex';
             modal.classList.add('active');
             // Data will be loaded after successful unlock
         } else {
             // No encryption - load data normally
-            console.log('ℹ️ No encryption enabled - loading data normally');
             await loadData();
         }
     } catch (err) {
-        console.error("❌ initializeUser error:", err);
     }
 }
         // Global variables
@@ -2635,7 +2620,7 @@ async function initializeUser(user) {
         var currentGadgetFilter = 'all';
         var currentDigitalFilter = 'all';
         var deleteCallback = null;
-        
+
         // Ensure modals are hidden on page load
         document.addEventListener('DOMContentLoaded', function() {
             const deleteModal = document.getElementById('deleteModal');
@@ -2662,11 +2647,9 @@ onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             currentUserUID = user.uid;
 
-            console.log('✅ User authenticated:', user.email);
 
             // Check if admin (for future admin panel if needed)
             if (isAdmin(user)) {
-                console.log('👑 Admin access granted');
             }
 
             document.getElementById('loginScreen').style.display = 'none';
@@ -2676,7 +2659,7 @@ onAuthStateChanged(auth, async (user) => {
             // Set user name and email
             const displayName = user.displayName || user.email.split('@')[0];
             document.getElementById('userEmail').textContent = user.email;
-            
+
             // Update avatar with initials
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
@@ -2691,7 +2674,7 @@ onAuthStateChanged(auth, async (user) => {
             if (isAdmin(user)) {
                 const adminNav = document.getElementById('admin-nav');
                 if (adminNav) adminNav.style.display = 'block';
-                
+
                 // Also show admin option in profile menu
                 const profileMenuAdmin = document.getElementById('profileMenuAdmin');
                 if (profileMenuAdmin) profileMenuAdmin.style.display = 'flex';
@@ -2705,7 +2688,6 @@ onAuthStateChanged(auth, async (user) => {
             currentUser = null;
             currentUserUID = null;
 
-            console.log('⛔ User not authenticated');
 
             // Hide admin panel
             const adminNav = document.getElementById('admin-nav');
@@ -2713,29 +2695,20 @@ onAuthStateChanged(auth, async (user) => {
 
         const loginScreen = document.getElementById('loginScreen');
         const mainApp = document.getElementById('mainApp');
-        
-        console.log('🔍 loginScreen element:', loginScreen);
-        console.log('🔍 loginScreen computed style:', loginScreen ? window.getComputedStyle(loginScreen).display : 'element not found');
-        console.log('🔍 body height:', document.body.offsetHeight);
-        console.log('🔍 window height:', window.innerHeight);
-        console.log('🔍 loginScreen bounding rect:', loginScreen ? loginScreen.getBoundingClientRect() : 'N/A');
-        
+
+
         if (loginScreen) {
             loginScreen.style.display = 'flex';
             loginScreen.style.visibility = 'visible';
             loginScreen.style.opacity = '1';
-            console.log('✅ Set loginScreen to flex');
         } else {
-            console.error('❌ loginScreen element not found!');
         }
-        
+
         if (mainApp) {
             mainApp.style.display = 'none';
-            console.log('✅ Set mainApp to none');
         }
     }
     } catch (error) {
-        console.error('❌ Auth state change error:', error);
         // Ensure loading screen is hidden and login screen is shown even on error
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('loginScreen').style.display = 'flex';
@@ -2753,8 +2726,7 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('loginError').style.display = 'none';
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
-        
-        console.log('Signed in as:', user.email);
+
 
         // Create or update user profile
         const userProfileRef = doc(db, 'userProfiles', user.uid);
@@ -2769,7 +2741,6 @@ onAuthStateChanged(auth, async (user) => {
                 createdAt: new Date().toISOString(),
                 blocked: false
             });
-            console.log('✅ User profile created');
         } else {
             // Existing user - check if blocked
             const userData = userProfileSnap.data();
@@ -2785,18 +2756,15 @@ onAuthStateChanged(auth, async (user) => {
             await updateDoc(userProfileRef, {
                 lastLogin: new Date().toISOString()
             });
-            console.log('✅ Last login updated');
         }
 
     } catch (error) {
-        console.error('Sign in error:', error);
         const errorDiv = document.getElementById('loginError');
         errorDiv.textContent = `Sign in failed: ${error.message}`;
         errorDiv.style.display = 'block';
     }
 });
             } else {
-                console.error('Google Sign-in button not found!');
             }
         }, 100);
 
@@ -2809,11 +2777,9 @@ onAuthStateChanged(auth, async (user) => {
                 // Clear encryption key on sign out
                 encryptionManager.lockData();
                 document.body.classList.remove('encrypted');
-                
+
                 await signOut(auth);
-                console.log('Signed out successfully');
             } catch (error) {
-                console.error('Sign out error:', error);
                 alert('Failed to sign out: ' + error.message);
             }
         });
@@ -2843,11 +2809,7 @@ async function loadData() {
         gadgets = await Promise.all(gadgetsSnapshot.docs.map(async doc => {
             try {
                 const encryptedData = doc.data();
-                console.log('📦 Loading gadget from Firestore:', doc.id);
-                console.log('  Encrypted data:', encryptedData);
                 const data = await decryptData(encryptedData);
-                console.log('  Decrypted data:', data);
-                console.log('  imageUrl in decrypted data:', data.imageUrl);
                 // Set status for old gadgets that don't have it
                 if (!data.status) {
                     data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
@@ -2857,7 +2819,6 @@ async function loadData() {
                     ...data
                 };
             } catch (error) {
-                console.error('Error processing gadget:', doc.id, error);
                 // Return basic data if decryption fails
                 return {
                     firestoreId: doc.id,
@@ -2890,7 +2851,6 @@ async function loadData() {
                     ...data
                 };
             } catch (error) {
-                console.error('Error processing game:', doc.id, error);
                 // Return basic data if decryption fails
                 return {
                     firestoreId: doc.id,
@@ -2919,7 +2879,6 @@ async function loadData() {
                     ...data
                 };
             } catch (error) {
-                console.error('Error processing digital purchase:', doc.id, error);
                 // Return basic data if decryption fails
                 return {
                     firestoreId: doc.id,
@@ -2935,9 +2894,7 @@ async function loadData() {
         updateAll();
 
     } catch (error) {
-        console.error('Error loading data:', error);
-        console.error('Error details:', error.message, error.code);
-        
+
         // More detailed error message
         let errorMsg = 'Error loading data. ';
         if (error.code === 'failed-precondition') {
@@ -2947,7 +2904,7 @@ async function loadData() {
         } else {
             errorMsg += 'Please refresh the page. If the problem persists, clear your browser cache.';
         }
-        
+
         alert(errorMsg);
     }
 }
@@ -3104,7 +3061,7 @@ async function loadData() {
                     <circle cx="5" cy="12" r="2" fill="url(#other-grad)" stroke="#94a3b8" stroke-width="1.5"/>
                     <circle cx="19" cy="12" r="2" fill="url(#other-grad)" stroke="#94a3b8" stroke-width="1.5"/>
                 </svg>`,
-            
+
             // Game Platforms - Unique colored icons
             'PlayStation 5': `
                 <svg viewBox="0 0 24 24" fill="none">
@@ -3254,7 +3211,7 @@ async function loadData() {
                     <rect x="5" y="10" width="14" height="8" rx="1" fill="#1e293b"/>
                     <circle cx="19" cy="5" r="2" fill="#ef4444"/>
                 </svg>`,
-            
+
             // Game Genres - Colorful and distinct
             'Action': `
                 <svg viewBox="0 0 24 24" fill="none">
@@ -3413,7 +3370,7 @@ async function loadData() {
                     <rect x="6" y="8" width="5" height="6" rx="1" fill="url(#platform-grad)" stroke="#22c55e" stroke-width="1.5"/>
                     <rect x="13" y="3" width="5" height="11" rx="1" fill="url(#platform-grad)" stroke="#22c55e" stroke-width="1.5"/>
                 </svg>`,
-            
+
             // Digital Purchase Types
             'Game Subscription': `
                 <svg viewBox="0 0 24 24" fill="none">
@@ -3512,9 +3469,9 @@ async function loadData() {
         function createSVGIcon(categoryName, animationDelay = 0) {
             // Remove emojis and clean up the text for matching
             const cleanName = categoryName.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '').trim();
-            
+
             const svgMarkup = iconLibrary[cleanName] || iconLibrary['Other'];
-            
+
             return `
                 <div style="position: relative; width: 24px; height: 24px; flex-shrink: 0;">
                     <div class="floating-category-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: floatCategoryIcon 3s ease-in-out infinite; animation-delay: ${animationDelay}s;">
@@ -3558,7 +3515,6 @@ async function loadSettings() {
             digitalTypes = settings.digitalTypes || getDefaultDigitalTypes();
             customIcons = settings.customIcons || [];
 
-            console.log('Loaded global settings');
 
         } else {
 
@@ -3579,23 +3535,21 @@ async function loadSettings() {
             digitalTypes = defaultSettings.digitalTypes;
             customIcons = defaultSettings.customIcons;
 
-            console.log('Created default global settings');
         }
 
         updateAllDropdowns();
         renderSettingsLists();
         renderCustomIcons();
-        
+
         // Update encryption status display
         if (typeof updateEncryptionStatus === 'function') {
             updateEncryptionStatus();
         }
 
     } catch (error) {
-        console.error('Error loading settings:', error);
     }
 }
-                
+
                 // Create new settings document
                 async function saveSettings() {
 
@@ -3616,7 +3570,6 @@ async function loadSettings() {
         renderCustomIcons();
 
     } catch (error) {
-        console.error('Error saving settings:', error);
         alert('Error saving settings. Please try again.');
     }
 }
@@ -3628,18 +3581,18 @@ async function loadSettings() {
             updateDropdown('gm-platform', gamePlatforms);
             updateDropdown('gm-genre', gameGenres);
             updateDropdown('d-type', digitalTypes);
-            
+
             // Populate game condition dropdowns
             const gameConditions = ['New', 'Like New', 'Good', 'Fair', 'Poor', 'Digital'];
             updateDropdown('gm-condition', gameConditions);
-            
+
             // Edit modal dropdowns
             updateDropdown('edit-g-category', gadgetCategories);
             updateDropdown('edit-gm-platform', gamePlatforms);
             updateDropdown('edit-gm-genre', gameGenres);
             updateDropdown('edit-d-type', digitalTypes);
             updateDropdown('edit-gm-condition', gameConditions);
-            
+
             updateIconPlatformDropdown();
             createCustomPlatformDropdown(); // Create visual dropdown with icons
         }
@@ -3664,7 +3617,7 @@ async function loadSettings() {
             // Create trigger
             const trigger = document.createElement('div');
             trigger.className = 'custom-select-trigger';
-            trigger.innerHTML = currentIcon 
+            trigger.innerHTML = currentIcon
                 ? '<img src="' + currentIcon.iconUrl + '" class="custom-select-icon" alt="' + currentValue + '">' + displayText + '<span class="custom-select-arrow">▼</span>'
                 : displayText + '<span class="custom-select-arrow">▼</span>';
 
@@ -3676,17 +3629,17 @@ async function loadSettings() {
                 const option = document.createElement('div');
                 option.className = 'custom-select-option';
                 if (platform === currentValue) option.classList.add('selected');
-                
+
                 const icon = getCustomIconForPlatform(platform);
                 const text = removeEmojiFromText(platform);
-                
-                option.innerHTML = icon 
+
+                option.innerHTML = icon
                     ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text
                     : text;
-                
+
                 option.onclick = () => {
                     select.value = platform;
-                    trigger.innerHTML = icon 
+                    trigger.innerHTML = icon
                         ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text + '<span class="custom-select-arrow">▼</span>'
                         : text + '<span class="custom-select-arrow">▼</span>';
                     optionsContainer.classList.remove('active');
@@ -3720,7 +3673,7 @@ async function loadSettings() {
             // Try exact match
             let icon = customIcons.find(icon => icon.platform === platform);
             if (icon) return icon;
-            
+
             // Try fuzzy match
             const cleanPlatform = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
             return customIcons.find(icon => {
@@ -3736,22 +3689,22 @@ async function loadSettings() {
         function updateIconPlatformDropdown() {
             const select = document.getElementById('icon-platform-name');
             if (!select) return;
-            
+
             const currentValue = select.value;
             select.innerHTML = '<option value="">Select a platform...</option>';
-            
+
             gamePlatforms.forEach(platform => {
                 const opt = document.createElement('option');
                 opt.value = platform;
                 opt.textContent = platform;
                 select.appendChild(opt);
             });
-            
+
             // Restore previous selection if it still exists
             if (gamePlatforms.includes(currentValue)) {
                 select.value = currentValue;
             }
-            
+
             // Create visual custom dropdown
             createCustomIconPlatformDropdown();
         }
@@ -3803,17 +3756,17 @@ async function loadSettings() {
                 const option = document.createElement('div');
                 option.className = 'custom-select-option';
                 if (platform === currentValue) option.classList.add('selected');
-                
+
                 const icon = getCustomIconForPlatform(platform);
                 const text = removeEmojiFromText(platform);
-                
-                option.innerHTML = icon 
+
+                option.innerHTML = icon
                     ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text
                     : text;
-                
+
                 option.onclick = () => {
                     select.value = platform;
-                    trigger.innerHTML = icon 
+                    trigger.innerHTML = icon
                         ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text + '<span class="custom-select-arrow">▼</span>'
                         : text + '<span class="custom-select-arrow">▼</span>';
                     optionsContainer.classList.remove('active');
@@ -3846,14 +3799,14 @@ async function loadSettings() {
         function updateDropdown(id, options) {
             const select = document.getElementById(id);
             if (!select) return;
-            
+
             const currentValue = select.value;
             select.innerHTML = '';
-            
+
             options.forEach(option => {
                 const opt = document.createElement('option');
                 opt.value = option;
-                
+
                 // For platform dropdown, add icon indicator
                 if (id === 'gm-platform') {
                     const customIcon = customIcons.find(icon => {
@@ -3864,7 +3817,7 @@ async function loadSettings() {
                         const cleanIcon = icon.platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
                         return cleanIcon === cleanOption;
                     });
-                    
+
                     if (customIcon) {
                         opt.textContent = '🎨 ' + option + ' (Custom Icon)';
                     } else {
@@ -3873,10 +3826,10 @@ async function loadSettings() {
                 } else {
                     opt.textContent = option;
                 }
-                
+
                 select.appendChild(opt);
             });
-            
+
             // Restore previous selection if it still exists
             if (options.includes(currentValue)) {
                 select.value = currentValue;
@@ -3894,13 +3847,13 @@ async function loadSettings() {
         function renderList(containerId, items, type) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            
+
             container.innerHTML = items.map((item, index) => {
                 let displayContent = '';
-                
+
                 // Remove emojis from text for display
                 const cleanText = item.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u0000-\u001F\u007F-\u009F\u2000-\u206F\uE000-\uF8FF\uD800-\uDFFF]/gu, '').trim();
-                
+
                 // Check if this is a game platform and has a custom uploaded icon
                 if (type === 'gamePlatform') {
                     const customIcon = getCustomIconForPlatform(item);
@@ -3917,7 +3870,7 @@ async function loadSettings() {
                     const animationDelay = (index * 0.1) % 1;
                     displayContent = `${createSVGIcon(item, animationDelay)} <span style="font-size:13px;font-weight:600;margin-left:6px;">${cleanText}</span>`;
                 }
-                
+
                 return `
                     <div class="settings-list-item">
                         ${displayContent}
@@ -3931,7 +3884,7 @@ async function loadSettings() {
         window.addGadgetCategory = async function() {
             const input = document.getElementById('new-gadget-category');
             const value = input.value.trim();
-            
+
             if (value && !gadgetCategories.includes(value)) {
                 gadgetCategories.push(value);
                 input.value = '';
@@ -3949,7 +3902,7 @@ async function loadSettings() {
         window.addGamePlatform = async function() {
             const input = document.getElementById('new-game-platform');
             const value = input.value.trim();
-            
+
             if (value && !gamePlatforms.includes(value)) {
                 gamePlatforms.push(value);
                 input.value = '';
@@ -3967,7 +3920,7 @@ async function loadSettings() {
         window.addGameGenre = async function() {
             const input = document.getElementById('new-game-genre');
             const value = input.value.trim();
-            
+
             if (value && !gameGenres.includes(value)) {
                 gameGenres.push(value);
                 input.value = '';
@@ -3985,7 +3938,7 @@ async function loadSettings() {
         window.addDigitalType = async function() {
             const input = document.getElementById('new-digital-type');
             const value = input.value.trim();
-            
+
             if (value && !digitalTypes.includes(value)) {
                 digitalTypes.push(value);
                 input.value = '';
@@ -4006,12 +3959,12 @@ async function loadSettings() {
         function handleIconUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
+
             if (!file.type.startsWith('image/')) {
                 alert('Please upload an image file');
                 return;
             }
-            
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 currentIconPreview = e.target.result;
@@ -4033,7 +3986,7 @@ async function loadSettings() {
         function showIconPreview(src) {
             const preview = document.getElementById('icon-preview');
             const img = document.getElementById('icon-preview-img');
-            
+
             if (preview && img) {
                 img.src = src;
                 img.onerror = () => {
@@ -4055,35 +4008,28 @@ async function loadSettings() {
         window.saveCustomIcon = async function() {
             const selectElement = document.getElementById('icon-platform-name');
             const platformName = selectElement.value;
-            
-            console.log('=== Saving Custom Icon Debug ===');
-            console.log('Raw value from dropdown:', platformName);
-            console.log('Value length:', platformName.length);
-            console.log('Value char codes:', [...platformName].map(c => c.charCodeAt(0)));
-            console.log('Selected index:', selectElement.selectedIndex);
-            console.log('Selected option text:', selectElement.options[selectElement.selectedIndex]?.text);
-            
+
+
             if (!platformName) {
                 alert('Please select a platform');
                 return;
             }
-            
+
             if (!currentIconPreview) {
                 alert('Please upload an icon or provide a URL');
                 return;
             }
-            
+
             // Check if icon already exists for this platform
             const existingIndex = customIcons.findIndex(icon => icon.platform === platformName);
-            
+
             const newIcon = {
                 platform: platformName,
                 iconUrl: currentIconPreview,
                 timestamp: Date.now()
             };
-            
-            console.log('Icon object to save:', newIcon);
-            
+
+
             if (existingIndex >= 0) {
                 if (confirm(`An icon already exists for "${platformName}". Replace it?`)) {
                     customIcons[existingIndex] = newIcon;
@@ -4093,18 +4039,16 @@ async function loadSettings() {
             } else {
                 customIcons.push(newIcon);
             }
-            
+
             await saveSettings();
-            
-            console.log('After save, customIcons array:', customIcons);
-            console.log('==================================');
-            
+
+
             // Clear inputs
             document.getElementById('icon-platform-name').value = '';
             document.getElementById('icon-upload').value = '';
             document.getElementById('icon-url').value = '';
             hideIconPreview();
-            
+
             alert(`Icon for "${platformName}" saved successfully!`);
         };
 
@@ -4118,14 +4062,13 @@ async function loadSettings() {
         function renderCustomIcons() {
             const iconsGrid = document.getElementById('icons-grid');
             if (!iconsGrid) return;
-            
-            console.log('Rendering custom icons:', customIcons);
-            
+
+
             if (customIcons.length === 0) {
                 iconsGrid.innerHTML = '<p style="color: rgba(255,255,255,0.4); text-align: center; padding: 20px; width:100%;">No custom icons yet. Add one above!</p>';
                 return;
             }
-            
+
             iconsGrid.innerHTML = customIcons.map((icon, index) => `
                 <div style="width:90px;flex:0 0 90px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 8px;text-align:center;overflow:hidden;">
                     <div class="icon-img-wrap" style="margin:0 auto 8px;">
@@ -4140,7 +4083,7 @@ async function loadSettings() {
         window.removeCustomIconByIndex = async function(index) {
             const icon = customIcons[index];
             if (!icon) return;
-            
+
             if (confirm(`Remove custom icon for "${icon.platform}"?`)) {
                 customIcons.splice(index, 1);
                 await saveSettings();
@@ -4148,38 +4091,26 @@ async function loadSettings() {
         };
 
         function getPlatformDisplay(platform) {
-            console.log('=== Platform Display Debug ===');
-            console.log('Looking for platform:', platform);
-            console.log('Platform length:', platform.length);
-            console.log('Platform char codes:', [...platform].map(c => c.charCodeAt(0)));
-            
+
             customIcons.forEach((icon, index) => {
-                console.log(`Icon ${index}:`, icon.platform);
-                console.log(`Icon ${index} length:`, icon.platform.length);
-                console.log(`Icon ${index} char codes:`, [...icon.platform].map(c => c.charCodeAt(0)));
-                console.log(`Exact match: ${icon.platform === platform}`);
             });
-            
+
             // Try exact match first
             let customIcon = customIcons.find(icon => icon.platform === platform);
-            
+
             // If no exact match, try fuzzy match (remove emojis and special chars and compare)
             if (!customIcon) {
                 // Remove emojis and extra spaces
                 const cleanPlatform = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
-                console.log('Trying fuzzy match with cleaned platform:', cleanPlatform);
-                
+
                 customIcon = customIcons.find(icon => {
                     const cleanIcon = icon.platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
                     const matches = cleanIcon === cleanPlatform;
-                    console.log('  Comparing "' + cleanIcon + '" with "' + cleanPlatform + '": ' + matches);
                     return matches;
                 });
             }
-            
-            console.log('Found icon (after exact or fuzzy match):', customIcon);
-            console.log('=============================');
-            
+
+
             if (customIcon) {
                 // Remove emoji from platform name when displaying with custom icon
                 const platformWithoutEmoji = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
@@ -4200,7 +4131,7 @@ async function loadSettings() {
     window.showSection = function(section, el) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    
+
     const sectionElement = document.getElementById(section);
     if (sectionElement) {
         sectionElement.classList.add('active');
@@ -4231,14 +4162,12 @@ async function loadSettings() {
       // Gadget form handler (with sanitization)
 document.getElementById('gadget-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const sellPrice = document.getElementById('g-sell-price').value;
     const sellDate = document.getElementById('g-sell-date').value;
     const imageUrl = document.getElementById('g-final-image-url').value;
     const condition = document.getElementById('g-condition').value;
 
-    console.log('🟢 Gadget form submitted');
-    console.log('  Raw imageUrl from hidden input:', imageUrl);
 
     const gadget = {
         name: sanitizeText(document.getElementById('g-name').value),           // ← SANITIZED
@@ -4253,39 +4182,31 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         condition: condition ? sanitizeNumber(parseInt(condition)) : null,     // ← NEW: Condition/Rating
         timestamp: Date.now()
     };
-    
-    console.log('  Gadget object to save:', gadget);
-    console.log('  imageUrl after sanitization:', gadget.imageUrl);
+
 
     try {
         if (window.editingGadgetId) {
             // UPDATE existing gadget
-            console.log('  Before encryption:', gadget);
             const gadgetToSave = await encryptData(gadget);
-            console.log('  After encryption:', gadgetToSave);
             await updateDoc(
                 doc(db, 'users', currentUserUID, 'gadgets', window.editingGadgetId),
                 gadgetToSave
             );
-            console.log('  ✅ Gadget updated in Firestore');
             window.editingGadgetId = null;
             document.querySelector('#gadget-form .btn').textContent = 'Add to Collection';
         } else {
             // ADD new gadget
-            console.log('  Before encryption:', gadget);
             const gadgetToSave = await encryptData(gadget);
-            console.log('  After encryption:', gadgetToSave);
             await addDoc(
                 collection(db, 'users', currentUserUID, 'gadgets'),
                 gadgetToSave
             );
-            console.log('  ✅ Gadget added to Firestore');
         }
 
         await loadData();
         e.target.reset();
         document.getElementById('g-date').valueAsDate = new Date();
-        
+
         // Reset image preview
         document.getElementById('g-final-image-url').value = '';
         const container = document.getElementById('g-image-preview-container');
@@ -4295,9 +4216,8 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 <div style="font-size: 13px; color: var(--text-muted);">Click to add image</div>
             `;
         }
-        
+
     } catch (error) {
-        console.error('Error adding gadget:', error);
         alert('Error adding gadget. Please try again.');
     }
 });
@@ -4314,17 +4234,17 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         function calculateOwnershipDuration(buyDate, sellDate) {
             const start = new Date(buyDate);
             const end = sellDate ? new Date(sellDate) : new Date();
-            
+
             const diffTime = Math.abs(end - start);
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
+
             if (diffDays === 0) return 'Same day';
             if (diffDays === 1) return '1 day';
             if (diffDays < 30) return `${diffDays} days`;
-            
+
             const diffMonths = Math.floor(diffDays / 30);
             const remainingDays = diffDays % 30;
-            
+
             if (diffMonths === 1 && remainingDays === 0) return '1 month';
             if (diffMonths === 1) return `1 month, ${remainingDays} day${remainingDays > 1 ? 's' : ''}`;
             if (remainingDays === 0) return `${diffMonths} months`;
@@ -4334,12 +4254,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         // Render gadgets
         function renderGadgets() {
     const container = document.getElementById('gadgets-list');
-    
+
     // Filter gadgets based on currentGadgetFilter
     let filtered = gadgets;
     if (currentGadgetFilter === 'owned') filtered = gadgets.filter(g => g.status === 'owned');
     if (currentGadgetFilter === 'sold') filtered = gadgets.filter(g => g.status === 'sold');
-    
+
     if (filtered.length === 0) {
         container.innerHTML = '<p style="text-align:center;color:#888;">No gadgets in this category yet.</p>';
         return;
@@ -4349,19 +4269,14 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         const profit = g.sellPrice ? g.sellPrice - g.price : 0;
         const profitClass = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : '';
         const cardId = `gadget-card-${index}`;
-        
+
         // Determine product image
         const productImage = g.imageUrl;
-        
+
         // Debug: Check if image is being saved
         if (index === 0) {
-            console.log('🟡 First gadget in renderGadgets:');
-            console.log('  imageUrl:', g.imageUrl);
-            console.log('  name:', g.name);
-            console.log('  category:', g.category);
-            console.log('  Full gadget object:', g);
         }
-        
+
         return `
         <div class="item-card" id="${cardId}" onclick="toggleCard('${cardId}')">
             <!-- Main Card Content (Always Visible) -->
@@ -4369,21 +4284,21 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 <div style="width: 100%;">
                     <!-- Title Above Everything -->
                     <div class="item-title" style="margin-bottom: 12px;">${sanitizeText(g.name)}</div>
-                    
+
                     <!-- Content Row: Image + Info -->
                     <div style="display: flex; gap: 12px; align-items: flex-start;">
                         <!-- Product Image -->
-                        ${productImage ? 
+                        ${productImage ?
                             `<img src="${sanitizeURL(productImage)}" alt="${sanitizeText(g.name)}" class="product-image">` :
                             `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;">${getCategoryIcon(g.category)}</div>`
                         }
-                        
+
                         <!-- Info beside image -->
                         <div style="flex: 1; min-width: 0;">
                             <div class="item-meta" style="margin-bottom: 8px;">
                                 <span class="item-category">${sanitizeText(g.category)}</span>
                             </div>
-                            
+
                             <!-- Badges Row -->
                             <div class="badge-row">
                                 <span class="status-badge status-${g.status || 'owned'}">
@@ -4395,7 +4310,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                     </div>
                 </div>
             </div>
-            
+
             <!-- Expandable Details Section -->
             <div class="card-details">
                 <div class="item-info">
@@ -4426,7 +4341,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                     </div>
                     ` : ''}
                 </div>
-                
+
                 <!-- Action Buttons -->
                 <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
                     <button class="btn-edit" onclick="editGadget('${g.firestoreId}')" style="flex: 1;">
@@ -4444,18 +4359,17 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
         // Delete gadget with confirmation
         window.deleteGadget = function(firestoreId, name) {
-            document.getElementById('deleteMessage').textContent = 
+            document.getElementById('deleteMessage').textContent =
                 `Are you sure you want to delete "${name}"? This action cannot be undone.`;
             const modal = document.getElementById('deleteModal');
             modal.classList.add('active');
             modal.style.display = 'flex';
-            
+
             deleteCallback = async () => {
                 try {
                     await deleteDoc(doc(db, 'users', currentUserUID, 'gadgets', firestoreId));
                     await loadData();
                 } catch (error) {
-                    console.error('Error deleting gadget:', error);
                     alert('Error deleting gadget. Please try again.');
                 }
             };
@@ -4475,7 +4389,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             document.getElementById('edit-g-sell-date').value = gadget.sellDate || '';
             document.getElementById('edit-g-condition').value = gadget.condition || '';
             document.getElementById('edit-g-notes').value = gadget.notes || '';
-            
+
             // Populate image if exists
             const imageUrl = gadget.imageUrl || '';
             document.getElementById('edit-g-final-image-url').value = imageUrl;
@@ -4494,7 +4408,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
             // Store editing ID
             window.editingGadgetId = firestoreId;
-            
+
             // Show modal
             const modal = document.getElementById('gadgetEditModal');
             modal.style.display = 'flex';
@@ -4510,23 +4424,17 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
         window.updateGadgetFromModal = async function(e) {
             e.preventDefault();
-            
-            console.log('🔵 updateGadgetFromModal called');
-            
+
+
             const hiddenInput = document.getElementById('edit-g-final-image-url');
-            console.log('  Hidden input element exists:', !!hiddenInput);
             if (hiddenInput) {
-                console.log('  Hidden input value:', hiddenInput.value);
-                console.log('  Hidden input value length:', hiddenInput.value.length);
             }
-            
+
             const sellPrice = document.getElementById('edit-g-sell-price').value;
             const sellDate = document.getElementById('edit-g-sell-date').value;
             const imageUrl = hiddenInput ? hiddenInput.value : '';
             const condition = document.getElementById('edit-g-condition').value;
-            
-            console.log('  imageUrl variable:', imageUrl);
-            console.log('  imageUrl length:', imageUrl ? imageUrl.length : 0);
+
 
             const gadget = {
                 name: sanitizeText(document.getElementById('edit-g-name').value),
@@ -4541,12 +4449,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 condition: condition ? sanitizeNumber(parseInt(condition)) : null,
                 timestamp: Date.now()
             };
-            
-            console.log('  📦 Gadget object created:');
-            console.log('    - name:', gadget.name);
-            console.log('    - imageUrl:', gadget.imageUrl);
-            console.log('    - imageUrl type:', typeof gadget.imageUrl);
-            console.log('    - imageUrl length:', gadget.imageUrl ? gadget.imageUrl.length : 0);
+
 
             try {
                 const gadgetToSave = await encryptData(gadget);
@@ -4557,7 +4460,6 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 await loadData();
                 closeGadgetEditModal();
             } catch (error) {
-                console.error('Error updating gadget:', error);
                 alert('Error updating gadget. Please try again.');
             }
         };
@@ -4565,7 +4467,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         // Game form handler
         document.getElementById('game-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const sellPrice = document.getElementById('gm-sell-price').value;
             const sellDate = document.getElementById('gm-sell-date').value;
             const imageUrl = document.getElementById('gm-final-image-url').value;
@@ -4622,7 +4524,6 @@ if (gmContainer) {
     `;
 }
             } catch (error) {
-                console.error('Error adding game:', error);
                 alert('Error adding game. Please try again.');
             }
         });
@@ -4660,7 +4561,7 @@ if (gmContainer) {
                 const platformDisplay = getPlatformDisplay(g.platform);
                 const genreDisplay = g.genre || '';
                 const cardId = `game-card-${index}`;
-                
+
                 return `
                     <div class="item-card" id="${cardId}" onclick="toggleCard('${cardId}')">
                         <!-- Main Card Content (Always Visible) -->
@@ -4668,22 +4569,22 @@ if (gmContainer) {
                             <div style="width: 100%;">
                                 <!-- Title Above Everything -->
                                 <div class="item-title" style="margin-bottom: 12px;">${sanitizeText(g.title)}</div>
-                                
+
                                 <!-- Content Row: Image + Info -->
                                 <div style="display: flex; gap: 12px; align-items: flex-start;">
                                     <!-- Game Cover Image -->
-                                    ${g.imageUrl ? 
+                                    ${g.imageUrl ?
                                         `<img src="${sanitizeURL(g.imageUrl)}" alt="${sanitizeText(g.title)}" class="product-image">` :
                                         `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg></div>`
                                     }
-                                    
+
                                     <!-- Info -->
                                     <div style="flex: 1; min-width: 0;">
                                         <div class="item-meta" style="margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
                                             <span class="item-category">${platformDisplay}</span>
                                             ${g.genre ? `<span class="item-category">${genreDisplay}</span>` : ''}
                                         </div>
-                                        
+
                                         <!-- Badges Row -->
                                         <div class="badge-row">
                                             <span class="status-badge status-${g.status}">
@@ -4694,7 +4595,7 @@ if (gmContainer) {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Expandable Details Section -->
                         <div class="card-details">
                             <div class="item-info">
@@ -4738,7 +4639,7 @@ if (gmContainer) {
                                 </div>
                                 ` : ''}
                             </div>
-                            
+
                             <!-- Action Buttons -->
                             <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
                                 <button class="btn-edit" onclick="editGame('${g.firestoreId}')" style="flex: 1;">
@@ -4756,18 +4657,17 @@ if (gmContainer) {
 
         // Delete game with confirmation
         window.deleteGame = function(firestoreId, title) {
-            document.getElementById('deleteMessage').textContent = 
+            document.getElementById('deleteMessage').textContent =
                 `Are you sure you want to delete "${title}"? This action cannot be undone.`;
             const modal = document.getElementById('deleteModal');
             modal.classList.add('active');
             modal.style.display = 'flex';
-            
+
             deleteCallback = async () => {
                 try {
                     await deleteDoc(doc(db, 'users', currentUserUID, 'games', firestoreId));
                     await loadData();
                 } catch (error) {
-                    console.error('Error deleting game:', error);
                     alert('Error deleting game. Please try again.');
                 }
             };
@@ -4809,7 +4709,7 @@ if (gmContainer) {
 
             // Store editing ID
             window.editingGameId = firestoreId;
-            
+
             // Show modal
             const modal = document.getElementById('gameEditModal');
             modal.style.display = 'flex';
@@ -4825,7 +4725,7 @@ if (gmContainer) {
 
         window.updateGameFromModal = async function(e) {
             e.preventDefault();
-            
+
             const sellPrice = document.getElementById('edit-gm-sell-price').value;
             const sellDate = document.getElementById('edit-gm-sell-date').value;
             const editGmImageUrl = document.getElementById('edit-gm-final-image-url').value;
@@ -4854,7 +4754,6 @@ if (gmContainer) {
                 await loadData();
                 closeGameEditModal();
             } catch (error) {
-                console.error('Error updating game:', error);
                 alert('Error updating game. Please try again.');
             }
         };
@@ -4872,7 +4771,6 @@ if (gmContainer) {
                 try {
                     await deleteCallback();
                 } catch (error) {
-                    console.error('Error during delete:', error);
                     alert('Error deleting item. Please try again.');
                 } finally {
                     // Always close the modal, even if there's an error
@@ -4889,7 +4787,7 @@ if (gmContainer) {
             const soldGadgets = gadgets.filter(g => g.status === 'sold');
             const currentGadgetsValue = ownedGadgets.reduce((sum, g) => sum + g.price, 0);
             const gadgetsProfit = soldGadgets.reduce((sum, g) => sum + (g.sellPrice - g.price), 0);
-            
+
             // Games stats
             const totalGames = games.length;
             const ownedGames = games.filter(g => g.status === 'owned');
@@ -4906,15 +4804,15 @@ if (gmContainer) {
             document.getElementById('dash-gadgets-value').textContent = `₹${currentGadgetsValue.toFixed(0)}`;
             document.getElementById('dash-gadgets-sold').textContent = soldGadgets.length;
             document.getElementById('dash-gadgets-profit').textContent = `₹${gadgetsProfit.toFixed(0)}`;
-            
+
             document.getElementById('dash-total-games').textContent = totalGames;
             document.getElementById('dash-games-value').textContent = `₹${currentGamesValue.toFixed(0)}`;
             document.getElementById('dash-games-sold').textContent = soldGames.length;
             document.getElementById('dash-games-profit-stat').textContent = `₹${gamesProfit.toFixed(0)}`;
-            
+
             document.getElementById('dash-total-digital').textContent = totalDigital;
             document.getElementById('dash-digital-spent').textContent = `₹${digitalSpent.toFixed(0)}`;
-            
+
             // Total profit/loss
             const totalProfit = gadgetsProfit + gamesProfit;
             document.getElementById('dash-total-profit').textContent = `₹${totalProfit.toFixed(0)}`;
@@ -4925,7 +4823,7 @@ if (gmContainer) {
                 document.getElementById('dash-games-profit-stat'),
                 document.getElementById('dash-total-profit')
             ];
-            
+
             profitElements.forEach((el, idx) => {
                 const value = idx === 0 ? gadgetsProfit : idx === 1 ? gamesProfit : totalProfit;
                 if (value > 0) {
@@ -5025,7 +4923,7 @@ if (gmContainer) {
         window.toggleCustomValidity = function() {
             const validitySelect = document.getElementById('d-validity');
             const customGroup = document.getElementById('custom-validity-group');
-            
+
             if (validitySelect.value === 'custom') {
                 customGroup.style.display = 'block';
             } else {
@@ -5036,30 +4934,30 @@ if (gmContainer) {
         // Digital purchases form handler
         document.getElementById('digital-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const purchaseDate = document.getElementById('d-date').value;
             const validityPeriod = document.getElementById('d-validity').value;
-            
+
             // Calculate expiry date and duration based on validity period
             let expiryDate = null;
             let duration = null;
-            
+
             if (validityPeriod) {
                 const startDate = new Date(purchaseDate);
                 let months = 0;
-                
+
                 if (validityPeriod === 'custom') {
                     months = parseInt(document.getElementById('d-custom-months').value) || 0;
                 } else {
                     months = parseInt(validityPeriod);
                 }
-                
+
                 if (months > 0) {
                     // Calculate expiry date by adding months
                     const endDate = new Date(startDate);
                     endDate.setMonth(endDate.getMonth() + months);
                     expiryDate = endDate.toISOString().split('T')[0];
-                    
+
                     // Format duration text
                     if (months >= 12) {
                         const years = Math.floor(months / 12);
@@ -5074,7 +4972,7 @@ if (gmContainer) {
                     }
                 }
             }
-            
+
             const digital = {
                 name: document.getElementById('d-name').value,
                 type: document.getElementById('d-type').value,
@@ -5082,6 +4980,7 @@ if (gmContainer) {
                 date: purchaseDate,
                 duration: duration,
                 expiryDate: expiryDate,
+                imageUrl: document.getElementById('d-final-image-url').value || '',
                 notes: document.getElementById('d-notes').value,
                 timestamp: Date.now()
             };
@@ -5111,8 +5010,13 @@ if (gmContainer) {
             e.target.reset();
             document.getElementById('d-date').valueAsDate = new Date();
             document.getElementById('custom-validity-group').style.display = 'none';
+            // Reset image preview
+            document.getElementById('d-final-image-url').value = '';
+            document.getElementById('d-image-preview-container').innerHTML = `
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <div style="font-size: 13px; color: var(--text-muted);">Click to add icon</div>
+            `;
             } catch (error) {
-                console.error('Error adding digital purchase:', error);
                 alert('Error adding purchase. Please try again.');
             }
         });
@@ -5154,7 +5058,7 @@ if (gmContainer) {
                     return new Date(d.expiryDate) < today;
                 });
             }
-            
+
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -5168,14 +5072,14 @@ if (gmContainer) {
             container.innerHTML = filtered.map((d, index) => {
                 const isExpired = d.expiryDate && new Date(d.expiryDate) < today;
                 const cardId = `digital-card-${index}`;
-                
+
                 // Calculate remaining days and status for active subscriptions
                 let remainingDays = null;
                 let remainingText = '';
                 let statusClass = 'status-owned';
                 let statusText = 'ACTIVE';
                 let statusIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-                
+
                 if (d.expiryDate) {
                     if (isExpired) {
                         statusClass = 'status-sold';
@@ -5185,14 +5089,14 @@ if (gmContainer) {
                         const expiry = new Date(d.expiryDate);
                         const diffTime = expiry - today;
                         remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        
+
                         // Check if expiring soon (within 7 days)
                         if (remainingDays <= 7) {
                             statusClass = 'status-badge';
                             statusText = 'SOON TO EXPIRE';
                             statusIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
                         }
-                        
+
                         // Format remaining time text
                         if (remainingDays === 0) {
                             remainingText = 'Expires today';
@@ -5208,7 +5112,7 @@ if (gmContainer) {
                 } else {
                     statusText = 'LIFETIME';
                 }
-                
+
                 return `
                 <div class="item-card" id="${cardId}" onclick="toggleCard('${cardId}')">
                     <!-- Main Card Content (Always Visible) -->
@@ -5216,15 +5120,22 @@ if (gmContainer) {
                         <div style="width: 100%;">
                             <!-- Title Above Everything -->
                             <div class="item-title" style="margin-bottom: 12px;">${sanitizeText(d.name)}</div>
-                            
-                            <!-- Content Row: Info Only -->
+
+                            <!-- Content Row: Image + Info -->
                             <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                ${d.imageUrl ? `
+                                <!-- Service Icon -->
+                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <img src="${sanitizeURL(d.imageUrl)}" alt="${sanitizeText(d.name)}" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                ` : ''}
+
                                 <!-- Info -->
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-meta" style="margin-bottom: 8px;">
                                         <span class="item-category">${sanitizeText(d.type)}</span>
                                     </div>
-                                    
+
                                     <!-- Badges Row -->
                                     <div class="badge-row">
                                         <span class="status-badge ${statusClass}${statusText === 'SOON TO EXPIRE' ? '' : ''}" style="${statusText === 'SOON TO EXPIRE' ? 'background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);' : ''}">
@@ -5236,7 +5147,7 @@ if (gmContainer) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Expandable Details Section -->
                     <div class="card-details">
                         <div class="item-info">
@@ -5263,7 +5174,7 @@ if (gmContainer) {
                             </div>
                             ` : ''}
                         </div>
-                        
+
                         <!-- Action Buttons -->
                         <div style="display: flex; gap: 12px; margin-top: 16px;" onclick="event.stopPropagation();">
                             <button class="btn-edit" onclick="editDigital('${d.firestoreId}')" style="flex: 1;">
@@ -5281,18 +5192,17 @@ if (gmContainer) {
 
         // Delete digital purchase
         window.deleteDigital = function(firestoreId, name) {
-            document.getElementById('deleteMessage').textContent = 
+            document.getElementById('deleteMessage').textContent =
                 `Are you sure you want to delete "${name}"? This action cannot be undone.`;
             const modal = document.getElementById('deleteModal');
             modal.classList.add('active');
             modal.style.display = 'flex';
-            
+
             deleteCallback = async () => {
                 try {
                     await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId));
                     await loadData();
                 } catch (error) {
-                    console.error('Error deleting digital purchase:', error);
                     alert('Error deleting purchase. Please try again.');
                 }
             };
@@ -5303,7 +5213,7 @@ if (gmContainer) {
         window.toggleEditCustomValidity = function() {
             const validitySelect = document.getElementById('edit-d-validity');
             const customGroup = document.getElementById('edit-custom-validity-group');
-            
+
             if (validitySelect.value === 'custom') {
                 customGroup.style.display = 'block';
             } else {
@@ -5321,18 +5231,35 @@ if (gmContainer) {
             document.getElementById('edit-d-price').value = digital.amount;
             document.getElementById('edit-d-date').value = digital.date;
             document.getElementById('edit-d-notes').value = digital.notes || '';
-            
+
+            // Populate image preview
+            const imageUrl = digital.imageUrl || '';
+            document.getElementById('edit-d-final-image-url').value = imageUrl;
+            const imagePreviewContainer = document.getElementById('edit-d-image-preview-container');
+
+            if (imageUrl) {
+                imagePreviewContainer.innerHTML = `
+                    <img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                    <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Icon added ✓</div>
+                `;
+            } else {
+                imagePreviewContainer.innerHTML = `
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <div style="font-size: 13px; color: var(--text-muted);">Click to add/change icon</div>
+                `;
+            }
+
             // Calculate validity period from purchase date and expiry date
             if (digital.expiryDate && digital.date) {
                 const start = new Date(digital.date);
                 const end = new Date(digital.expiryDate);
                 const diffTime = Math.abs(end - start);
                 const diffMonths = Math.round(diffTime / (1000 * 60 * 60 * 24 * 30.44)); // Average days per month
-                
+
                 // Select the appropriate validity option
                 const validitySelect = document.getElementById('edit-d-validity');
                 const customGroup = document.getElementById('edit-custom-validity-group');
-                
+
                 if (diffMonths === 1) {
                     validitySelect.value = '1';
                     customGroup.style.display = 'none';
@@ -5360,7 +5287,7 @@ if (gmContainer) {
 
             // Store editing ID
             window.editingDigitalId = firestoreId;
-            
+
             // Show modal
             const modal = document.getElementById('digitalEditModal');
             modal.style.display = 'flex';
@@ -5379,27 +5306,27 @@ if (gmContainer) {
 
             const purchaseDate = document.getElementById('edit-d-date').value;
             const validityPeriod = document.getElementById('edit-d-validity').value;
-            
+
             // Calculate expiry date and duration based on validity period
             let expiryDate = null;
             let duration = null;
-            
+
             if (validityPeriod) {
                 const startDate = new Date(purchaseDate);
                 let months = 0;
-                
+
                 if (validityPeriod === 'custom') {
                     months = parseInt(document.getElementById('edit-d-custom-months').value) || 0;
                 } else {
                     months = parseInt(validityPeriod);
                 }
-                
+
                 if (months > 0) {
                     // Calculate expiry date by adding months
                     const endDate = new Date(startDate);
                     endDate.setMonth(endDate.getMonth() + months);
                     expiryDate = endDate.toISOString().split('T')[0];
-                    
+
                     // Format duration text
                     if (months >= 12) {
                         const years = Math.floor(months / 12);
@@ -5422,6 +5349,7 @@ if (gmContainer) {
                 date: purchaseDate,
                 duration: duration,
                 expiryDate: expiryDate,
+                imageUrl: document.getElementById('edit-d-final-image-url').value || '',
                 notes: sanitizeHTML(document.getElementById('edit-d-notes').value),
                 timestamp: Date.now()
             };
@@ -5435,7 +5363,6 @@ if (gmContainer) {
                 await loadData();
                 closeDigitalEditModal();
             } catch (error) {
-                console.error('Error updating digital purchase:', error);
                 alert('Error updating digital purchase. Please try again.');
             }
         };
@@ -5486,7 +5413,7 @@ if (gmContainer) {
         window.downloadGadgetTemplate = function() {
             const headers = ['Name', 'Category', 'Price', 'Purchase Date', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
             const exampleRow = ['iPhone 15 Pro', '📱 Phone', '119900', '2024-01-15', '95000', '2025-02-01', 'sold', 'Upgraded to 16'];
-            
+
             const escapeCsvValue = (val) => {
                 const str = String(val);
                 if (str.includes(',') || str.includes('"') || str.includes('\n')) {
@@ -5496,7 +5423,7 @@ if (gmContainer) {
             };
 
             const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
-            
+
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -5504,7 +5431,7 @@ if (gmContainer) {
             a.download = 'gadgets_template.csv';
             a.click();
             URL.revokeObjectURL(url);
-            
+
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one item per row), and import it back.');
         };
 
@@ -5557,9 +5484,8 @@ if (gmContainer) {
                 const name = values[0]?.trim() || '';
                 const category = values[1]?.trim() || '🔧 Other';
                 const price = parseFloat(values[2]?.replace(/[^\d.]/g, ''));
-                
+
                 if (!name || isNaN(price)) {
-                    console.warn('⛔ Skipping row:', values);
                     continue;
                 }
 
@@ -5589,7 +5515,6 @@ if (gmContainer) {
             await loadData();
 
         } catch (err) {
-            console.error(err);
             alert("Import failed");
         }
 
@@ -5647,7 +5572,7 @@ if (gmContainer) {
         window.downloadGameTemplate = function() {
             const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
             const exampleRow = ['Spider-Man 2', 'PlayStation 5', '🎯 Action', '3999', '2024-06-01', 'Mint', '2500', '2025-01-15', 'sold', 'Completed'];
-            
+
             const escapeCsvValue = (val) => {
                 const str = String(val);
                 if (str.includes(',') || str.includes('"') || str.includes('\n')) {
@@ -5657,7 +5582,7 @@ if (gmContainer) {
             };
 
             const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
-            
+
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -5665,7 +5590,7 @@ if (gmContainer) {
             a.download = 'games_template.csv';
             a.click();
             URL.revokeObjectURL(url);
-            
+
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one game per row), and import it back.');
         };
 
@@ -5725,7 +5650,6 @@ window.importGamesCSV = async function(event) {
 
                 // Skip if missing required fields
                 if (!title || isNaN(buyPrice) || buyPrice === 0) {
-                    console.warn('⛔ Skipping game row:', values);
                     continue;
                 }
 
@@ -5757,7 +5681,6 @@ window.importGamesCSV = async function(event) {
             await loadData();
 
         } catch (err) {
-            console.error(err);
             alert("Import failed");
         }
 
@@ -5812,7 +5735,7 @@ window.importGamesCSV = async function(event) {
         window.downloadDigitalTemplate = function() {
             const headers = ['Name', 'Type', 'Amount', 'Purchase Date', 'Duration', 'Expiry Date', 'Notes'];
             const exampleRow = ['PS+ Premium', '🎮 Game Subscription', '1299', '2024-01-15', '1 Month', '2024-02-15', 'Auto-renewal enabled'];
-            
+
             const escapeCsvValue = (val) => {
                 const str = String(val);
                 if (str.includes(',') || str.includes('"') || str.includes('\n')) {
@@ -5822,7 +5745,7 @@ window.importGamesCSV = async function(event) {
             };
 
             const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
-            
+
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -5830,7 +5753,7 @@ window.importGamesCSV = async function(event) {
             a.download = 'digital_purchases_template.csv';
             a.click();
             URL.revokeObjectURL(url);
-            
+
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one purchase per row), and import it back.');
         };
 // TSV/CSV Import for Digital Purchases (GLOBAL SAFE)
@@ -5882,7 +5805,6 @@ window.importDigitalCSV = async function (event) {
     const amount = parseFloat(values[2]);
 
     if (!name || isNaN(amount)) {
-        console.warn('⛔ Skipping row:', values);
         continue;
     }
 
@@ -5909,7 +5831,6 @@ window.importDigitalCSV = async function (event) {
             await loadData();
 
         } catch (err) {
-            console.error(err);
             alert("Import failed");
         }
 
@@ -5922,86 +5843,70 @@ window.importDigitalCSV = async function (event) {
         // ========== ENCRYPTION UI FUNCTIONS ==========
 
         window.setupEncryption = async function() {
-            console.log('🔐 setupEncryption function called');
-            
+
             const passwordInput = document.getElementById('masterPassword');
             const confirmPasswordInput = document.getElementById('masterPasswordConfirm');
-            
-            console.log('Password input element:', passwordInput);
-            console.log('Confirm password input element:', confirmPasswordInput);
-            
+
+
             const password = passwordInput ? passwordInput.value : '';
             const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : '';
-            
-            console.log('Password length:', password.length);
-            console.log('Confirm password length:', confirmPassword.length);
-            console.log('Current user UID:', currentUserUID);
+
 
             if (!password || password.length < 8) {
-                console.error('Password validation failed');
                 alert('⚠️ Password must be at least 8 characters long');
                 return;
             }
 
             if (password !== confirmPassword) {
-                console.error('Password mismatch');
                 alert('⚠️ Passwords do not match');
                 return;
             }
 
             try {
-                console.log('🔐 Setting up encryption...');
-                
+
                 if (!currentUserUID) {
-                    console.error('No current user UID');
                     throw new Error('User not authenticated. Please sign in again.');
                 }
-                
-                console.log('Calling encryptionManager.setupNewUser...');
+
                 await encryptionManager.setupNewUser(password);
-                console.log('✅ Encryption setup successful');
-                
+
                 // Close modal properly
                 const modal = document.getElementById('encryptionSetupModal');
                 modal.classList.remove('active');
                 setTimeout(() => {
                     modal.style.display = 'none';
                 }, 200); // Wait for fade out animation
-                
+
                 document.body.classList.add('encrypted');
-                
+
                 // Clear password fields
                 if (passwordInput) passwordInput.value = '';
                 if (confirmPasswordInput) confirmPasswordInput.value = '';
-                
+
                 alert('✅ Encryption enabled! Your data is now protected. You will need to enter your password on next login.');
-                
+
                 // Update encryption status in settings (with error handling)
                 try {
                     if (typeof updateEncryptionStatus === 'function') {
                         updateEncryptionStatus();
                     }
                 } catch (statusError) {
-                    console.warn('Could not update encryption status display:', statusError);
                     // Don't throw - encryption is already enabled successfully
                 }
-                
+
             } catch (error) {
-                console.error('Encryption setup error:', error);
-                console.error('Error stack:', error.stack);
                 alert('❌ Failed to setup encryption: ' + error.message);
             }
         };
 
         window.skipEncryptionSetup = async function() {
             // Just close the modal
-            console.log('ℹ️ User closed encryption setup modal');
             const modal = document.getElementById('encryptionSetupModal');
             modal.classList.remove('active');
             setTimeout(() => {
                 modal.style.display = 'none';
             }, 200); // Wait for fade out animation
-            
+
             // If data hasn't loaded yet, load it now
             if (gadgets.length === 0 && games.length === 0 && digitalPurchases.length === 0) {
                 await loadData();
@@ -6009,10 +5914,10 @@ window.importDigitalCSV = async function (event) {
         };
 
         // ========== ENCRYPTION SETTINGS FUNCTIONS (FROM SETTINGS PANEL) ==========
-        
+
         window.updateEncryptionStatus = function() {
             const isEnabled = encryptionManager.isEncryptionEnabled();
-            
+
             // Get all the elements
             const statusIcon = document.getElementById('encryption-status-icon');
             const statusText = document.getElementById('encryption-status-text');
@@ -6020,19 +5925,19 @@ window.importDigitalCSV = async function (event) {
             const statusContainer = document.getElementById('encryption-status');
             const disabledBtn = document.getElementById('encryption-disabled-controls');
             const enabledBtn = document.getElementById('encryption-enabled-controls');
-            
+
             // If essential elements don't exist, skip update silently
             if (!statusIcon || !statusText || !statusSubtitle || !statusContainer) {
                 return;
             }
-            
+
             if (isEnabled) {
                 statusIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
                 statusText.textContent = 'Encryption Enabled';
                 statusSubtitle.textContent = 'Your data is protected with end-to-end encryption';
                 statusContainer.style.background = 'rgba(16, 185, 129, 0.15)';
                 statusContainer.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                
+
                 // Show enabled button, hide disabled button
                 if (disabledBtn) disabledBtn.style.display = 'none';
                 if (enabledBtn) enabledBtn.style.display = 'block';
@@ -6042,35 +5947,32 @@ window.importDigitalCSV = async function (event) {
                 statusSubtitle.textContent = 'Your data is stored without encryption';
                 statusContainer.style.background = 'rgba(148, 163, 184, 0.1)';
                 statusContainer.style.borderColor = 'rgba(148, 163, 184, 0.2)';
-                
+
                 // Show disabled button, hide enabled button
                 if (disabledBtn) disabledBtn.style.display = 'block';
                 if (enabledBtn) enabledBtn.style.display = 'none';
             }
         };
-        
+
         window.showEnableEncryptionForm = function() {
             // This function is no longer needed since we use the modal
-            console.log('Opening encryption setup modal...');
             const modal = document.getElementById('encryptionSetupModal');
             if (modal) {
                 modal.style.display = 'flex';
                 modal.classList.add('active');
             }
         };
-        
+
         window.cancelEnableEncryption = function() {
             // This function is no longer needed since we use the modal
-            console.log('Canceling encryption setup...');
         };
-        
+
         window.enableEncryptionFromSettings = async function() {
             const passwordField = document.getElementById('settings-master-password');
             const confirmPasswordField = document.getElementById('settings-master-password-confirm');
-            
+
             // If password fields don't exist, open the modal instead
             if (!passwordField || !confirmPasswordField) {
-                console.log('Password fields not found, opening modal...');
                 const modal = document.getElementById('encryptionSetupModal');
                 if (modal) {
                     modal.style.display = 'flex';
@@ -6078,31 +5980,30 @@ window.importDigitalCSV = async function (event) {
                 }
                 return;
             }
-            
+
             const password = passwordField.value;
             const confirmPassword = confirmPasswordField.value;
-            
+
             if (!password || password.length < 8) {
                 alert('⚠️ Password must be at least 8 characters long');
                 return;
             }
-            
+
             if (password !== confirmPassword) {
                 alert('⚠️ Passwords do not match');
                 return;
             }
-            
+
             if (!confirm('⚠️ Are you sure you want to enable encryption?\n\nIMPORTANT: If you lose your password, your data CANNOT be recovered!')) {
                 return;
             }
-            
+
             try {
                 // Setup encryption
                 await encryptionManager.setupNewUser(password);
-                
+
                 // Re-encrypt all existing data
-                console.log('🔄 Re-encrypting existing data...');
-                
+
                 // Re-save all gadgets with encryption
                 for (const gadget of gadgets) {
                     const encryptedData = await encryptData(gadget);
@@ -6111,7 +6012,7 @@ window.importDigitalCSV = async function (event) {
                         encryptedData
                     );
                 }
-                
+
                 // Re-save all games with encryption
                 for (const game of games) {
                     const encryptedData = await encryptData(game);
@@ -6120,7 +6021,7 @@ window.importDigitalCSV = async function (event) {
                         encryptedData
                     );
                 }
-                
+
                 // Re-save all digital purchases with encryption
                 for (const digital of digitalPurchases) {
                     const encryptedData = await encryptData(digital);
@@ -6129,62 +6030,54 @@ window.importDigitalCSV = async function (event) {
                         encryptedData
                     );
                 }
-                
+
                 document.body.classList.add('encrypted');
-                
+
                 try {
                     updateEncryptionStatus();
                 } catch (statusError) {
-                    console.warn('Could not update encryption status display:', statusError);
                 }
-                
+
                 alert('✅ Encryption enabled successfully!\n\nAll your data has been encrypted with your master password.');
-                
+
                 // Clear password fields if they exist
                 const masterPasswordField = document.getElementById('settings-master-password');
                 const confirmPasswordField = document.getElementById('settings-master-password-confirm');
                 if (masterPasswordField) masterPasswordField.value = '';
                 if (confirmPasswordField) confirmPasswordField.value = '';
-                
+
             } catch (error) {
-                console.error('Encryption setup error:', error);
                 alert('❌ Failed to setup encryption: ' + error.message);
             }
         };
-        
+
         window.disableEncryption = async function() {
             try {
-                console.log('🔄 Disabling encryption...');
-                
+
                 // Remove encryption settings from localStorage
                 localStorage.removeItem('encryptionEnabled_' + currentUserUID);
                 localStorage.removeItem('encryptionSalt_' + currentUserUID);
-                
+
                 // Reset encryption manager
                 encryptionManager.encryptionKey = null;
                 encryptionManager.isUnlocked = false;
-                
+
                 document.body.classList.remove('encrypted');
-                
+
                 try {
                     updateEncryptionStatus();
                 } catch (statusError) {
-                    console.warn('Could not update encryption status display:', statusError);
                 }
-                
+
                 alert('✅ Encryption disabled!\n\nYour app will reload to apply changes.');
-                
+
                 // Reload the page to clear everything
                 window.location.reload();
-                
+
             } catch (error) {
-                console.error('Disable encryption error:', error);
                 alert('❌ Failed to disable encryption: ' + error.message);
             }
         };
-
-
-
         window.unlockData = async function() {
             const password = document.getElementById('unlockPassword').value;
             const errorDiv = document.getElementById('unlockError');
@@ -6204,11 +6097,10 @@ window.importDigitalCSV = async function (event) {
                 }, 200);
                 document.body.classList.add('encrypted');
                 errorDiv.style.display = 'none';
-                
+
                 await loadData();
-                
+
             } catch (error) {
-                console.error('Unlock error:', error);
                 errorDiv.textContent = '❌ Incorrect password or decryption error';
                 errorDiv.style.display = 'block';
             }
@@ -6251,7 +6143,6 @@ window.importDigitalCSV = async function (event) {
                 `;
 
             } catch (error) {
-                console.error('Search error:', error);
                 alert('Failed to search user');
             }
         };
@@ -6272,7 +6163,6 @@ window.importDigitalCSV = async function (event) {
                 await searchUser();
 
             } catch (error) {
-                console.error('Block error:', error);
                 alert('Failed to block user');
             }
         };
@@ -6291,7 +6181,6 @@ window.importDigitalCSV = async function (event) {
                 await searchUser();
 
             } catch (error) {
-                console.error('Unblock error:', error);
                 alert('Failed to unblock user');
             }
         };
@@ -6328,7 +6217,6 @@ window.importDigitalCSV = async function (event) {
                 document.getElementById('admin-users-list').innerHTML = usersList;
 
             } catch (error) {
-                console.error('Load users error:', error);
                 alert('Failed to load users');
             }
         };
@@ -6361,10 +6249,10 @@ window.importDigitalCSV = async function (event) {
 
                 // Delete user data
                 await deleteUserData(user.uid);
-                
+
                 // Delete user profile
                 await deleteDoc(doc(db, 'userProfiles', user.uid));
-                
+
                 // Delete auth account
                 await deleteUser(user);
 
@@ -6372,7 +6260,6 @@ window.importDigitalCSV = async function (event) {
                 window.location.reload();
 
             } catch (error) {
-                console.error('Deletion error:', error);
 
                 if (error.code === 'auth/requires-recent-login') {
                     alert(
@@ -6400,28 +6287,27 @@ window.importDigitalCSV = async function (event) {
                 await batch.commit();
             }
 
-            console.log('✅ User data deleted');
     }
 
     // Initialize
     document.getElementById('g-date').valueAsDate = new Date();
     document.getElementById('gm-buy-date').valueAsDate = new Date();
     document.getElementById('d-date').valueAsDate = new Date();
-    
+
     // Initialize icon upload handlers
     setTimeout(() => {
         const fileInput = document.getElementById('icon-upload');
         const urlInput = document.getElementById('icon-url');
-        
+
         if (fileInput) {
             fileInput.addEventListener('change', handleIconUpload);
         }
-        
+
         if (urlInput) {
             urlInput.addEventListener('input', handleIconURL);
         }
     }, 1000);
-    
+
     // Data will be loaded automatically after authentication via onAuthStateChanged
 </script>
 
@@ -6443,11 +6329,11 @@ window.importDigitalCSV = async function (event) {
         </div>
 
         <div style="display: flex; gap: 12px;">
-            <button onclick="closeDeleteModal()" 
+            <button onclick="closeDeleteModal()"
                     style="flex: 1; padding: 14px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
                 Cancel
             </button>
-            <button onclick="confirmDelete()" 
+            <button onclick="confirmDelete()"
                     style="flex: 1; padding: 14px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);">
                 Delete
             </button>
@@ -6462,7 +6348,7 @@ window.importDigitalCSV = async function (event) {
             <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg>Edit Game</h2>
             <button onclick="closeGameEditModal()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        
+
         <form id="game-edit-form" onsubmit="updateGameFromModal(event)">
             <div style="display: grid; gap: 16px;">
                 <div class="input-group">
@@ -6501,7 +6387,7 @@ window.importDigitalCSV = async function (event) {
                     <label>Notes</label>
                     <textarea id="edit-gm-notes" rows="2" placeholder="Any notes..."></textarea>
                 </div>
-                
+
                 <!-- Game Image Upload -->
                 <div class="input-group">
                     <label>Game Cover <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
@@ -6512,14 +6398,14 @@ window.importDigitalCSV = async function (event) {
                         </div>
                         <input type="hidden" id="edit-gm-final-image-url" value="">
                     </div>
-                </div> 
+                </div>
             </div>
             <div style="display: flex; gap: 12px; margin-top: 24px;">
                 <button type="button" onclick="closeGameEditModal()"
                         style="flex: 1; padding: 14px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
                     Cancel
                 </button>
-                <button type="submit" 
+                <button type="submit"
                         style="flex: 2; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Changes
                 </button>
@@ -6535,7 +6421,7 @@ window.importDigitalCSV = async function (event) {
             <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Edit Gadget</h2>
             <button onclick="closeGadgetEditModal()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        
+
         <form id="gadget-edit-form" onsubmit="updateGadgetFromModal(event)">
             <div style="display: grid; gap: 16px;">
                 <div class="input-group">
@@ -6562,7 +6448,7 @@ window.importDigitalCSV = async function (event) {
                     <label>Sell Date <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label>
                     <input type="date" id="edit-g-sell-date">
                 </div>
-                
+
                 <!-- Clickable Image Icon -->
                 <div class="input-group">
                     <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
@@ -6574,24 +6460,24 @@ window.importDigitalCSV = async function (event) {
                         <input type="hidden" id="edit-g-final-image-url" value="">
                     </div>
                 </div>
-                
+
                 <!-- Condition/Rating Field -->
                 <div class="input-group">
                     <label>Condition/Rating <span style="color:var(--text-muted);font-size:11px;">(0-100, optional)</span></label>
                     <input type="number" id="edit-g-condition" min="0" max="100" placeholder="e.g. 90">
                 </div>
-                
+
                 <div class="input-group">
                     <label>Notes</label>
                     <textarea id="edit-g-notes" rows="2" placeholder="Any notes..."></textarea>
                 </div>
             </div>
             <div style="display: flex; gap: 12px; margin-top: 24px;">
-                <button type="button" onclick="closeGadgetEditModal()" 
+                <button type="button" onclick="closeGadgetEditModal()"
                         style="flex: 1; padding: 14px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
                     Cancel
                 </button>
-                <button type="submit" 
+                <button type="submit"
                         style="flex: 2; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Changes
                 </button>
@@ -6607,7 +6493,7 @@ window.importDigitalCSV = async function (event) {
             <h2 style="font-size: 24px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Edit Digital Purchase</h2>
             <button onclick="closeDigitalEditModal()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 36px; height: 36px; border-radius: 8px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        
+
         <form id="digital-edit-form" onsubmit="updateDigitalFromModal(event)">
             <div style="display: grid; gap: 16px;">
                 <div class="input-group">
@@ -6641,17 +6527,28 @@ window.importDigitalCSV = async function (event) {
                     <label>Custom Duration (months)</label>
                     <input type="number" id="edit-d-custom-months" placeholder="e.g. 18" min="1">
                 </div>
+                <!-- Clickable Image Icon for Digital Edit -->
+                <div class="input-group">
+                    <label>Service Icon <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
+                    <div onclick="openImagePicker('edit-digital')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+                        <div id="edit-d-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            <div style="font-size: 13px; color: var(--text-muted);">Click to add/change icon</div>
+                        </div>
+                        <input type="hidden" id="edit-d-final-image-url" value="">
+                    </div>
+                </div>
                 <div class="input-group">
                     <label>Notes</label>
                     <textarea id="edit-d-notes" rows="2" placeholder="Any notes..."></textarea>
                 </div>
             </div>
             <div style="display: flex; gap: 12px; margin-top: 24px;">
-                <button type="button" onclick="closeDigitalEditModal()" 
+                <button type="button" onclick="closeDigitalEditModal()"
                         style="flex: 1; padding: 14px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer;">
                     Cancel
                 </button>
-                <button type="submit" 
+                <button type="submit"
                         style="flex: 2; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Changes
                 </button>
@@ -6685,26 +6582,25 @@ window.importDigitalCSV = async function (event) {
 
         <div style="margin-bottom: 20px;">
             <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Create Master Password</label>
-            <input type="password" id="masterPassword" placeholder="Enter a strong password (min 8 characters)" 
+            <input type="password" id="masterPassword" placeholder="Enter a strong password (min 8 characters)"
                    onkeypress="if(event.key==='Enter') document.getElementById('masterPasswordConfirm').focus()"
                    style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
         </div>
 
         <div style="margin-bottom: 30px;">
             <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Confirm Master Password</label>
-            <input type="password" id="masterPasswordConfirm" placeholder="Re-enter your password" 
+            <input type="password" id="masterPasswordConfirm" placeholder="Re-enter your password"
                    onkeypress="if(event.key==='Enter') setupEncryption()"
                    style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;">
         </div>
 
         <div style="display: flex; gap: 12px;">
-            <button onclick="skipEncryptionSetup()" 
+            <button onclick="skipEncryptionSetup()"
                     style="flex: 1; padding: 16px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;"
                     onmouseover="this.style.background='rgba(148, 163, 184, 0.2)'"
                     onmouseout="this.style.background='rgba(148, 163, 184, 0.1)'">
                 Cancel
             </button>
-            <button onclick="console.log('Enable Encryption button clicked'); setupEncryption()" 
                     style="flex: 2; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;"
                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 32px rgba(16, 185, 129, 0.5)'"
                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 24px rgba(16, 185, 129, 0.3)'">
@@ -6737,14 +6633,14 @@ window.importDigitalCSV = async function (event) {
 
         <div style="margin-bottom: 20px;">
             <label style="display: block; color: #94a3b8; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Master Password</label>
-            <input type="password" id="unlockPassword" placeholder="Enter your master password" 
+            <input type="password" id="unlockPassword" placeholder="Enter your master password"
                    style="width: 100%; padding: 14px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; color: #f1f5f9; font-size: 15px;"
                    onkeypress="if(event.key==='Enter') unlockData()">
         </div>
 
         <div id="unlockError" style="color: #ef4444; margin-bottom: 20px; font-size: 14px; font-weight: 600; display: none; padding: 12px; background: rgba(239, 68, 68, 0.15); border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3);"></div>
 
-        <button onclick="unlockData()" 
+        <button onclick="unlockData()"
                 style="width: 100%; padding: 16px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Unlock My Data
         </button>
@@ -6847,11 +6743,11 @@ window.importDigitalCSV = async function (event) {
         // ==========================================
         // Expandable Card Functions
         // ==========================================
-        
+
         function toggleCard(cardId) {
             const card = document.getElementById(cardId);
             if (!card) return;
-            
+
             // Toggle expanded class
             card.classList.toggle('expanded');
         }
@@ -6883,7 +6779,7 @@ window.importDigitalCSV = async function (event) {
             // Return icon or default box icon
             return icons[category] || `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M10 8V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v3"/></svg>`;
         }
-        
+
         function getCategoryEmoji(category) {
             const emojis = {
                 'Mobile': '📱',
@@ -6909,23 +6805,23 @@ window.importDigitalCSV = async function (event) {
         // ==========================================
         // IMAGE UPLOAD FUNCTIONS
         // ==========================================
-        
+
         // Switch between image tabs
         function switchImageTab(event, tabId) {
             event.preventDefault();
-            
+
             // Get the parent container (either image-upload-container or modal-content)
             const container = event.target.closest('.image-upload-container') || event.target.closest('.modal-content');
-            
+
             if (!container) return;
-            
+
             // Remove active class from all tabs and contents in this container
             container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
+
             // Add active class to clicked tab
             event.target.classList.add('active');
-            
+
             // Show the corresponding tab content
             const targetTab = document.getElementById(tabId);
             if (targetTab) {
@@ -6944,26 +6840,26 @@ window.importDigitalCSV = async function (event) {
         // ==========================================
         // IMAGE PICKER MODAL FUNCTIONS
         // ==========================================
-        
+
         let currentPickerTarget = null; // Stores which form is using the picker
         let currentPickerImageUrl = null; // Stores the selected image URL
-        
+
         window.openImagePicker = function(target) {
             currentPickerTarget = target;
             currentPickerImageUrl = null;
-            
+
             // Reset all tabs
             document.getElementById('picker-image-url').value = '';
             document.getElementById('picker-url-preview').style.display = 'none';
             document.getElementById('picker-upload-preview').style.display = 'none';
             document.getElementById('picker-file-input').value = '';
-            
+
             // Show modal
             const modal = document.getElementById('imagePickerModal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('active'), 10);
         };
-        
+
         window.closeImagePicker = function() {
             const modal = document.getElementById('imagePickerModal');
             modal.classList.remove('active');
@@ -6973,7 +6869,7 @@ window.importDigitalCSV = async function (event) {
                 currentPickerImageUrl = null;
             }, 200);
         };
-        
+
         // Handle URL input with validation
         document.addEventListener('DOMContentLoaded', () => {
             const urlInput = document.getElementById('picker-image-url');
@@ -6982,7 +6878,7 @@ window.importDigitalCSV = async function (event) {
                     const url = this.value.trim();
                     const preview = document.getElementById('picker-url-preview');
                     const img = document.getElementById('picker-url-img');
-                    
+
                     if (url) {
                         // Test if URL is a valid image
                         const testImg = new Image();
@@ -7003,83 +6899,74 @@ window.importDigitalCSV = async function (event) {
                 });
             }
         });
-        
+
         // Handle file upload with mobile support and error handling
         window.pickerHandleUpload = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            console.log('📤 File selected:', file.name, file.type, file.size);
-            
+
+
             // Validate file type
             if (!file.type.startsWith('image/')) {
                 alert('Please select a valid image file');
                 return;
             }
-            
+
             // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
                 alert('Image size should be less than 5MB');
                 return;
             }
-            
+
             try {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     document.getElementById('picker-upload-img').src = e.target.result;
                     document.getElementById('picker-upload-preview').style.display = 'block';
                     currentPickerImageUrl = e.target.result;
-                    console.log('✅ Image uploaded successfully');
                 };
-                
+
                 reader.onerror = function(error) {
-                    console.error('❌ FileReader error:', error);
                     alert('Error reading file. Please try again.');
                 };
-                
+
                 reader.readAsDataURL(file);
             } catch (error) {
-                console.error('❌ Upload error:', error);
                 alert('Error uploading image. Please try again.');
             }
         };
-        
+
         // Save the picked image
         window.savePickedImage = function() {
-            console.log('🔵 savePickedImage called');
-            console.log('  currentPickerImageUrl:', currentPickerImageUrl);
-            console.log('  currentPickerTarget:', currentPickerTarget);
-            
+
             if (!currentPickerImageUrl) {
                 alert('Please select or enter an image first');
                 return;
             }
-            
+
             if (!currentPickerTarget) {
                 closeImagePicker();
                 return;
             }
-            
+
             // Determine which form to update
-            const prefix = currentPickerTarget === 'gadget' ? 'g' : 
-                          currentPickerTarget === 'edit-gadget' ? 'edit-g' : 
+            const prefix = currentPickerTarget === 'gadget' ? 'g' :
+                          currentPickerTarget === 'edit-gadget' ? 'edit-g' :
                           currentPickerTarget === 'game' ? 'gm' :
-                          currentPickerTarget === 'edit-game' ? 'edit-gm' : '';
-            
-            console.log('  Determined prefix:', prefix);
-            
+                          currentPickerTarget === 'edit-game' ? 'edit-gm' :
+                          currentPickerTarget === 'digital' ? 'd' :
+                          currentPickerTarget === 'edit-digital' ? 'edit-d' : '';
+
+
             if (prefix) {
                 // Update hidden input
                 const hiddenInput = document.getElementById(`${prefix}-final-image-url`);
-                console.log('  Hidden input element:', hiddenInput);
                 if (hiddenInput) {
                     hiddenInput.value = currentPickerImageUrl;
-                    console.log('  ✅ Set hidden input value to:', hiddenInput.value);
                 } else {
-                    console.error('  ❌ Hidden input not found!');
                 }
-                
+
                 // Update preview container with horizontal layout
                 const container = document.getElementById(`${prefix}-image-preview-container`);
                 if (container) {
@@ -7087,12 +6974,10 @@ window.importDigitalCSV = async function (event) {
                         <img src="${currentPickerImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
                         <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added ✓</div>
                     `;
-                    console.log('  ✅ Updated preview container');
                 } else {
-                    console.error('  ❌ Preview container not found!');
                 }
             }
-            
+
             closeImagePicker();
         };
 
@@ -7108,13 +6993,13 @@ window.importDigitalCSV = async function (event) {
             <h2 style="font-size: 20px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Add Product Image</h2>
             <button onclick="closeImagePicker()" style="background: rgba(148, 163, 184, 0.1); border: none; color: #94a3b8; width: 32px; height: 32px; border-radius: 8px; font-size: 18px; cursor: pointer;">×</button>
         </div>
-        
+
         <!-- Image Tabs -->
         <div class="image-tabs">
             <button type="button" class="tab-btn active" onclick="switchImageTab(event, 'picker-url')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>URL</button>
             <button type="button" class="tab-btn" onclick="switchImageTab(event, 'picker-upload')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload</button>
         </div>
-        
+
         <!-- Tab 1: URL (Default) -->
         <div id="picker-url" class="tab-content active">
             <input type="text" id="picker-image-url" placeholder="Paste image URL here..." style="width: 100%; margin-bottom: 8px;">
@@ -7122,7 +7007,7 @@ window.importDigitalCSV = async function (event) {
                 <img id="picker-url-img" src="" alt="Preview">
             </div>
         </div>
-        
+
         <!-- Tab 2: Upload -->
         <div id="picker-upload" class="tab-content">
             <input type="file" id="picker-file-input" accept="image/*" style="display: none;" onchange="pickerHandleUpload(event)">
@@ -7135,13 +7020,13 @@ window.importDigitalCSV = async function (event) {
                 <img id="picker-upload-img" src="" alt="Preview">
             </div>
         </div>
-        
+
         <div style="display: flex; gap: 12px; margin-top: 20px;">
-            <button type="button" onclick="closeImagePicker()" 
+            <button type="button" onclick="closeImagePicker()"
                     style="flex: 1; padding: 12px; background: rgba(148, 163, 184, 0.1); color: #f1f5f9; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
                 Cancel
             </button>
-            <button type="button" onclick="savePickedImage()" 
+            <button type="button" onclick="savePickedImage()"
                     style="flex: 2; padding: 12px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
                 ✓ Save Image
             </button>
