@@ -1062,9 +1062,38 @@
         .edit-icon:hover { background: rgba(6, 182, 212, 0.3); transform: scale(1.1); }
         .delete-icon:hover { background: rgba(239, 68, 68, 0.3); transform: scale(1.1); }
 
-        /* Status badges */
-        .status-owned { color: #4CAF50; font-weight: 700; font-size: 11px; text-transform: uppercase; }
-        .status-sold  { color: #ff9800; font-weight: 700; font-size: 11px; text-transform: uppercase; }
+        /* Compact status badges for dashboard recent cards */
+        .status-badge--mini {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            gap: 4px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .status-badge--mini svg {
+            width: 10px;
+            height: 10px;
+            flex-shrink: 0;
+        }
+
+        .game-genre-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .game-genre-chip svg {
+            flex-shrink: 0;
+        }
+
+        .game-genre-chip--compact {
+            padding: 3px 8px;
+            font-size: 11px;
+        }
 
         /* Profit colors */
         .profit-positive { color: #4CAF50 !important; }
@@ -2509,7 +2538,7 @@
                 <p style="color:var(--text-secondary);margin-bottom:28px;">Welcome back!</p>
 
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Gadgets</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7.2" y="2.5" width="9.6" height="19" rx="2.2"/><path d="M10 5.5h4"/><circle cx="12" cy="18.1" r="0.8" fill="#10b981" stroke="none"/><path d="M3.3 9.8h2.8"/><path d="M3.3 14.2h2.8"/><path d="M17.9 9.8h2.8"/><path d="M17.9 14.2h2.8"/></svg> Gadgets</h3>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-gadgets">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-gadgets-value">₹0</div></div></div>
@@ -2519,7 +2548,7 @@
                 </div>
 
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg> Games</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5h11a4.5 4.5 0 0 1 4.33 5.72l-.48 1.63A2.25 2.25 0 0 1 19.2 18.5h-1.08a2.5 2.5 0 0 1-2.17-1.26l-.74-1.28h-6.42l-.74 1.28A2.5 2.5 0 0 1 5.88 18.5H4.8a2.25 2.25 0 0 1-2.15-1.65l-.48-1.63A4.5 4.5 0 0 1 6.5 9.5Z"/><path d="M9 12.15v2.7"/><path d="M7.65 13.5h2.7"/><circle cx="15.8" cy="12.7" r="0.95" fill="#10b981" stroke="none"/><circle cx="18.1" cy="14.3" r="0.95" fill="#10b981" stroke="none"/></svg> Games</h3>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total</div><div class="stat-value" id="dash-total-games">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Current Value</div><div class="stat-value" style="font-size:22px;" id="dash-games-value">₹0</div></div></div>
@@ -2529,7 +2558,7 @@
                 </div>
 
                 <div style="margin-bottom:24px;">
-                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Digital</h3>
+                    <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;background:linear-gradient(135deg, #10b981 0%, #06b6d4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="#10b981" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="#10b981" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg> Digital</h3>
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Purchases</div><div class="stat-value" id="dash-total-digital">0</div></div></div>
                         <div class="stat-card"><div class="stat-content"><div class="stat-label">Total Spent</div><div class="stat-value" style="font-size:22px;" id="dash-digital-spent">₹0</div></div></div>
@@ -5501,6 +5530,55 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"${style}><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg>`;
         }
 
+        function getOwnedSoldBadgeMarkup(status, options = {}) {
+            const normalizedStatus = status === 'sold' ? 'sold' : 'owned';
+            const compactClass = options.compact === true ? ' status-badge--mini' : '';
+
+            if (normalizedStatus === 'sold') {
+                return `<span class="status-badge status-sold${compactClass}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>SOLD</span>`;
+            }
+
+            return `<span class="status-badge status-owned${compactClass}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>OWNED</span>`;
+        }
+
+        function getGameGenreIconSvg(genre, options = {}) {
+            const sizeValue = Number(options.size);
+            const strokeValue = Number(options.strokeWidth);
+            const size = Number.isFinite(sizeValue) && sizeValue > 0 ? sizeValue : 11;
+            const strokeWidth = Number.isFinite(strokeValue) && strokeValue > 0 ? strokeValue : 1.9;
+            const cleanGenre = normalizeLabel(genre || '').toLowerCase();
+            let paths = '<path d="M5.5 7.5h13a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5l-3.5 3v-3h-4.5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z"/>';
+
+            if (cleanGenre.includes('racing')) {
+                paths = '<path d="M4 6h16v12H4z"/><path d="M4 10h16"/><path d="M8 6v4"/><path d="M12 10v8"/>';
+            } else if (cleanGenre.includes('sports')) {
+                paths = '<circle cx="12" cy="12" r="8"/><path d="M12 4v16"/><path d="M4 12h16"/><path d="M6.5 6.5l11 11"/><path d="M17.5 6.5l-11 11"/>';
+            } else if (cleanGenre.includes('rpg') || cleanGenre.includes('adventure') || cleanGenre.includes('role')) {
+                paths = '<circle cx="12" cy="12" r="9"/><path d="m12 8 3 4-3 4-3-4z"/><path d="M12 3v2"/><path d="M12 19v2"/><path d="M3 12h2"/><path d="M19 12h2"/>';
+            } else if (cleanGenre.includes('action') || cleanGenre.includes('shooter') || cleanGenre.includes('fighting')) {
+                paths = '<circle cx="12" cy="12" r="7"/><path d="M12 5v3"/><path d="M12 16v3"/><path d="M5 12h3"/><path d="M16 12h3"/>';
+            } else if (cleanGenre.includes('puzzle') || cleanGenre.includes('strategy')) {
+                paths = '<rect x="4" y="4" width="7.5" height="7.5" rx="1"/><rect x="12.5" y="4" width="7.5" height="7.5" rx="1"/><rect x="4" y="12.5" width="7.5" height="7.5" rx="1"/><path d="M12.5 16h7.5"/><path d="M16.25 12.5v7.5"/>';
+            } else if (cleanGenre.includes('horror')) {
+                paths = '<path d="M4 12s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5z"/><circle cx="12" cy="12" r="2.5"/>';
+            } else if (cleanGenre.includes('simulation')) {
+                paths = '<line x1="5" y1="7" x2="19" y2="7"/><line x1="5" y1="12" x2="19" y2="12"/><line x1="5" y1="17" x2="19" y2="17"/><circle cx="9" cy="7" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="11" cy="17" r="1.5"/>';
+            } else if (cleanGenre.includes('music')) {
+                paths = '<path d="M10 18V6l9-2v12"/><circle cx="7" cy="18" r="3"/><circle cx="19" cy="16" r="3"/>';
+            } else if (cleanGenre.includes('platform')) {
+                paths = '<rect x="4" y="14" width="6" height="6" rx="1"/><rect x="10" y="10" width="6" height="10" rx="1"/><rect x="16" y="6" width="4" height="14" rx="1"/>';
+            }
+
+            return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+        }
+
+        function getGameGenreBadgeMarkup(genre, options = {}) {
+            const cleanGenre = normalizeLabel(genre || '');
+            if (!cleanGenre) return '';
+            const compactClass = options.compact === true ? ' game-genre-chip--compact' : '';
+            return `<span class="item-category game-genre-chip${compactClass}">${getGameGenreIconSvg(cleanGenre)}<span>${sanitizeText(cleanGenre)}</span></span>`;
+        }
+
         // Render gadgets
         function renderGadgets() {
     const container = document.getElementById('gadgets-list');
@@ -5872,7 +5950,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                     <div style="flex: 1; min-width: 0;">
                                         <div class="item-meta" style="margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
                                             <span class="item-category">${platformDisplay}</span>
-                                            ${g.genre ? `<span class="item-category">${genreDisplay}</span>` : ''}
+                                            ${g.genre ? getGameGenreBadgeMarkup(genreDisplay) : ''}
                                         </div>
 
                                         <!-- Badges Row -->
@@ -6207,8 +6285,8 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                     <div class="item-title">${item.title}</div>
                                     <div class="item-meta" style="margin-bottom:0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
                                         <span class="item-category" style="white-space:nowrap;">${sanitizeText(normalizeLabel(item.platform || ''))}</span>
-                                        ${item.genre ? `<span class="item-category" style="white-space:nowrap;">${sanitizeText(normalizeLabel(item.genre || ''))}</span>` : ''}
-                                        <span class="status-${status}" style="font-size: 11px;">${status.toUpperCase()}</span>
+                                        ${item.genre ? getGameGenreBadgeMarkup(item.genre, { compact: true }) : ''}
+                                        ${getOwnedSoldBadgeMarkup(status, { compact: true })}
                                     </div>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Buy Price</div>
@@ -6252,7 +6330,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
                                     <span class="item-category">${sanitizeText(normalizeLabel(item.category || ""))}</span>
-                                    <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
+                                    ${getOwnedSoldBadgeMarkup(status, { compact: true })}
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Price</div>
                                         <div class="price-tag">₹${sanitizeNumber(item.price).toFixed(2)}</div>
