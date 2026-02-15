@@ -2574,7 +2574,7 @@
                                 <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
                                 <div onclick="openImagePicker('gadget')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                                     <div id="g-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="7.2" y="2.5" width="9.6" height="19" rx="2.2"/><path d="M10 5.5h4"/><circle cx="12" cy="18.1" r="0.8" fill="currentColor" stroke="none"/><path d="M3.3 9.8h2.8"/><path d="M3.3 14.2h2.8"/><path d="M17.9 9.8h2.8"/><path d="M17.9 14.2h2.8"/></svg>
                                         <div style="font-size: 13px; color: var(--text-muted);">Click to add image</div>
                                     </div>
                                     <input type="hidden" id="g-final-image-url" value="">
@@ -2679,7 +2679,7 @@
                                 <label>Service Icon <span style="color:var(--text-muted);font-size:11px;">(click to add)</span></label>
                                 <div onclick="openImagePicker('digital')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                                     <div id="d-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg>
                                         <div style="font-size: 13px; color: var(--text-muted);">Click to add icon</div>
                                     </div>
                                     <input type="hidden" id="d-final-image-url" value="">
@@ -5277,7 +5277,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         const container = document.getElementById('g-image-preview-container');
         if (container) {
             container.innerHTML = `
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="7.2" y="2.5" width="9.6" height="19" rx="2.2"/><path d="M10 5.5h4"/><circle cx="12" cy="18.1" r="0.8" fill="currentColor" stroke="none"/><path d="M3.3 9.8h2.8"/><path d="M3.3 14.2h2.8"/><path d="M17.9 9.8h2.8"/><path d="M17.9 14.2h2.8"/></svg>
                 <div style="font-size: 13px; color: var(--text-muted);">Click to add image</div>
             `;
         }
@@ -5447,6 +5447,26 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"${style}><path d="M6.5 9.5h11a4.5 4.5 0 0 1 4.33 5.72l-.48 1.63A2.25 2.25 0 0 1 19.2 18.5h-1.08a2.5 2.5 0 0 1-2.17-1.26l-.74-1.28h-6.42l-.74 1.28A2.5 2.5 0 0 1 5.88 18.5H4.8a2.25 2.25 0 0 1-2.15-1.65l-.48-1.63A4.5 4.5 0 0 1 6.5 9.5Z"/><path d="M9 12.15v2.7"/><path d="M7.65 13.5h2.7"/><circle cx="15.8" cy="12.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="18.1" cy="14.3" r="0.95" fill="currentColor" stroke="none"/></svg>`;
         }
 
+        function getGadgetPlaceholderSvg(options = {}) {
+            const sizeValue = Number(options.size);
+            const strokeValue = Number(options.strokeWidth);
+            const size = Number.isFinite(sizeValue) && sizeValue > 0 ? sizeValue : 30;
+            const strokeWidth = Number.isFinite(strokeValue) && strokeValue > 0 ? strokeValue : 1.9;
+            const style = typeof options.style === 'string' && options.style.trim() ? ` style="${options.style}"` : '';
+
+            return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"${style}><rect x="7.2" y="2.5" width="9.6" height="19" rx="2.2"/><path d="M10 5.5h4"/><circle cx="12" cy="18.1" r="0.8" fill="currentColor" stroke="none"/><path d="M3.3 9.8h2.8"/><path d="M3.3 14.2h2.8"/><path d="M17.9 9.8h2.8"/><path d="M17.9 14.2h2.8"/></svg>`;
+        }
+
+        function getDigitalPlaceholderSvg(options = {}) {
+            const sizeValue = Number(options.size);
+            const strokeValue = Number(options.strokeWidth);
+            const size = Number.isFinite(sizeValue) && sizeValue > 0 ? sizeValue : 30;
+            const strokeWidth = Number.isFinite(strokeValue) && strokeValue > 0 ? strokeValue : 1.9;
+            const style = typeof options.style === 'string' && options.style.trim() ? ` style="${options.style}"` : '';
+
+            return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round"${style}><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg>`;
+        }
+
         // Render gadgets
         function renderGadgets() {
     const container = document.getElementById('gadgets-list');
@@ -5479,7 +5499,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                         <!-- Content Row: Image + Info -->
                         <div style="display: flex; gap: 12px; align-items: flex-start;">
                             <!-- Product Image -->
-                            ${getCardImageMarkup(productImage, g.name, getCategoryIcon(g.category), { useProxy: true })}
+                            ${getCardImageMarkup(productImage, g.name, getGadgetPlaceholderSvg({ size: 30, strokeWidth: 1.8 }), { useProxy: true })}
 
                             <!-- Info -->
                             <div style="flex: 1; min-width: 0;">
@@ -5608,7 +5628,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 `;
             } else {
                 container.innerHTML = `
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="7.2" y="2.5" width="9.6" height="19" rx="2.2"/><path d="M10 5.5h4"/><circle cx="12" cy="18.1" r="0.8" fill="currentColor" stroke="none"/><path d="M3.3 9.8h2.8"/><path d="M3.3 14.2h2.8"/><path d="M17.9 9.8h2.8"/><path d="M17.9 14.2h2.8"/></svg>
                     <div style="font-size: 13px; color: var(--text-muted);">Click to add/change image</div>
                 `;
             }
@@ -6169,7 +6189,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                         // Digital purchase item
                         return `
                             <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${getCardImageMarkup(item.imageUrl, item.name, '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>')}
+                                ${getCardImageMarkup(item.imageUrl, item.name, getDigitalPlaceholderSvg({ size: 30, strokeWidth: 1.8 }))}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
                                     <span class="item-category">${item.type}</span>
@@ -6192,7 +6212,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                         const status = item.status || 'owned';
                         return `
                             <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${getCardImageMarkup(item.imageUrl, item.name, getCategoryIcon(item.category))}
+                                ${getCardImageMarkup(item.imageUrl, item.name, getGadgetPlaceholderSvg({ size: 30, strokeWidth: 1.8 }))}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
                                     <span class="item-category">${item.category}</span>
@@ -6340,7 +6360,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             // Reset image preview
             document.getElementById('d-final-image-url').value = '';
             document.getElementById('d-image-preview-container').innerHTML = `
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg>
                 <div style="font-size: 13px; color: var(--text-muted);">Click to add icon</div>
             `;
 
@@ -6396,7 +6416,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+                        <div class="empty-state-icon">${getDigitalPlaceholderSvg({ size: 48, strokeWidth: 1.5, style: 'opacity:0.4;' })}</div>
                         <p>No digital purchases in this category yet!</p>
                     </div>
                 `;
@@ -6457,7 +6477,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
                             <!-- Content Row: Image + Info -->
                             <div style="display: flex; gap: 16px; align-items: flex-start;">
-                                ${getCardImageMarkup(d.imageUrl, d.name, '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>')}
+                                ${getCardImageMarkup(d.imageUrl, d.name, getDigitalPlaceholderSvg({ size: 30, strokeWidth: 1.8 }))}
 
                                 <!-- Info -->
                                 <div style="flex: 1; min-width: 0;">
@@ -6577,7 +6597,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 `;
             } else {
                 imagePreviewContainer.innerHTML = `
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg>
                     <div style="font-size: 13px; color: var(--text-muted);">Click to add/change icon</div>
                 `;
             }
@@ -8058,7 +8078,7 @@ window.importDigitalCSV = function(event) {
                     <label>Product Image <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
                     <div onclick="openImagePicker('edit-gadget')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                         <div id="edit-g-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="7.2" y="2.5" width="9.6" height="19" rx="2.2"/><path d="M10 5.5h4"/><circle cx="12" cy="18.1" r="0.8" fill="currentColor" stroke="none"/><path d="M3.3 9.8h2.8"/><path d="M3.3 14.2h2.8"/><path d="M17.9 9.8h2.8"/><path d="M17.9 14.2h2.8"/></svg>
                             <div style="font-size: 13px; color: var(--text-muted);">Click to add/change image</div>
                         </div>
                         <input type="hidden" id="edit-g-final-image-url" value="">
@@ -8138,7 +8158,7 @@ window.importDigitalCSV = function(event) {
                     <label>Service Icon <span style="color:var(--text-muted);font-size:11px;">(click to change)</span></label>
                     <div onclick="openImagePicker('edit-digital')" style="cursor: pointer; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; min-height: 48px; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.1)'; this.style.borderColor='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.borderColor='rgba(255, 255, 255, 0.1)'">
                         <div id="edit-d-image-preview-container" style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#10b981;flex-shrink:0;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/><circle cx="6.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><circle cx="9.1" cy="6.2" r="0.7" fill="currentColor" stroke="none"/><path d="m8.4 15.2 2.5 2.5 4.8-5"/></svg>
                             <div style="font-size: 13px; color: var(--text-muted);">Click to add/change icon</div>
                         </div>
                         <input type="hidden" id="edit-d-final-image-url" value="">
