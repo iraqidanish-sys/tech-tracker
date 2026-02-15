@@ -2560,6 +2560,38 @@ function sanitizeURL(url) {
     }
 }
 
+// CORS proxy helper - bypasses CORS restrictions for external images
+function getCORSProxyURL(imageUrl) {
+    if (!imageUrl) return '';
+    
+    // Don't proxy data URLs
+    if (imageUrl.startsWith('data:')) {
+        return imageUrl;
+    }
+    
+    // If already from a CORS-friendly source, return as-is
+    const corsFriendly = [
+        'images.unsplash.com',
+        'i.imgur.com',
+        'imgur.com',
+        'res.cloudinary.com',
+        'firebasestorage.googleapis.com',
+        'corsproxy.io' // Don't proxy the proxy!
+    ];
+    
+    try {
+        const url = new URL(imageUrl);
+        if (corsFriendly.some(domain => url.hostname.includes(domain))) {
+            return imageUrl; // No proxy needed
+        }
+        
+        // Use CORS proxy for potentially blocked domains
+        return `https://corsproxy.io/?${encodeURIComponent(imageUrl)}`;
+    } catch {
+        return imageUrl;
+    }
+}
+
 // Sanitize numeric inputs
 function sanitizeNumber(value, defaultValue = 0) {
     const num = parseFloat(value);
@@ -4323,7 +4355,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                         <div style="display: flex; gap: 12px; align-items: flex-start;">
                             <!-- Product Image -->
                             ${productImage ?
-                                `<img src="${sanitizeURL(productImage)}" alt="${sanitizeText(g.name)}" class="product-image">` :
+                                `<img src="${getCORSProxyURL(sanitizeURL(productImage))}" alt="${sanitizeText(g.name)}" class="product-image">` :
                                 `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;">${getCategoryIcon(g.category)}</div>`
                             }
 
@@ -4650,7 +4682,7 @@ if (gmContainer) {
                                 <div style="display: flex; gap: 12px; align-items: flex-start;">
                                     <!-- Game Cover Image -->
                                     ${g.imageUrl ?
-                                        `<img src="${sanitizeURL(g.imageUrl)}" alt="${sanitizeText(g.title)}" class="product-image">` :
+                                        `<img src="${getCORSProxyURL(sanitizeURL(g.imageUrl))}" alt="${sanitizeText(g.title)}" class="product-image">` :
                                         `<div class="product-image-placeholder" style="color:#10b981; display:flex; align-items:center; justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="11" x2="15.01" y2="11" stroke-width="3"/><line x1="18" y1="13" x2="18.01" y2="13" stroke-width="3"/><path d="M4 8h16c.3 0 .6.1.8.3.2.2.3.5.2.8l-2 8c-.1.5-.6.9-1.2.9H6.2c-.6 0-1.1-.4-1.2-.9l-2-8c-.1-.3 0-.6.2-.8C3.4 8.1 3.7 8 4 8z"/></svg></div>`
                                     }
 
