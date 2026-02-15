@@ -813,8 +813,8 @@
 
         .product-image--contain {
             object-fit: contain;
-            padding: 8px;
-            background: rgba(15, 23, 42, 0.55);
+            padding: 2px;
+            background: rgba(15, 23, 42, 0.35);
         }
 
         .product-image-placeholder {
@@ -2625,10 +2625,10 @@
                     <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>Card Image Display</h3>
                     <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Choose how uploaded images appear in cards.</p>
                     <div class="image-fit-mode-row" style="margin-bottom:10px;">
-                        <button type="button" id="image-fit-cover-btn" class="image-fit-mode-btn">Cover (Recommended)</button>
-                        <button type="button" id="image-fit-contain-btn" class="image-fit-mode-btn active">Contain (Show Full)</button>
+                        <button type="button" id="image-fit-cover-btn" class="image-fit-mode-btn active">Cover (Recommended)</button>
+                        <button type="button" id="image-fit-contain-btn" class="image-fit-mode-btn">Contain (Show Full)</button>
                     </div>
-                    <div id="image-fit-mode-status" style="font-size:12px;color:var(--text-secondary);line-height:1.45;">Contain mode keeps the full image visible with subtle padding.</div>
+                    <div id="image-fit-mode-status" style="font-size:12px;color:var(--text-secondary);line-height:1.45;">Cover mode fills the frame and center-crops edges.</div>
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
@@ -5131,12 +5131,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         }
 
         // Global image-fit mode for card media
-        const CARD_IMAGE_FIT_STORAGE_KEY = 'gearnest_card_image_fit_mode_v2';
+        const CARD_IMAGE_FIT_STORAGE_KEY = 'gearnest_card_image_fit_mode_v3';
         const CARD_IMAGE_FIT_MODES = {
             cover: 'cover',
             contain: 'contain'
         };
-        let currentCardImageFitMode = CARD_IMAGE_FIT_MODES.contain;
+        let currentCardImageFitMode = CARD_IMAGE_FIT_MODES.cover;
 
         function normalizeCardImageFitMode(mode) {
             return mode === CARD_IMAGE_FIT_MODES.cover ? CARD_IMAGE_FIT_MODES.cover : CARD_IMAGE_FIT_MODES.contain;
@@ -5147,7 +5147,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 const saved = localStorage.getItem(CARD_IMAGE_FIT_STORAGE_KEY);
                 return normalizeCardImageFitMode(saved);
             } catch (error) {
-                return CARD_IMAGE_FIT_MODES.contain;
+                return CARD_IMAGE_FIT_MODES.cover;
             }
         }
 
