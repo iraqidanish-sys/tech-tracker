@@ -1211,6 +1211,67 @@
             line-height: 1.4;
         }
 
+        .game-catalog-search-wrap {
+            position: relative;
+        }
+
+        .game-catalog-results {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            z-index: 1200;
+            max-height: 260px;
+            overflow-y: auto;
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.98);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            display: none;
+        }
+
+        .game-catalog-results.active {
+            display: block;
+        }
+
+        .game-catalog-result {
+            width: 100%;
+            border: 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+            background: transparent;
+            text-align: left;
+            color: var(--text-primary);
+            padding: 10px 12px;
+            cursor: pointer;
+            display: grid;
+            gap: 3px;
+        }
+
+        .game-catalog-result:last-child {
+            border-bottom: none;
+        }
+
+        .game-catalog-result:hover {
+            background: rgba(16, 185, 129, 0.14);
+        }
+
+        .game-catalog-result-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .game-catalog-result-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .game-catalog-result-empty {
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         /* Profit colors */
         .profit-positive { color: #4CAF50 !important; }
         .profit-negative { color: #f44336 !important; }
@@ -2767,11 +2828,13 @@
                         <div class="form-grid">
                             <div class="input-group" style="grid-column:1 / -1;">
                                 <label>Quick Fill From Catalog <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label>
-                                <div style="display:flex;gap:8px;align-items:center;">
-                                    <input type="text" id="gm-catalog-search" list="gm-catalog-datalist" placeholder="Type to search games (e.g. Elden Ring)" style="flex:1;" oninput="updateGameCatalogSearchHint()" onchange="applyGameCatalogSearchSelection()">
-                                    <button type="button" class="btn" style="white-space:nowrap;padding:10px 14px;" onclick="applyGameCatalogSearchSelection()">Use Match</button>
+                                <div id="gm-catalog-search-wrap" class="game-catalog-search-wrap">
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="text" id="gm-catalog-search" placeholder="Search games (start typing title)" style="flex:1;" oninput="updateGameCatalogSearchHint()" onfocus="openGameCatalogResults()" onkeydown="handleGameCatalogSearchKey(event)" autocomplete="off">
+                                        <button type="button" class="btn" style="white-space:nowrap;padding:10px 14px;" onclick="applyGameCatalogSearchSelection()">Use Match</button>
+                                    </div>
+                                    <div id="gm-catalog-results" class="game-catalog-results"></div>
                                 </div>
-                                <datalist id="gm-catalog-datalist"></datalist>
                                 <div id="gm-catalog-match-hint" class="game-catalog-hint">Import your game metadata catalog in Settings to enable quick auto-fill.</div>
                             </div>
                             <div class="input-group"><label>Title</label><input type="text" id="gm-title" placeholder="e.g. Elden Ring" required oninput="updateGameCatalogSearchHint()"></div>
@@ -2951,7 +3014,6 @@
                         </div>
                         <div class="settings-data-tool-card">
                             <div class="settings-data-tool-title">Game Metadata Catalog</div>
-                            <div id="game-metadata-catalog-summary" style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">No catalog imported yet.</div>
                             <div class="settings-data-tool-actions">
                                 <button type="button" class="settings-data-tool-btn" onclick="downloadGameMetadataTemplate()">Download Template</button>
                                 <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-game-metadata')">Import CSV</button>
@@ -4959,8 +5021,8 @@ async function loadSettings() {
             const trigger = document.createElement('div');
             trigger.className = 'custom-select-trigger';
             trigger.innerHTML = currentIcon
-                ? '<img src="' + currentIcon.iconUrl + '" class="custom-select-icon" alt="' + currentValue + '">' + displayText + '<span class="custom-select-arrow">▼</span>'
-                : displayText + '<span class="custom-select-arrow">▼</span>';
+                ? '<img src="' + currentIcon.iconUrl + '" class="custom-select-icon" alt="' + currentValue + '">' + displayText
+                : displayText;
 
             // Create options container
             const optionsContainer = document.createElement('div');
@@ -4981,12 +5043,15 @@ async function loadSettings() {
                 option.onclick = () => {
                     select.value = platform;
                     trigger.innerHTML = icon
-                        ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text + '<span class="custom-select-arrow">▼</span>'
-                        : text + '<span class="custom-select-arrow">▼</span>';
+                        ? '<img src="' + icon.iconUrl + '" class="custom-select-icon" alt="' + platform + '">' + text
+                        : text;
                     optionsContainer.classList.remove('active');
                     trigger.classList.remove('active');
                     document.querySelectorAll('.custom-select-option').forEach(opt => opt.classList.remove('selected'));
                     option.classList.add('selected');
+                    if (typeof window.updateGameCatalogSearchHint === 'function') {
+                        window.updateGameCatalogSearchHint();
+                    }
                 };
 
                 optionsContainer.appendChild(option);
@@ -5716,6 +5781,14 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
             setCardImageFitMode(getSavedCardImageFitMode(), { persist: false, rerender: false });
             window.updateGameCatalogSearchHint();
+
+            document.addEventListener('click', function(event) {
+                const searchWrap = document.getElementById('gm-catalog-search-wrap');
+                if (!searchWrap || searchWrap.contains(event.target)) return;
+                if (typeof window.closeGameCatalogResults === 'function') {
+                    window.closeGameCatalogResults();
+                }
+            });
         });
 
         function getCardImageMarkup(imageUrl, altText, placeholderMarkup = '', options = {}) {
@@ -5921,9 +5994,98 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             return game;
         }
 
-        function refreshGameMetadataCatalogUI() {
+        let gameCatalogSearchResults = [];
+        let gameCatalogDropdownOpen = false;
+
+        function buildGameCatalogSearchResults(query, limit = 24) {
+            const cleanQuery = normalizeLabel(query || '').toLowerCase();
+            if (gameMetadataCatalog.length === 0) return [];
+
+            const ranked = gameMetadataCatalog
+                .map(entry => {
+                    const title = normalizeLabel(entry.title || '').toLowerCase();
+                    const platform = normalizeLabel(entry.platform || '').toLowerCase();
+                    const genre = normalizeLabel(entry.genre || '').toLowerCase();
+                    let rank = 99;
+
+                    if (!cleanQuery) {
+                        rank = 10;
+                    } else if (title === cleanQuery) {
+                        rank = 0;
+                    } else if (title.startsWith(cleanQuery)) {
+                        rank = 1;
+                    } else if (title.includes(cleanQuery)) {
+                        rank = 2;
+                    } else if (platform.includes(cleanQuery)) {
+                        rank = 3;
+                    } else if (genre.includes(cleanQuery)) {
+                        rank = 4;
+                    }
+
+                    return { entry, rank };
+                })
+                .filter(item => item.rank < 99)
+                .sort((a, b) => {
+                    if (a.rank !== b.rank) return a.rank - b.rank;
+                    const titleCompare = a.entry.title.localeCompare(b.entry.title);
+                    if (titleCompare !== 0) return titleCompare;
+                    return a.entry.platform.localeCompare(b.entry.platform);
+                });
+
+            if (!cleanQuery) {
+                return gameMetadataCatalog.slice(0, limit);
+            }
+
+            return ranked.slice(0, limit).map(item => item.entry);
+        }
+
+        function renderGameCatalogResults(forceOpen = false) {
             const searchInput = document.getElementById('gm-catalog-search');
-            const listEl = document.getElementById('gm-catalog-datalist');
+            const listEl = document.getElementById('gm-catalog-results');
+            if (!searchInput || !listEl) return;
+
+            if (forceOpen) {
+                gameCatalogDropdownOpen = true;
+            }
+
+            const query = normalizeLabel(searchInput.value || '');
+            gameCatalogSearchResults = buildGameCatalogSearchResults(query);
+            const shouldShow = gameCatalogDropdownOpen && (document.activeElement === searchInput || query.length > 0);
+
+            if (!shouldShow) {
+                listEl.classList.remove('active');
+                listEl.innerHTML = '';
+                return;
+            }
+
+            if (gameMetadataCatalog.length === 0) {
+                listEl.innerHTML = '<div class="game-catalog-result-empty">Import metadata in Settings to enable game suggestions.</div>';
+                listEl.classList.add('active');
+                return;
+            }
+
+            if (gameCatalogSearchResults.length === 0) {
+                listEl.innerHTML = '<div class="game-catalog-result-empty">No matching games found.</div>';
+                listEl.classList.add('active');
+                return;
+            }
+
+            listEl.innerHTML = gameCatalogSearchResults.map((entry, index) => {
+                const metaParts = [entry.platform];
+                if (entry.genre) metaParts.push(entry.genre);
+                if (entry.metacriticScore) metaParts.push(`MC ${entry.metacriticScore}`);
+                if (entry.imageUrl) metaParts.push('Cover URL');
+                return `
+                    <button type="button" class="game-catalog-result" onclick="selectGameCatalogResult(${index})">
+                        <span class="game-catalog-result-title">${sanitizeText(entry.title)}</span>
+                        <span class="game-catalog-result-meta">${sanitizeText(metaParts.join(' | '))}</span>
+                    </button>
+                `;
+            }).join('');
+            listEl.classList.add('active');
+        }
+
+        function refreshGameMetadataCatalogUI() {
             const summaryEl = document.getElementById('game-metadata-catalog-summary');
             if (summaryEl) {
                 if (gameMetadataCatalog.length === 0) {
@@ -5935,23 +6097,50 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 }
             }
 
-            if (!listEl) return;
-            const query = normalizeLabel(searchInput ? searchInput.value : '').toLowerCase();
-            const filtered = gameMetadataCatalog
-                .filter(entry => {
-                    if (!query) return true;
-                    return normalizeLabel(entry.title || '').toLowerCase().includes(query);
-                })
-                .slice(0, 120);
-
-            listEl.innerHTML = filtered.map(entry => {
-                const labelParts = [entry.platform];
-                if (entry.genre) labelParts.push(entry.genre);
-                if (entry.metacriticScore) labelParts.push(`MC ${entry.metacriticScore}`);
-                const label = labelParts.filter(Boolean).join(' | ');
-                return `<option value="${sanitizeText(entry.title)}" label="${sanitizeText(label)}"></option>`;
-            }).join('');
+            renderGameCatalogResults();
         }
+
+        window.openGameCatalogResults = function() {
+            gameCatalogDropdownOpen = true;
+            renderGameCatalogResults(true);
+        };
+
+        window.closeGameCatalogResults = function() {
+            gameCatalogDropdownOpen = false;
+            const listEl = document.getElementById('gm-catalog-results');
+            if (listEl) {
+                listEl.classList.remove('active');
+                listEl.innerHTML = '';
+            }
+        };
+
+        window.selectGameCatalogResult = function(index) {
+            const entry = gameCatalogSearchResults[index];
+            if (!entry) return;
+            applyCatalogEntryToGameForm(entry);
+            const searchInput = document.getElementById('gm-catalog-search');
+            if (searchInput) {
+                searchInput.value = entry.title;
+            }
+            window.closeGameCatalogResults();
+            window.updateGameCatalogSearchHint();
+        };
+
+        window.handleGameCatalogSearchKey = function(event) {
+            if (event.key === 'Escape') {
+                window.closeGameCatalogResults();
+                return;
+            }
+
+            if (event.key === 'Enter') {
+                if (gameCatalogSearchResults.length > 0) {
+                    event.preventDefault();
+                    window.selectGameCatalogResult(0);
+                } else {
+                    window.applyGameCatalogSearchSelection();
+                }
+            }
+        };
 
         window.updateGameCatalogSearchHint = function() {
             const hint = document.getElementById('gm-catalog-match-hint');
@@ -5959,6 +6148,9 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             const titleInput = document.getElementById('gm-title');
             const platformSelect = document.getElementById('gm-platform');
 
+            if (document.activeElement === searchInput) {
+                gameCatalogDropdownOpen = true;
+            }
             refreshGameMetadataCatalogUI();
             if (!hint) return;
 
@@ -5992,7 +6184,10 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 return;
             }
 
-            const match = findBestGameMetadataMatch(query, platformSelect ? platformSelect.value : '', { allowPartial: true });
+            let match = findBestGameMetadataMatch(query, platformSelect ? platformSelect.value : '', { allowPartial: true });
+            if (!match && gameCatalogSearchResults.length > 0) {
+                match = gameCatalogSearchResults[0];
+            }
             if (!match) {
                 window.updateGameCatalogSearchHint();
                 return;
@@ -6000,6 +6195,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
             applyCatalogEntryToGameForm(match);
             if (searchInput) searchInput.value = match.title;
+            window.closeGameCatalogResults();
             window.updateGameCatalogSearchHint();
         };
 
