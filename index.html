@@ -2714,7 +2714,7 @@
                         <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;">
                             <div style="font-size:12px;color:var(--text-muted);">Signed in: <strong id="userEmail" style="color:var(--text-secondary);font-weight:500;"></strong></div>
                             <!-- Encryption Button - Show when ENABLED -->
-                            <button id="encryption-enabled-controls" onclick="if(confirm('⚠️ Are you sure you want to disable encryption?\\n\\nYour data will no longer be encrypted.')) { disableEncryption(); }" class="btn" style="padding:8px 12px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);display:none;">
+                            <button id="encryption-enabled-controls" onclick="if(confirm('Are you sure you want to disable encryption?\\n\\nYour data will no longer be encrypted.')) { disableEncryption(); }" class="btn" style="padding:8px 12px;background:rgba(239,68,68,0.2);color:#ef4444;border:1px solid rgba(239,68,68,0.3);display:none;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>Disable
                             </button>
                         </div>
@@ -2804,7 +2804,7 @@
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:16px;">🏷️ Game Genres</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3H4a1 1 0 0 0-1 1v5.59a2 2 0 0 0 .59 1.41L13.17 20.6a2 2 0 0 0 2.83 0l4.59-4.59a2 2 0 0 0 0-2.83Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Game Genres</h3>
                     <div style="display:flex;gap:8px;margin-bottom:12px;">
                         <input type="text" id="new-game-genre" placeholder="New genre" style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;">
                         <button class="btn" onclick="addGameGenre()">Add</button>
@@ -2822,7 +2822,7 @@
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:16px;">🖼️ Custom Platform Icons</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>Custom Platform Icons</h3>
                     <div class="form-grid">
                         <div class="input-group"><label>Platform</label>
                             <div id="icon-platform-select-wrapper">
@@ -2853,7 +2853,7 @@
                     <div id="admin-user-details" style="display:none;"><div id="admin-user-info"></div></div>
                 </div>
                 <div class="add-form">
-                    <h3 style="margin-bottom:16px;">👥 All Users</h3>
+                    <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="3"/><path d="M20 8v6"/><path d="M23 11h-6"/></svg>All Users</h3>
                     <button class="btn" style="margin-bottom:16px;" onclick="loadAllUsers()">Load All Users</button>
                     <div id="admin-users-list"></div>
                 </div>
@@ -3485,6 +3485,14 @@ function sanitizeText(text) {
     return temp.innerHTML.replace(/<[^>]*>/g, '');
 }
 
+function normalizeLabel(value) {
+    if (value == null) return '';
+    return String(value)
+        .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 // Sanitize URLs (for icon URLs and links)
 function sanitizeURL(url) {
     if (!url) return '';
@@ -3564,7 +3572,7 @@ function sanitizeNumber(value, defaultValue = 0) {
     return isNaN(num) || !isFinite(num) ? defaultValue : num;
 }
 
-        // ⭐⭐⭐ INSERT initializeUser() RIGHT HERE ⭐⭐⭐
+        // INSERT initializeUser() RIGHT HERE
 async function initializeUser(user) {
     try {
         currentUserUID = user.uid;
@@ -3588,7 +3596,7 @@ async function initializeUser(user) {
             });
         }
 
-        // ✅ LOAD USER'S CURRENCY SETTING
+        // LOAD USER'S CURRENCY SETTING
         const settingsRef = collection(db, "users", user.uid, "settings");
         const settingsSnapshot = await getDocs(settingsRef);
         if (!settingsSnapshot.empty) {
@@ -3886,9 +3894,20 @@ async function loadData() {
             digitalDocsPromise
         ]);
 
-        gadgets = loadedGadgets.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        games = loadedGames.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        digitalPurchases = loadedDigitalPurchases.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        gadgets = loadedGadgets
+            .map(g => ({ ...g, category: normalizeLabel(g.category || 'Other') || 'Other' }))
+            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        games = loadedGames
+            .map(g => ({
+                ...g,
+                platform: normalizeLabel(g.platform || 'Other') || 'Other',
+                genre: normalizeLabel(g.genre || 'Action') || 'Action',
+                condition: normalizeLabel(g.condition || 'New/Sealed') || 'New/Sealed'
+            }))
+            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        digitalPurchases = loadedDigitalPurchases
+            .map(d => ({ ...d, type: normalizeLabel(d.type || 'Other') || 'Other' }))
+            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
         updateAll();
 
@@ -4549,11 +4568,26 @@ async function loadSettings() {
 
             const settings = settingsSnap.data();
 
-            gadgetCategories = settings.gadgetCategories || getDefaultGadgetCategories();
-            gamePlatforms = settings.gamePlatforms || getDefaultGamePlatforms();
-            gameGenres = settings.gameGenres || getDefaultGameGenres();
-            digitalTypes = settings.digitalTypes || getDefaultDigitalTypes();
-            customIcons = settings.customIcons || [];
+            gadgetCategories = (settings.gadgetCategories || getDefaultGadgetCategories())
+                .map(normalizeLabel)
+                .filter(Boolean);
+            gamePlatforms = (settings.gamePlatforms || getDefaultGamePlatforms())
+                .map(normalizeLabel)
+                .filter(Boolean);
+            gameGenres = (settings.gameGenres || getDefaultGameGenres())
+                .map(normalizeLabel)
+                .filter(Boolean);
+            digitalTypes = (settings.digitalTypes || getDefaultDigitalTypes())
+                .map(normalizeLabel)
+                .filter(Boolean);
+            customIcons = (settings.customIcons || [])
+                .map(icon => ({ ...icon, platform: normalizeLabel(icon.platform || '') }))
+                .filter(icon => icon.platform && icon.iconUrl);
+
+            if (gadgetCategories.length === 0) gadgetCategories = getDefaultGadgetCategories();
+            if (gamePlatforms.length === 0) gamePlatforms = getDefaultGamePlatforms();
+            if (gameGenres.length === 0) gameGenres = getDefaultGameGenres();
+            if (digitalTypes.length === 0) digitalTypes = getDefaultDigitalTypes();
 
 
         } else {
@@ -4870,7 +4904,7 @@ async function loadSettings() {
                     });
 
                     if (customIcon) {
-                        opt.textContent = '🎨 ' + option + ' (Custom Icon)';
+                        opt.textContent = 'Custom Icon: ' + normalizeLabel(option);
                     } else {
                         opt.textContent = option;
                     }
@@ -4934,7 +4968,7 @@ async function loadSettings() {
         // Add/Remove functions for each setting type
         window.addGadgetCategory = async function() {
             const input = document.getElementById('new-gadget-category');
-            const value = input.value.trim();
+            const value = normalizeLabel(input.value);
 
             if (value && !gadgetCategories.includes(value)) {
                 gadgetCategories.push(value);
@@ -4952,7 +4986,7 @@ async function loadSettings() {
 
         window.addGamePlatform = async function() {
             const input = document.getElementById('new-game-platform');
-            const value = input.value.trim();
+            const value = normalizeLabel(input.value);
 
             if (value && !gamePlatforms.includes(value)) {
                 gamePlatforms.push(value);
@@ -4970,7 +5004,7 @@ async function loadSettings() {
 
         window.addGameGenre = async function() {
             const input = document.getElementById('new-game-genre');
-            const value = input.value.trim();
+            const value = normalizeLabel(input.value);
 
             if (value && !gameGenres.includes(value)) {
                 gameGenres.push(value);
@@ -4988,7 +5022,7 @@ async function loadSettings() {
 
         window.addDigitalType = async function() {
             const input = document.getElementById('new-digital-type');
-            const value = input.value.trim();
+            const value = normalizeLabel(input.value);
 
             if (value && !digitalTypes.includes(value)) {
                 digitalTypes.push(value);
@@ -5164,10 +5198,10 @@ async function loadSettings() {
 
             if (customIcon) {
                 // Remove emoji from platform name when displaying with custom icon
-                const platformWithoutEmoji = platform.replace(/[\u0000-\u001F\u007F-\u009F\u2000-\u206F\u2700-\u27BF\uE000-\uF8FF\uD800-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
+                const platformWithoutEmoji = normalizeLabel(platform);
                 return '<span style="display:inline-flex;align-items:center;gap:5px;"><span class="icon-img-wrap-sm"><img src="' + customIcon.iconUrl + '" alt="' + platform + '"></span>' + platformWithoutEmoji + '</span>';
             }
-            return platform; // Return plain text if no custom icon
+            return normalizeLabel(platform); // Return plain text if no custom icon
         }
 
         function getPlatformIcon(platform) {
@@ -5220,7 +5254,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
     
     if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ Saving...';
+        submitBtn.textContent = 'Saving...';
     }
 
     try {
@@ -5504,7 +5538,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                             <!-- Info -->
                             <div style="flex: 1; min-width: 0;">
                                 <div class="item-meta" style="margin-bottom: 8px;">
-                                    <span class="item-category">${sanitizeText(g.category)}</span>
+                                    <span class="item-category">${sanitizeText(normalizeLabel(g.category || ""))}</span>
                                 </div>
 
                                 <!-- Badges Row -->
@@ -5624,7 +5658,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             if (imageUrl) {
                 container.innerHTML = `
                     <img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
-                    <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added ✓</div>
+                    <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added</div>
                 `;
             } else {
                 container.innerHTML = `
@@ -5658,7 +5692,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '⏳ Saving...';
+                submitBtn.innerHTML = 'Saving...';
             }
 
             try {
@@ -5741,7 +5775,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             try {
                 if (window.editingGameId) {
 
-    // ✅ UPDATE existing game (do NOT delete)
+    // UPDATE existing game (do NOT delete)
     const editingGameId = window.editingGameId;
     const gameToSave = await encryptData(game);
     await updateDoc(
@@ -5755,7 +5789,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
 } else {
 
-    // ✅ ADD new game
+    // ADD new game
     const gameToSave = await encryptData(game);
     const gameDocRef = await addDoc(
         collection(db, 'users', currentUserUID, 'games'),
@@ -5818,7 +5852,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 const profitClass = profit > 0 ? 'profit-positive' : profit < 0 ? 'profit-negative' : '';
                 const duration = calculateOwnershipDuration(g.buyDate, g.sellDate);
                 const platformDisplay = getPlatformDisplay(g.platform);
-                const genreDisplay = g.genre || '';
+                const genreDisplay = normalizeLabel(g.genre || "");
                 const cardId = `game-card-${index}`;
 
                 return `
@@ -5941,7 +5975,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             // Populate modal form
             document.getElementById('edit-gm-title').value = game.title;
             document.getElementById('edit-gm-platform').value = game.platform;
-            document.getElementById('edit-gm-genre').value = game.genre || '🎯 Action';
+            document.getElementById('edit-gm-genre').value = normalizeLabel(game.genre || 'Action') || 'Action';
             document.getElementById('edit-gm-buy-price').value = game.buyPrice;
             document.getElementById('edit-gm-buy-date').value = game.buyDate;
             document.getElementById('edit-gm-condition').value = game.condition;
@@ -5957,7 +5991,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 if (editGmImageUrl) {
                     editGmContainer.innerHTML = `
                         <img src="${editGmImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
-                        <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Cover added ✓</div>
+                        <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Cover added</div>
                     `;
                 } else {
                     editGmContainer.innerHTML = `
@@ -6171,9 +6205,11 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 ${getCardImageMarkup(item.imageUrl, item.title, getGamepadPlaceholderSvg({ size: 30, strokeWidth: 1.8 }))}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.title}</div>
-                                    <span class="item-category">${item.platform}</span>
-                                    ${item.genre ? `<span class="item-category" style="margin-left: 5px;">${item.genre}</span>` : ''}
-                                    <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
+                                    <div class="item-meta" style="margin-bottom:0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                                        <span class="item-category" style="white-space:nowrap;">${sanitizeText(normalizeLabel(item.platform || ''))}</span>
+                                        ${item.genre ? `<span class="item-category" style="white-space:nowrap;">${sanitizeText(normalizeLabel(item.genre || ''))}</span>` : ''}
+                                        <span class="status-${status}" style="font-size: 11px;">${status.toUpperCase()}</span>
+                                    </div>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Buy Price</div>
                                         <div class="price-tag">₹${sanitizeNumber(item.buyPrice).toFixed(2)}</div>
@@ -6192,7 +6228,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 ${getCardImageMarkup(item.imageUrl, item.name, getDigitalPlaceholderSvg({ size: 30, strokeWidth: 1.8 }))}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
-                                    <span class="item-category">${item.type}</span>
+                                    <span class="item-category">${sanitizeText(normalizeLabel(item.type || ""))}</span>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Amount</div>
                                         <div class="price-tag">₹${sanitizeNumber(item.amount).toFixed(2)}</div>
@@ -6215,7 +6251,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 ${getCardImageMarkup(item.imageUrl, item.name, getGadgetPlaceholderSvg({ size: 30, strokeWidth: 1.8 }))}
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-title">${item.name}</div>
-                                    <span class="item-category">${item.category}</span>
+                                    <span class="item-category">${sanitizeText(normalizeLabel(item.category || ""))}</span>
                                     <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Price</div>
@@ -6482,7 +6518,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 <!-- Info -->
                                 <div style="flex: 1; min-width: 0;">
                                     <div class="item-meta" style="margin-bottom: 8px;">
-                                        <span class="item-category">${sanitizeText(d.type)}</span>
+                                        <span class="item-category">${sanitizeText(normalizeLabel(d.type || ""))}</span>
                                     </div>
 
                                     <!-- Badges Row -->
@@ -6593,7 +6629,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             if (imageUrl) {
                 imagePreviewContainer.innerHTML = `
                     <img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
-                    <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Icon added ✓</div>
+                    <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Icon added</div>
                 `;
             } else {
                 imagePreviewContainer.innerHTML = `
@@ -6819,7 +6855,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             rows.forEach(values => {
                 const name = (values[0] || '').trim();
-                const category = (values[1] || '🔧 Other').trim() || '🔧 Other';
+                const category = normalizeLabel((values[1] || 'Other').trim()) || 'Other';
                 const price = parseImportNumber(values[2]);
                 if (!name || !Number.isFinite(price)) {
                     skipped += 1;
@@ -6897,11 +6933,11 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
                 items.push({
                     title,
-                    platform: (values[1] || '🟦 PlayStation 5').trim() || '🟦 PlayStation 5',
-                    genre: (values[2] || '🎯 Action').trim() || '🎯 Action',
+                    platform: normalizeLabel((values[1] || 'PlayStation 5').trim()) || 'PlayStation 5',
+                    genre: normalizeLabel((values[2] || 'Action').trim()) || 'Action',
                     buyPrice,
                     buyDate: parseImportDate(values[4]) || today,
-                    condition: (values[5] || '✨ New/Sealed').trim() || '✨ New/Sealed',
+                    condition: normalizeLabel((values[5] || 'New/Sealed').trim()) || 'New/Sealed',
                     sellPrice,
                     sellDate,
                     status,
@@ -6949,7 +6985,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
                 items.push({
                     name,
-                    type: (values[1] || '💳 Other').trim() || '💳 Other',
+                    type: normalizeLabel((values[1] || 'Other').trim()) || 'Other',
                     amount,
                     date: parseImportDate(values[3]) || today,
                     duration: (values[4] || '').trim(),
@@ -7158,7 +7194,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 .map(row => row.map(escapeCsvValue).join(','))
                 .join('\n');
 
-            // UTF-8 with BOM for emoji support in both Excel and Google Sheets
+            // UTF-8 with BOM for broad character support in both Excel and Google Sheets
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -7171,7 +7207,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
         // Download Gadget Template
         window.downloadGadgetTemplate = function() {
             const headers = ['Name', 'Category', 'Price', 'Purchase Date', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
-            const exampleRow = ['iPhone 15 Pro', '📱 Phone', '119900', '2024-01-15', '95000', '2025-02-01', 'sold', 'Upgraded to 16'];
+            const exampleRow = ['iPhone 15 Pro', 'Phone', '119900', '2024-01-15', '95000', '2025-02-01', 'sold', 'Upgraded to 16'];
 
             const escapeCsvValue = (val) => {
                 const str = String(val);
@@ -7252,7 +7288,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 .map(row => row.map(escapeCsvValue).join(','))
                 .join('\n');
 
-            // UTF-8 with BOM for emoji support in both Excel and Google Sheets
+            // UTF-8 with BOM for broad character support in both Excel and Google Sheets
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -7265,7 +7301,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
         // Download Game Template
         window.downloadGameTemplate = function() {
             const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
-            const exampleRow = ['Spider-Man 2', 'PlayStation 5', '🎯 Action', '3999', '2024-06-01', 'Mint', '2500', '2025-01-15', 'sold', 'Completed'];
+            const exampleRow = ['Spider-Man 2', 'PlayStation 5', 'Action', '3999', '2024-06-01', 'Mint', '2500', '2025-01-15', 'sold', 'Completed'];
 
             const escapeCsvValue = (val) => {
                 const str = String(val);
@@ -7344,7 +7380,7 @@ window.importGamesCSV = function(event) {
                 .map(row => row.map(escapeCsvValue).join(','))
                 .join('\n');
 
-            // UTF-8 with BOM for emoji support in both Excel and Google Sheets
+            // UTF-8 with BOM for broad character support in both Excel and Google Sheets
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -7357,7 +7393,7 @@ window.importGamesCSV = function(event) {
         // Download Digital Template
         window.downloadDigitalTemplate = function() {
             const headers = ['Name', 'Type', 'Amount', 'Purchase Date', 'Duration', 'Expiry Date', 'Notes'];
-            const exampleRow = ['PS+ Premium', '🎮 Game Subscription', '1299', '2024-01-15', '1 Month', '2024-02-15', 'Auto-renewal enabled'];
+            const exampleRow = ['PS+ Premium', 'Game Subscription', '1299', '2024-01-15', '1 Month', '2024-02-15', 'Auto-renewal enabled'];
 
             const escapeCsvValue = (val) => {
                 const str = String(val);
@@ -7417,12 +7453,12 @@ window.importDigitalCSV = function(event) {
 
 
             if (!password || password.length < 8) {
-                alert('⚠️ Password must be at least 8 characters long');
+                alert('Password must be at least 8 characters long');
                 return;
             }
 
             if (password !== confirmPassword) {
-                alert('⚠️ Passwords do not match');
+                alert('Passwords do not match');
                 return;
             }
 
@@ -7447,7 +7483,7 @@ window.importDigitalCSV = function(event) {
                 if (passwordInput) passwordInput.value = '';
                 if (confirmPasswordInput) confirmPasswordInput.value = '';
 
-                alert('✅ Encryption enabled! Your data is now protected. You will need to enter your password on next login.');
+                alert('Encryption enabled. Your data is now protected. You will need to enter your password on next login.');
 
                 // Update encryption status in settings (with error handling)
                 try {
@@ -7459,7 +7495,7 @@ window.importDigitalCSV = function(event) {
                 }
 
             } catch (error) {
-                alert('❌ Failed to setup encryption: ' + error.message);
+                alert('Failed to setup encryption: ' + error.message);
             }
         };
 
@@ -7544,7 +7580,7 @@ window.importDigitalCSV = function(event) {
         window.profileMenuEncryptionToggle = function() {
             const isEnabled = encryptionManager.isEncryptionEnabled();
             if (isEnabled) {
-                if (confirm('⚠️ Are you sure you want to disable encryption?\n\nYour data will no longer be encrypted.')) {
+                if (confirm('Are you sure you want to disable encryption?\n\nYour data will no longer be encrypted.')) {
                     disableEncryption();
                 }
             } else {
@@ -7583,16 +7619,16 @@ window.importDigitalCSV = function(event) {
             const confirmPassword = confirmPasswordField.value;
 
             if (!password || password.length < 8) {
-                alert('⚠️ Password must be at least 8 characters long');
+                alert('Password must be at least 8 characters long');
                 return;
             }
 
             if (password !== confirmPassword) {
-                alert('⚠️ Passwords do not match');
+                alert('Passwords do not match');
                 return;
             }
 
-            if (!confirm('⚠️ Are you sure you want to enable encryption?\n\nIMPORTANT: If you lose your password, your data CANNOT be recovered!')) {
+            if (!confirm('Are you sure you want to enable encryption?\n\nImportant: If you lose your password, your data cannot be recovered.')) {
                 return;
             }
 
@@ -7636,7 +7672,7 @@ window.importDigitalCSV = function(event) {
                 } catch (statusError) {
                 }
 
-                alert('✅ Encryption enabled successfully!\n\nAll your data has been encrypted with your master password.');
+                alert('Encryption enabled successfully.\n\nAll your data has been encrypted with your master password.');
 
                 // Clear password fields if they exist
                 const masterPasswordField = document.getElementById('settings-master-password');
@@ -7645,7 +7681,7 @@ window.importDigitalCSV = function(event) {
                 if (confirmPasswordField) confirmPasswordField.value = '';
 
             } catch (error) {
-                alert('❌ Failed to setup encryption: ' + error.message);
+                alert('Failed to setup encryption: ' + error.message);
             }
         };
 
@@ -7667,13 +7703,13 @@ window.importDigitalCSV = function(event) {
                 } catch (statusError) {
                 }
 
-                alert('✅ Encryption disabled!\n\nYour app will reload to apply changes.');
+                alert('Encryption disabled.\n\nYour app will reload to apply changes.');
 
                 // Reload the page to clear everything
                 window.location.reload();
 
             } catch (error) {
-                alert('❌ Failed to disable encryption: ' + error.message);
+                alert('Failed to disable encryption: ' + error.message);
             }
         };
         window.unlockData = async function() {
@@ -7681,7 +7717,7 @@ window.importDigitalCSV = function(event) {
             const errorDiv = document.getElementById('unlockError');
 
             if (!password) {
-                errorDiv.textContent = '⚠️ Please enter your password';
+                errorDiv.textContent = 'Please enter your password';
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -7699,7 +7735,7 @@ window.importDigitalCSV = function(event) {
                 await loadData();
 
             } catch (error) {
-                errorDiv.textContent = '❌ Incorrect password or decryption error';
+                errorDiv.textContent = 'Incorrect password or decryption error';
                 errorDiv.style.display = 'block';
             }
         };
@@ -7829,7 +7865,7 @@ window.importDigitalCSV = function(event) {
             }
 
             const confirm1 = confirm(
-                '⚠️ WARNING: This will permanently delete your account and ALL data.\n\n' +
+                'Warning: This will permanently delete your account and all data.\n\n' +
                 'Are you absolutely sure?'
             );
             if (!confirm1) return;
@@ -8202,7 +8238,7 @@ window.importDigitalCSV = function(event) {
 
         <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 25px;">
             <p style="color: #ef4444; margin: 0; font-weight: 600; font-size: 14px;">
-                ⚠️ IMPORTANT: Store your password securely. If you lose it, your data CANNOT be recovered!
+                Important: Store your password securely. If you lose it, your data cannot be recovered.
             </p>
         </div>
 
@@ -8237,9 +8273,9 @@ window.importDigitalCSV = function(event) {
 
         <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(148, 163, 184, 0.1);">
             <p style="color: #64748b; font-size: 12px; text-align: center; margin: 0;">
-                🔒 Your data is encrypted locally before storage<br>
-                🔑 Only you have the decryption key<br>
-                🚫 Even we cannot access your encrypted data
+                Your data is encrypted locally before storage<br>
+                Only you have the decryption key<br>
+                No one else can access your encrypted data
             </p>
         </div>
     </div>
@@ -8285,7 +8321,7 @@ window.importDigitalCSV = function(event) {
     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
     </svg>
-    <span>End-to-End Encrypted ✓</span>
+    <span>End-to-End Encrypted</span>
 </div>
 
 <style>
@@ -8418,20 +8454,7 @@ window.importDigitalCSV = function(event) {
         }
 
         function getCategoryEmoji(category) {
-            const emojis = {
-                'Mobile': '📱',
-                'Laptop': '💻',
-                'Watch': '⌚',
-                'Headphones': '🎧',
-                'Camera': '📷',
-                'Gaming': '🎮',
-                'Tablet': '📲',
-                'TV': '📺',
-                'Audio': '🔊',
-                'Smart Home': '🏠',
-                'Accessories': '🔌'
-            };
-            return emojis[category] || '📦';
+            return normalizeLabel(category || 'Other');
         }
 
         // Make functions global
@@ -8662,7 +8685,7 @@ window.importDigitalCSV = function(event) {
             const uploadPlaceholder = document.querySelector('#picker-upload .upload-placeholder');
             const originalPlaceholderHTML = uploadPlaceholder ? uploadPlaceholder.innerHTML : '';
             if (uploadPlaceholder) {
-                uploadPlaceholder.innerHTML = '<div style="padding:12px;text-align:center;color:#10b981;">⏳ Processing...</div>';
+                uploadPlaceholder.innerHTML = '<div style="padding:12px;text-align:center;color:#10b981;">Processing...</div>';
                 uploadPlaceholder.style.pointerEvents = 'none';
             }
 
@@ -8733,7 +8756,7 @@ window.importDigitalCSV = function(event) {
                 if (container) {
                     container.innerHTML = `
                         <img src="${currentPickerImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
-                        <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added ✓</div>
+                        <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added</div>
                     `;
                 } else {
                 }
@@ -8812,7 +8835,7 @@ window.importDigitalCSV = function(event) {
             </button>
             <button type="button" onclick="savePickedImage()"
                     style="flex: 2; padding: 12px; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
-                ✓ Save Image
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Save Image
             </button>
         </div>
     </div>
