@@ -1981,8 +1981,19 @@
                             <div class="input-group"><label>Amount (₹)</label><input type="number" id="d-amount" placeholder="0" required></div>
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="d-date" required></div>
                             <div class="input-group">
-                                <label>Expiry Date <span style="color:var(--text-muted);font-size:11px;">(required for auto-status)</span></label>
-                                <input type="date" id="d-expiry">
+                                <label>Validity Period</label>
+                                <select id="d-validity" onchange="toggleCustomValidity()">
+                                    <option value="">No expiry</option>
+                                    <option value="1">1 Month</option>
+                                    <option value="3">3 Months</option>
+                                    <option value="6">6 Months</option>
+                                    <option value="12">1 Year</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="input-group" id="custom-validity-group" style="display: none;">
+                                <label>Custom Duration (months)</label>
+                                <input type="number" id="d-custom-months" placeholder="e.g. 18" min="1">
                             </div>
                         </div>
                         <div class="input-group" style="margin-top:8px;"><label>Notes</label><textarea id="d-notes" rows="2" placeholder="Any notes..."></textarea></div>
@@ -1992,6 +2003,7 @@
                 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
                     <button class="filter-chip active" onclick="filterDigital(event,'all')">All</button>
                     <button class="filter-chip" onclick="filterDigital(event,'active')">Active</button>
+                    <button class="filter-chip" onclick="filterDigital(event,'soon')">Soon to Expire</button>
                     <button class="filter-chip" onclick="filterDigital(event,'expired')">Expired</button>
                 </div>
                 <div id="digital-list" class="items-grid"></div>
@@ -5009,29 +5021,57 @@ if (gmContainer) {
             updateDashboard();
         }
 
+        // Toggle custom validity input
+        window.toggleCustomValidity = function() {
+            const validitySelect = document.getElementById('d-validity');
+            const customGroup = document.getElementById('custom-validity-group');
+            
+            if (validitySelect.value === 'custom') {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        };
+
         // Digital purchases form handler
         document.getElementById('digital-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const purchaseDate = document.getElementById('d-date').value;
-            const expiryDate = document.getElementById('d-expiry').value || null;
+            const validityPeriod = document.getElementById('d-validity').value;
             
-            // Auto-calculate duration if expiry date is provided
+            // Calculate expiry date and duration based on validity period
+            let expiryDate = null;
             let duration = null;
-            if (expiryDate && purchaseDate) {
-                const start = new Date(purchaseDate);
-                const end = new Date(expiryDate);
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (validityPeriod) {
+                const startDate = new Date(purchaseDate);
+                let months = 0;
                 
-                if (diffDays >= 365) {
-                    const years = Math.round(diffDays / 365);
-                    duration = `${years} year${years > 1 ? 's' : ''}`;
-                } else if (diffDays >= 30) {
-                    const months = Math.round(diffDays / 30);
-                    duration = `${months} month${months > 1 ? 's' : ''}`;
+                if (validityPeriod === 'custom') {
+                    months = parseInt(document.getElementById('d-custom-months').value) || 0;
                 } else {
-                    duration = `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+                    months = parseInt(validityPeriod);
+                }
+                
+                if (months > 0) {
+                    // Calculate expiry date by adding months
+                    const endDate = new Date(startDate);
+                    endDate.setMonth(endDate.getMonth() + months);
+                    expiryDate = endDate.toISOString().split('T')[0];
+                    
+                    // Format duration text
+                    if (months >= 12) {
+                        const years = Math.floor(months / 12);
+                        const remainingMonths = months % 12;
+                        if (remainingMonths === 0) {
+                            duration = `${years} year${years > 1 ? 's' : ''}`;
+                        } else {
+                            duration = `${years} year${years > 1 ? 's' : ''} ${remainingMonths} month${remainingMonths > 1 ? 's' : ''}`;
+                        }
+                    } else {
+                        duration = `${months} month${months > 1 ? 's' : ''}`;
+                    }
                 }
             }
             
@@ -5070,6 +5110,7 @@ if (gmContainer) {
             await loadData();
             e.target.reset();
             document.getElementById('d-date').valueAsDate = new Date();
+            document.getElementById('custom-validity-group').style.display = 'none';
             } catch (error) {
                 console.error('Error adding digital purchase:', error);
                 alert('Error adding purchase. Please try again.');
@@ -5098,6 +5139,15 @@ if (gmContainer) {
                     return new Date(d.expiryDate) >= today;
                 });
             }
+            if (currentDigitalFilter === 'soon') {
+                filtered = digitalPurchases.filter(d => {
+                    if (!d.expiryDate) return false;
+                    const expiry = new Date(d.expiryDate);
+                    const diffTime = expiry - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays > 0 && diffDays <= 7;
+                });
+            }
             if (currentDigitalFilter === 'expired') {
                 filtered = digitalPurchases.filter(d => {
                     if (!d.expiryDate) return false;
@@ -5119,26 +5169,44 @@ if (gmContainer) {
                 const isExpired = d.expiryDate && new Date(d.expiryDate) < today;
                 const cardId = `digital-card-${index}`;
                 
-                // Calculate remaining days for active subscriptions
+                // Calculate remaining days and status for active subscriptions
                 let remainingDays = null;
                 let remainingText = '';
-                if (d.expiryDate && !isExpired) {
-                    const expiry = new Date(d.expiryDate);
-                    const diffTime = expiry - today;
-                    remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (remainingDays === 0) {
-                        remainingText = 'Expires today';
-                    } else if (remainingDays === 1) {
-                        remainingText = '1 day left';
-                    } else if (remainingDays <= 7) {
-                        remainingText = `${remainingDays} days left`;
-                    } else if (remainingDays <= 30) {
-                        remainingText = `${remainingDays} days left`;
+                let statusClass = 'status-owned';
+                let statusText = 'ACTIVE';
+                let statusIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+                
+                if (d.expiryDate) {
+                    if (isExpired) {
+                        statusClass = 'status-sold';
+                        statusText = 'EXPIRED';
+                        statusIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>';
                     } else {
-                        const months = Math.floor(remainingDays / 30);
-                        remainingText = `${months} month${months > 1 ? 's' : ''} left`;
+                        const expiry = new Date(d.expiryDate);
+                        const diffTime = expiry - today;
+                        remainingDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        // Check if expiring soon (within 7 days)
+                        if (remainingDays <= 7) {
+                            statusClass = 'status-badge';
+                            statusText = 'SOON TO EXPIRE';
+                            statusIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+                        }
+                        
+                        // Format remaining time text
+                        if (remainingDays === 0) {
+                            remainingText = 'Expires today';
+                        } else if (remainingDays === 1) {
+                            remainingText = '1 day left';
+                        } else if (remainingDays <= 30) {
+                            remainingText = `${remainingDays} days left`;
+                        } else {
+                            const months = Math.floor(remainingDays / 30);
+                            remainingText = `${months} month${months > 1 ? 's' : ''} left`;
+                        }
                     }
+                } else {
+                    statusText = 'LIFETIME';
                 }
                 
                 return `
@@ -5159,8 +5227,8 @@ if (gmContainer) {
                                     
                                     <!-- Badges Row -->
                                     <div class="badge-row">
-                                        <span class="status-badge ${isExpired ? 'status-sold' : 'status-owned'}">
-                                            ${isExpired ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> EXPIRED' : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> ACTIVE'}
+                                        <span class="status-badge ${statusClass}${statusText === 'SOON TO EXPIRE' ? '' : ''}" style="${statusText === 'SOON TO EXPIRE' ? 'background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);' : ''}">
+                                            ${statusIcon} ${statusText}
                                         </span>
                                         ${remainingText ? `<span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${remainingText}</span>` : ''}
                                     </div>
@@ -5185,7 +5253,7 @@ if (gmContainer) {
                             ${d.expiryDate ? `
                             <div class="info-row">
                                 <span class="info-label">Expiry Date</span>
-                                <span class="info-value ${isExpired ? 'profit-negative' : ''}">${new Date(d.expiryDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                                <span class="info-value ${isExpired ? 'profit-negative' : remainingDays <= 7 ? '' : ''}" style="${remainingDays <= 7 && !isExpired ? 'color: #fbbf24;' : ''}">${new Date(d.expiryDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
                             </div>
                             ` : ''}
                             ${d.notes ? `
@@ -5231,6 +5299,18 @@ if (gmContainer) {
         };
 
         // Edit digital purchase
+        // Toggle custom validity input for edit modal
+        window.toggleEditCustomValidity = function() {
+            const validitySelect = document.getElementById('edit-d-validity');
+            const customGroup = document.getElementById('edit-custom-validity-group');
+            
+            if (validitySelect.value === 'custom') {
+                customGroup.style.display = 'block';
+            } else {
+                customGroup.style.display = 'none';
+            }
+        };
+
         window.editDigital = function(firestoreId) {
             const digital = digitalPurchases.find(d => d.firestoreId === firestoreId);
             if (!digital) return;
@@ -5240,8 +5320,43 @@ if (gmContainer) {
             document.getElementById('edit-d-type').value = digital.type;
             document.getElementById('edit-d-price').value = digital.amount;
             document.getElementById('edit-d-date').value = digital.date;
-            document.getElementById('edit-d-renewal').value = digital.expiryDate || '';
             document.getElementById('edit-d-notes').value = digital.notes || '';
+            
+            // Calculate validity period from purchase date and expiry date
+            if (digital.expiryDate && digital.date) {
+                const start = new Date(digital.date);
+                const end = new Date(digital.expiryDate);
+                const diffTime = Math.abs(end - start);
+                const diffMonths = Math.round(diffTime / (1000 * 60 * 60 * 24 * 30.44)); // Average days per month
+                
+                // Select the appropriate validity option
+                const validitySelect = document.getElementById('edit-d-validity');
+                const customGroup = document.getElementById('edit-custom-validity-group');
+                
+                if (diffMonths === 1) {
+                    validitySelect.value = '1';
+                    customGroup.style.display = 'none';
+                } else if (diffMonths === 3) {
+                    validitySelect.value = '3';
+                    customGroup.style.display = 'none';
+                } else if (diffMonths === 6) {
+                    validitySelect.value = '6';
+                    customGroup.style.display = 'none';
+                } else if (diffMonths === 12) {
+                    validitySelect.value = '12';
+                    customGroup.style.display = 'none';
+                } else if (diffMonths > 0) {
+                    validitySelect.value = 'custom';
+                    document.getElementById('edit-d-custom-months').value = diffMonths;
+                    customGroup.style.display = 'block';
+                } else {
+                    validitySelect.value = '';
+                    customGroup.style.display = 'none';
+                }
+            } else {
+                document.getElementById('edit-d-validity').value = '';
+                document.getElementById('edit-custom-validity-group').style.display = 'none';
+            }
 
             // Store editing ID
             window.editingDigitalId = firestoreId;
@@ -5263,24 +5378,40 @@ if (gmContainer) {
             e.preventDefault();
 
             const purchaseDate = document.getElementById('edit-d-date').value;
-            const expiryDate = document.getElementById('edit-d-renewal').value || null;
+            const validityPeriod = document.getElementById('edit-d-validity').value;
             
-            // Auto-calculate duration if expiry date is provided
+            // Calculate expiry date and duration based on validity period
+            let expiryDate = null;
             let duration = null;
-            if (expiryDate && purchaseDate) {
-                const start = new Date(purchaseDate);
-                const end = new Date(expiryDate);
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (validityPeriod) {
+                const startDate = new Date(purchaseDate);
+                let months = 0;
                 
-                if (diffDays >= 365) {
-                    const years = Math.round(diffDays / 365);
-                    duration = `${years} year${years > 1 ? 's' : ''}`;
-                } else if (diffDays >= 30) {
-                    const months = Math.round(diffDays / 30);
-                    duration = `${months} month${months > 1 ? 's' : ''}`;
+                if (validityPeriod === 'custom') {
+                    months = parseInt(document.getElementById('edit-d-custom-months').value) || 0;
                 } else {
-                    duration = `${diffDays} day${diffDays > 1 ? 's' : ''}`;
+                    months = parseInt(validityPeriod);
+                }
+                
+                if (months > 0) {
+                    // Calculate expiry date by adding months
+                    const endDate = new Date(startDate);
+                    endDate.setMonth(endDate.getMonth() + months);
+                    expiryDate = endDate.toISOString().split('T')[0];
+                    
+                    // Format duration text
+                    if (months >= 12) {
+                        const years = Math.floor(months / 12);
+                        const remainingMonths = months % 12;
+                        if (remainingMonths === 0) {
+                            duration = `${years} year${years > 1 ? 's' : ''}`;
+                        } else {
+                            duration = `${years} year${years > 1 ? 's' : ''} ${remainingMonths} month${remainingMonths > 1 ? 's' : ''}`;
+                        }
+                    } else {
+                        duration = `${months} month${months > 1 ? 's' : ''}`;
+                    }
                 }
             }
 
@@ -6496,8 +6627,19 @@ window.importDigitalCSV = async function (event) {
                     <input type="date" id="edit-d-date" required>
                 </div>
                 <div class="input-group">
-                    <label>Expiry Date <span style="color:var(--text-muted);font-size:11px;">(required for auto-status)</span></label>
-                    <input type="date" id="edit-d-renewal">
+                    <label>Validity Period</label>
+                    <select id="edit-d-validity" onchange="toggleEditCustomValidity()">
+                        <option value="">No expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+                <div class="input-group" id="edit-custom-validity-group" style="display: none;">
+                    <label>Custom Duration (months)</label>
+                    <input type="number" id="edit-d-custom-months" placeholder="e.g. 18" min="1">
                 </div>
                 <div class="input-group">
                     <label>Notes</label>
