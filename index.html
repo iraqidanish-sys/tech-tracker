@@ -13,9 +13,9 @@
     <meta name="description" content="Track and manage your gadgets, games, and digital collection.">
     <link rel="manifest" href="./manifest.json">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2310b981;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M50 25 L25 35 L25 65 L50 75 L75 65 L75 35 Z' fill='none' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M50 25 L50 75' stroke='white' stroke-width='4'/%3E%3Cpath d='M25 35 L50 45 L75 35' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M40 55 L45 60 L60 45' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2310b981;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Cpath d='M50 25 L25 35 L25 65 L50 75 L75 65 L75 35 Z' fill='none' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M50 25 L50 75' stroke='white' stroke-width='4'/%3E%3Cpath d='M25 35 L50 45 L75 35' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3Cpath d='M40 55 L45 60 L60 45' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <!-- App Icons -->
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
 
     <!-- DOMPurify for XSS Protection -->
@@ -1178,6 +1178,37 @@
         .game-genre-chip--compact {
             padding: 3px 8px;
             font-size: 11px;
+        }
+
+        .metacritic-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            background: rgba(245, 158, 11, 0.14);
+            color: #fbbf24;
+            text-decoration: none;
+        }
+
+        .metacritic-chip svg {
+            flex-shrink: 0;
+        }
+
+        .metacritic-chip:hover {
+            filter: brightness(1.08);
+        }
+
+        .metacritic-chip--compact {
+            padding: 3px 8px;
+            font-size: 11px;
+        }
+
+        .game-catalog-hint {
+            margin-top: 6px;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
         }
 
         /* Profit colors */
@@ -2734,13 +2765,24 @@
                     <h3 style="margin-bottom:20px;">Add / Edit Game</h3>
                     <form id="game-form">
                         <div class="form-grid">
-                            <div class="input-group"><label>Title</label><input type="text" id="gm-title" placeholder="e.g. Elden Ring" required></div>
+                            <div class="input-group" style="grid-column:1 / -1;">
+                                <label>Quick Fill From Catalog <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label>
+                                <div style="display:flex;gap:8px;align-items:center;">
+                                    <input type="text" id="gm-catalog-search" list="gm-catalog-datalist" placeholder="Type to search games (e.g. Elden Ring)" style="flex:1;" oninput="updateGameCatalogSearchHint()" onchange="applyGameCatalogSearchSelection()">
+                                    <button type="button" class="btn" style="white-space:nowrap;padding:10px 14px;" onclick="applyGameCatalogSearchSelection()">Use Match</button>
+                                </div>
+                                <datalist id="gm-catalog-datalist"></datalist>
+                                <div id="gm-catalog-match-hint" class="game-catalog-hint">Import your game metadata catalog in Settings to enable quick auto-fill.</div>
+                            </div>
+                            <div class="input-group"><label>Title</label><input type="text" id="gm-title" placeholder="e.g. Elden Ring" required oninput="updateGameCatalogSearchHint()"></div>
                             <div class="input-group"><label>Platform</label>
                                 <div id="platform-select-wrapper" style="position:relative;">
                                     <select id="gm-platform"></select>
                                 </div>
                             </div>
                             <div class="input-group"><label>Genre</label><select id="gm-genre"></select></div>
+                            <div class="input-group"><label>Metacritic Score <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="text" id="gm-metacritic-score" placeholder="e.g. 96"></div>
+                            <div class="input-group"><label>Metacritic URL <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label><input type="url" id="gm-metacritic-url" placeholder="https://www.metacritic.com/..." autocapitalize="off" spellcheck="false"></div>
                             <div class="input-group"><label>Condition</label><select id="gm-condition"></select></div>
                             <div class="input-group"><label>Buy Price (₹)</label><input type="number" id="gm-buy-price" placeholder="0" required></div>
                             <div class="input-group"><label>Purchase Date</label><input type="date" id="gm-buy-date" required></div>
@@ -2907,10 +2949,20 @@
                                 <button type="button" class="settings-data-tool-btn" onclick="exportDigitalCSV()">Export CSV</button>
                             </div>
                         </div>
+                        <div class="settings-data-tool-card">
+                            <div class="settings-data-tool-title">Game Metadata Catalog</div>
+                            <div id="game-metadata-catalog-summary" style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">No catalog imported yet.</div>
+                            <div class="settings-data-tool-actions">
+                                <button type="button" class="settings-data-tool-btn" onclick="downloadGameMetadataTemplate()">Download Template</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-game-metadata')">Import CSV</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="exportGameMetadataCatalogCSV()">Export CSV</button>
+                            </div>
+                        </div>
                     </div>
                     <input type="file" id="settings-import-gadgets" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGadgetsCSV(event)">
                     <input type="file" id="settings-import-games" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGamesCSV(event)">
                     <input type="file" id="settings-import-digital" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importDigitalCSV(event)">
+                    <input type="file" id="settings-import-game-metadata" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGameMetadataCatalogCSV(event)">
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
@@ -3775,6 +3827,7 @@ async function initializeUser(user) {
         var gameGenres = [];
         var digitalTypes = [];
         var customIcons = []; // New: Store custom platform icons
+        var gameMetadataCatalog = [];
 
        // Authentication State Management
 onAuthStateChanged(auth, async (user) => {
@@ -4030,7 +4083,10 @@ async function loadData() {
                 ...g,
                 platform: normalizeLabel(g.platform || 'Other') || 'Other',
                 genre: normalizeLabel(g.genre || 'Action') || 'Action',
-                condition: normalizeLabel(g.condition || 'New/Sealed') || 'New/Sealed'
+                condition: normalizeLabel(g.condition || 'New/Sealed') || 'New/Sealed',
+                metacriticScore: normalizeMetacriticScore(g.metacriticScore || ''),
+                metacriticUrl: sanitizeURL(g.metacriticUrl || ''),
+                imageUrl: g.imageUrl ? sanitizeURL(g.imageUrl) : null
             }))
             .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         digitalPurchases = loadedDigitalPurchases
@@ -4684,6 +4740,81 @@ async function loadData() {
             return ['Game Subscription', 'Streaming Service', 'Cloud Storage', 'Music Subscription', 'E-Book/Audiobook', 'Productivity Tool', 'Online Course', 'Other'];
         }
 
+        function normalizeMetacriticScore(value) {
+            const raw = String(value == null ? '' : value).trim();
+            if (!raw) return '';
+            const parsed = parseFloat(raw.replace(/[^\d.]/g, ''));
+            if (!Number.isFinite(parsed)) return '';
+            const clamped = Math.max(0, Math.min(100, parsed));
+            const rounded = Math.round(clamped * 10) / 10;
+            return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1).replace(/\.0$/, '');
+        }
+
+        function buildGameMetadataKey(title, platform) {
+            return `${normalizeLabel(title || '').toLowerCase()}|${normalizeLabel(platform || '').toLowerCase()}`;
+        }
+
+        function normalizeGameMetadataEntry(entry) {
+            if (!entry || typeof entry !== 'object') return null;
+            const title = normalizeLabel(entry.title || '');
+            if (!title) return null;
+
+            const platform = normalizeLabel(entry.platform || 'Other') || 'Other';
+            const genre = normalizeLabel(entry.genre || '');
+            const metacriticScore = normalizeMetacriticScore(entry.metacriticScore || '');
+            const metacriticUrl = sanitizeURL(entry.metacriticUrl || '');
+            const imageUrl = sanitizeURL(entry.imageUrl || '');
+
+            return {
+                title,
+                platform,
+                genre,
+                metacriticScore,
+                metacriticUrl,
+                imageUrl
+            };
+        }
+
+        function normalizeGameMetadataCatalog(list) {
+            if (!Array.isArray(list)) return [];
+            const map = new Map();
+
+            list.forEach(row => {
+                const normalized = normalizeGameMetadataEntry(row);
+                if (!normalized) return;
+                const key = buildGameMetadataKey(normalized.title, normalized.platform);
+                map.set(key, normalized);
+            });
+
+            return Array.from(map.values()).sort((a, b) => {
+                const titleCompare = a.title.localeCompare(b.title);
+                if (titleCompare !== 0) return titleCompare;
+                return a.platform.localeCompare(b.platform);
+            });
+        }
+
+        function findBestGameMetadataMatch(title, platform, options = {}) {
+            const targetTitle = normalizeLabel(title || '').toLowerCase();
+            const targetPlatform = normalizeLabel(platform || '').toLowerCase();
+            if (!targetTitle || gameMetadataCatalog.length === 0) return null;
+
+            const exactByTitle = gameMetadataCatalog.filter(entry => normalizeLabel(entry.title || '').toLowerCase() === targetTitle);
+            if (exactByTitle.length === 0) {
+                if (options.allowPartial === true) {
+                    const partial = gameMetadataCatalog.find(entry => normalizeLabel(entry.title || '').toLowerCase().includes(targetTitle));
+                    return partial || null;
+                }
+                return null;
+            }
+
+            if (targetPlatform) {
+                const exactPlatform = exactByTitle.find(entry => normalizeLabel(entry.platform || '').toLowerCase() === targetPlatform);
+                if (exactPlatform) return exactPlatform;
+            }
+
+            return exactByTitle[0] || null;
+        }
+
        // Load GLOBAL Settings from Firestore
 async function loadSettings() {
 
@@ -4711,6 +4842,7 @@ async function loadSettings() {
             customIcons = (settings.customIcons || [])
                 .map(icon => ({ ...icon, platform: normalizeLabel(icon.platform || '') }))
                 .filter(icon => icon.platform && icon.iconUrl);
+            gameMetadataCatalog = normalizeGameMetadataCatalog(settings.gameMetadataCatalog || []);
 
             if (gadgetCategories.length === 0) gadgetCategories = getDefaultGadgetCategories();
             if (gamePlatforms.length === 0) gamePlatforms = getDefaultGamePlatforms();
@@ -4726,7 +4858,8 @@ async function loadSettings() {
                 gamePlatforms: getDefaultGamePlatforms(),
                 gameGenres: getDefaultGameGenres(),
                 digitalTypes: getDefaultDigitalTypes(),
-                customIcons: []
+                customIcons: [],
+                gameMetadataCatalog: []
             };
 
             await setDoc(settingsRef, defaultSettings);
@@ -4736,6 +4869,7 @@ async function loadSettings() {
             gameGenres = defaultSettings.gameGenres;
             digitalTypes = defaultSettings.digitalTypes;
             customIcons = defaultSettings.customIcons;
+            gameMetadataCatalog = defaultSettings.gameMetadataCatalog;
 
         }
 
@@ -4764,7 +4898,8 @@ async function loadSettings() {
             gamePlatforms,
             gameGenres,
             digitalTypes,
-            customIcons
+            customIcons,
+            gameMetadataCatalog
         });
 
         updateAllDropdowns();
@@ -4800,6 +4935,7 @@ async function loadSettings() {
 
             updateIconPlatformDropdown();
             createCustomPlatformDropdown(); // Create visual dropdown with icons
+            refreshGameMetadataCatalogUI();
         }
 
         function createCustomPlatformDropdown() {
@@ -5579,6 +5715,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             }
 
             setCardImageFitMode(getSavedCardImageFitMode(), { persist: false, rerender: false });
+            window.updateGameCatalogSearchHint();
         });
 
         function getCardImageMarkup(imageUrl, altText, placeholderMarkup = '', options = {}) {
@@ -5677,6 +5814,194 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             const compactClass = options.compact === true ? ' game-genre-chip--compact' : '';
             return `<span class="item-category game-genre-chip${compactClass}">${getGameGenreIconSvg(cleanGenre)}<span>${sanitizeText(cleanGenre)}</span></span>`;
         }
+
+        function getMetacriticBadgeMarkup(score, url, options = {}) {
+            const cleanScore = normalizeMetacriticScore(score || '');
+            if (!cleanScore) return '';
+            const compactClass = options.compact === true ? ' metacritic-chip--compact' : '';
+            const scoreMarkup = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16h4l3-8 2 5h7"/></svg><span>MC ${sanitizeText(cleanScore)}</span>`;
+            const safeUrl = sanitizeURL(url || '');
+            if (safeUrl) {
+                return `<a class="item-category metacritic-chip${compactClass}" href="${safeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">${scoreMarkup}</a>`;
+            }
+            return `<span class="item-category metacritic-chip${compactClass}">${scoreMarkup}</span>`;
+        }
+
+        function getMetacriticDetailMarkup(score, url) {
+            const cleanScore = normalizeMetacriticScore(score || '');
+            const safeUrl = sanitizeURL(url || '');
+            if (!cleanScore && !safeUrl) return '';
+
+            if (safeUrl) {
+                const anchorText = cleanScore ? `Score ${cleanScore}` : 'Open link';
+                return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" style="color:#fbbf24;text-decoration:none;">${sanitizeText(anchorText)}</a>`;
+            }
+
+            return sanitizeText(cleanScore);
+        }
+
+        function getGameCoverPlaceholderMarkup(labelText) {
+            const safeLabel = sanitizeText(labelText || 'Click to add cover');
+            return `
+                ${getGamepadPlaceholderSvg({ size: 22, strokeWidth: 2, style: 'color:#10b981;flex-shrink:0;' })}
+                <div style="font-size: 13px; color: var(--text-muted);">${safeLabel}</div>
+            `;
+        }
+
+        function setGameCoverPreview(prefix, imageUrl, labelText = 'Image added') {
+            if (!prefix) return;
+            const hiddenInput = document.getElementById(`${prefix}-final-image-url`);
+            const container = document.getElementById(`${prefix}-image-preview-container`);
+            const safeSrc = sanitizeURL(imageUrl || '');
+
+            if (hiddenInput) hiddenInput.value = safeSrc;
+            if (!container) return;
+
+            if (safeSrc) {
+                container.innerHTML = `
+                    <img src="${safeSrc}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                    <div style="font-size: 13px; color: var(--text-primary); flex: 1;">${sanitizeText(labelText)}</div>
+                `;
+            } else {
+                container.innerHTML = getGameCoverPlaceholderMarkup('Click to add cover');
+            }
+        }
+
+        function applyCatalogEntryToGameForm(entry) {
+            if (!entry) return;
+
+            const titleInput = document.getElementById('gm-title');
+            const platformSelect = document.getElementById('gm-platform');
+            const genreSelect = document.getElementById('gm-genre');
+            const scoreInput = document.getElementById('gm-metacritic-score');
+            const urlInput = document.getElementById('gm-metacritic-url');
+
+            if (titleInput && entry.title) titleInput.value = entry.title;
+
+            if (platformSelect && entry.platform) {
+                if (!Array.from(platformSelect.options).some(option => option.value === entry.platform)) {
+                    const opt = document.createElement('option');
+                    opt.value = entry.platform;
+                    opt.textContent = entry.platform;
+                    platformSelect.appendChild(opt);
+                }
+                platformSelect.value = entry.platform;
+                createCustomPlatformDropdown();
+            }
+
+            if (genreSelect && entry.genre) {
+                if (!Array.from(genreSelect.options).some(option => option.value === entry.genre)) {
+                    const opt = document.createElement('option');
+                    opt.value = entry.genre;
+                    opt.textContent = entry.genre;
+                    genreSelect.appendChild(opt);
+                }
+                genreSelect.value = entry.genre;
+            }
+
+            if (scoreInput && entry.metacriticScore) scoreInput.value = entry.metacriticScore;
+            if (urlInput && entry.metacriticUrl) urlInput.value = entry.metacriticUrl;
+            if (entry.imageUrl) setGameCoverPreview('gm', entry.imageUrl, 'Cover from catalog');
+        }
+
+        function applyCatalogFallbackToGameRecord(record) {
+            const game = { ...record };
+            const match = findBestGameMetadataMatch(game.title, game.platform);
+            if (!match) return game;
+
+            if (!game.metacriticScore && match.metacriticScore) {
+                game.metacriticScore = match.metacriticScore;
+            }
+            if (!game.metacriticUrl && match.metacriticUrl) {
+                game.metacriticUrl = match.metacriticUrl;
+            }
+            if (!game.imageUrl && match.imageUrl) {
+                game.imageUrl = match.imageUrl;
+            }
+            return game;
+        }
+
+        function refreshGameMetadataCatalogUI() {
+            const searchInput = document.getElementById('gm-catalog-search');
+            const listEl = document.getElementById('gm-catalog-datalist');
+            const summaryEl = document.getElementById('game-metadata-catalog-summary');
+            if (summaryEl) {
+                if (gameMetadataCatalog.length === 0) {
+                    summaryEl.textContent = 'No catalog imported yet.';
+                } else if (gameMetadataCatalog.length === 1) {
+                    summaryEl.textContent = '1 catalog entry available.';
+                } else {
+                    summaryEl.textContent = `${gameMetadataCatalog.length} catalog entries available.`;
+                }
+            }
+
+            if (!listEl) return;
+            const query = normalizeLabel(searchInput ? searchInput.value : '').toLowerCase();
+            const filtered = gameMetadataCatalog
+                .filter(entry => {
+                    if (!query) return true;
+                    return normalizeLabel(entry.title || '').toLowerCase().includes(query);
+                })
+                .slice(0, 120);
+
+            listEl.innerHTML = filtered.map(entry => {
+                const labelParts = [entry.platform];
+                if (entry.genre) labelParts.push(entry.genre);
+                if (entry.metacriticScore) labelParts.push(`MC ${entry.metacriticScore}`);
+                const label = labelParts.filter(Boolean).join(' | ');
+                return `<option value="${sanitizeText(entry.title)}" label="${sanitizeText(label)}"></option>`;
+            }).join('');
+        }
+
+        window.updateGameCatalogSearchHint = function() {
+            const hint = document.getElementById('gm-catalog-match-hint');
+            const searchInput = document.getElementById('gm-catalog-search');
+            const titleInput = document.getElementById('gm-title');
+            const platformSelect = document.getElementById('gm-platform');
+
+            refreshGameMetadataCatalogUI();
+            if (!hint) return;
+
+            const query = normalizeLabel((searchInput && searchInput.value) || (titleInput && titleInput.value) || '');
+            if (!query) {
+                hint.textContent = gameMetadataCatalog.length > 0
+                    ? `Catalog ready. ${gameMetadataCatalog.length} game entries available.`
+                    : 'Import your game metadata catalog in Settings to enable quick auto-fill.';
+                return;
+            }
+
+            const match = findBestGameMetadataMatch(query, platformSelect ? platformSelect.value : '', { allowPartial: true });
+            if (!match) {
+                hint.textContent = 'No catalog match found yet for this title.';
+                return;
+            }
+
+            const parts = [match.title, match.platform];
+            if (match.genre) parts.push(match.genre);
+            if (match.metacriticScore) parts.push(`MC ${match.metacriticScore}`);
+            if (match.imageUrl) parts.push('Cover URL ready');
+            hint.textContent = `Best match: ${parts.join(' | ')}`;
+        };
+
+        window.applyGameCatalogSearchSelection = function() {
+            const searchInput = document.getElementById('gm-catalog-search');
+            const platformSelect = document.getElementById('gm-platform');
+            const query = normalizeLabel(searchInput ? searchInput.value : '');
+            if (!query) {
+                window.updateGameCatalogSearchHint();
+                return;
+            }
+
+            const match = findBestGameMetadataMatch(query, platformSelect ? platformSelect.value : '', { allowPartial: true });
+            if (!match) {
+                window.updateGameCatalogSearchHint();
+                return;
+            }
+
+            applyCatalogEntryToGameForm(match);
+            if (searchInput) searchInput.value = match.title;
+            window.updateGameCatalogSearchHint();
+        };
 
         // Render gadgets
         function renderGadgets() {
@@ -5934,20 +6259,24 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             const sellDate = document.getElementById('gm-sell-date').value;
             const imageUrl = document.getElementById('gm-final-image-url').value;
 
-            const game = {
-                title: document.getElementById('gm-title').value,
-                platform: document.getElementById('gm-platform').value,
-                genre: document.getElementById('gm-genre').value,
-                buyPrice: parseFloat(document.getElementById('gm-buy-price').value),
+            let game = {
+                title: sanitizeText(document.getElementById('gm-title').value),
+                platform: sanitizeText(document.getElementById('gm-platform').value),
+                genre: sanitizeText(document.getElementById('gm-genre').value),
+                buyPrice: sanitizeNumber(parseFloat(document.getElementById('gm-buy-price').value)),
                 buyDate: document.getElementById('gm-buy-date').value,
-                condition: document.getElementById('gm-condition').value,
-                sellPrice: sellPrice ? parseFloat(sellPrice) : null,
+                condition: sanitizeText(document.getElementById('gm-condition').value),
+                sellPrice: sellPrice ? sanitizeNumber(parseFloat(sellPrice)) : null,
                 sellDate: sellDate || null,
-                notes: document.getElementById('gm-notes').value,
+                notes: sanitizeHTML(document.getElementById('gm-notes').value),
                 status: (sellPrice && sellDate) ? 'sold' : 'owned',
                 imageUrl: imageUrl ? sanitizeURL(imageUrl) : null,
+                metacriticScore: normalizeMetacriticScore(document.getElementById('gm-metacritic-score').value),
+                metacriticUrl: sanitizeURL(document.getElementById('gm-metacritic-url').value),
                 timestamp: Date.now()
             };
+
+            game = applyCatalogFallbackToGameRecord(game);
 
             try {
                 if (window.editingGameId) {
@@ -5978,14 +6307,10 @@ e.target.reset();
 document.getElementById('gm-buy-date').valueAsDate = new Date();
 
 // Reset image preview
-document.getElementById('gm-final-image-url').value = '';
-const gmContainer = document.getElementById('gm-image-preview-container');
-if (gmContainer) {
-    gmContainer.innerHTML = `
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981;flex-shrink:0;"><path d="M6.5 9.5h11a4.5 4.5 0 0 1 4.33 5.72l-.48 1.63A2.25 2.25 0 0 1 19.2 18.5h-1.08a2.5 2.5 0 0 1-2.17-1.26l-.74-1.28h-6.42l-.74 1.28A2.5 2.5 0 0 1 5.88 18.5H4.8a2.25 2.25 0 0 1-2.15-1.65l-.48-1.63A4.5 4.5 0 0 1 6.5 9.5Z"/><path d="M9 12.15v2.7"/><path d="M7.65 13.5h2.7"/><circle cx="15.8" cy="12.7" r="0.95" fill="currentColor" stroke="none"/><circle cx="18.1" cy="14.3" r="0.95" fill="currentColor" stroke="none"/></svg>
-        <div style="font-size: 13px; color: var(--text-muted);">Click to add cover</div>
-    `;
-}
+setGameCoverPreview('gm', '', 'Click to add cover');
+const searchInput = document.getElementById('gm-catalog-search');
+if (searchInput) searchInput.value = '';
+window.updateGameCatalogSearchHint();
 
 // Close the add form
 const gamesWrapper = document.getElementById('games-add-wrapper');
@@ -6030,6 +6355,8 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 const duration = calculateOwnershipDuration(g.buyDate, g.sellDate);
                 const platformDisplay = getPlatformDisplay(g.platform);
                 const genreDisplay = normalizeLabel(g.genre || "");
+                const metacriticBadge = getMetacriticBadgeMarkup(g.metacriticScore, g.metacriticUrl);
+                const metacriticDetails = getMetacriticDetailMarkup(g.metacriticScore, g.metacriticUrl);
                 const cardId = `game-card-${index}`;
 
                 return `
@@ -6050,6 +6377,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                         <div class="item-meta" style="margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
                                             <span class="item-category">${platformDisplay}</span>
                                             ${g.genre ? getGameGenreBadgeMarkup(genreDisplay) : ''}
+                                            ${metacriticBadge}
                                         </div>
 
                                         <!-- Badges Row -->
@@ -6101,6 +6429,12 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                 <div class="info-row">
                                     <span class="info-label">Sold</span>
                                     <span class="info-value">${new Date(g.sellDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
+                                </div>
+                                ` : ''}
+                                ${metacriticDetails ? `
+                                <div class="info-row">
+                                    <span class="info-label">Metacritic</span>
+                                    <span class="info-value">${metacriticDetails}</span>
                                 </div>
                                 ` : ''}
                                 ${g.notes ? `
@@ -6159,6 +6493,8 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             document.getElementById('edit-gm-sell-price').value = game.sellPrice || '';
             document.getElementById('edit-gm-sell-date').value = game.sellDate || '';
             document.getElementById('edit-gm-notes').value = game.notes || '';
+            document.getElementById('edit-gm-metacritic-score').value = normalizeMetacriticScore(game.metacriticScore || '');
+            document.getElementById('edit-gm-metacritic-url').value = sanitizeURL(game.metacriticUrl || '');
 
             // Populate image preview
             const editGmImageUrl = game.imageUrl || '';
@@ -6201,7 +6537,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             const sellDate = document.getElementById('edit-gm-sell-date').value;
             const editGmImageUrl = document.getElementById('edit-gm-final-image-url').value;
 
-            const game = {
+            let game = {
                 title: sanitizeText(document.getElementById('edit-gm-title').value),
                 platform: sanitizeText(document.getElementById('edit-gm-platform').value),
                 genre: sanitizeText(document.getElementById('edit-gm-genre').value),
@@ -6212,9 +6548,13 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 sellDate: sellDate || null,
                 notes: sanitizeHTML(document.getElementById('edit-gm-notes').value),
                 imageUrl: editGmImageUrl ? sanitizeURL(editGmImageUrl) : null,
+                metacriticScore: normalizeMetacriticScore(document.getElementById('edit-gm-metacritic-score').value),
+                metacriticUrl: sanitizeURL(document.getElementById('edit-gm-metacritic-url').value),
                 status: (sellPrice && sellDate) ? 'sold' : 'owned',
                 timestamp: Date.now()
             };
+
+            game = applyCatalogFallbackToGameRecord(game);
 
             try {
                 const gameToSave = await encryptData(game);
@@ -6385,6 +6725,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                     <div class="item-meta" style="margin-bottom:0;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
                                         <span class="item-category" style="white-space:nowrap;">${sanitizeText(normalizeLabel(item.platform || ''))}</span>
                                         ${item.genre ? getGameGenreBadgeMarkup(item.genre, { compact: true }) : ''}
+                                        ${getMetacriticBadgeMarkup(item.metacriticScore, item.metacriticUrl, { compact: true })}
                                         ${getOwnedSoldBadgeMarkup(status, { compact: true })}
                                     </div>
                                     <div style="margin-top: 15px;">
@@ -7119,6 +7460,9 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                     sellDate,
                     status,
                     notes,
+                    metacriticScore: normalizeMetacriticScore(values[10] || ''),
+                    metacriticUrl: sanitizeURL(values[11] || ''),
+                    imageUrl: sanitizeURL(values[12] || ''),
                     timestamp: Date.now() + items.length
                 });
             });
@@ -7130,7 +7474,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 fileName,
                 items,
                 skipped,
-                columns: ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'],
+                columns: ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'],
                 previewRows: items.slice(0, IMPORT_PREVIEW_LIMIT).map(item => [
                     item.title,
                     item.platform,
@@ -7141,7 +7485,52 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                     item.sellPrice == null ? '' : item.sellPrice,
                     item.sellDate || '',
                     item.status,
-                    item.notes || ''
+                    item.notes || '',
+                    item.metacriticScore || '',
+                    item.metacriticUrl || '',
+                    item.imageUrl || ''
+                ])
+            };
+        }
+
+        function buildGameMetadataCatalogImportPayload(fileName, text) {
+            const rows = parseImportDataRows(text);
+            const items = [];
+            let skipped = 0;
+
+            rows.forEach(values => {
+                const candidate = normalizeGameMetadataEntry({
+                    title: values[0] || '',
+                    platform: values[1] || 'Other',
+                    genre: values[2] || '',
+                    metacriticScore: values[3] || '',
+                    metacriticUrl: values[4] || '',
+                    imageUrl: values[5] || ''
+                });
+
+                if (!candidate) {
+                    skipped += 1;
+                    return;
+                }
+
+                items.push(candidate);
+            });
+
+            const normalizedItems = normalizeGameMetadataCatalog(items);
+            return {
+                type: 'gameMetadataCatalog',
+                label: 'Game Metadata Catalog',
+                fileName,
+                items: normalizedItems,
+                skipped: skipped + Math.max(0, items.length - normalizedItems.length),
+                columns: ['Title', 'Platform', 'Genre', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'],
+                previewRows: normalizedItems.slice(0, IMPORT_PREVIEW_LIMIT).map(item => [
+                    item.title,
+                    item.platform,
+                    item.genre || '',
+                    item.metacriticScore || '',
+                    item.metacriticUrl || '',
+                    item.imageUrl || ''
                 ])
             };
         }
@@ -7310,14 +7699,24 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             }
 
             try {
-                const importedItems = await persistImportItems(payload.collectionName, payload.items);
-                applyImportedItemsToLocalState(payload.type, importedItems);
-                updateAll();
+                let importedCount = 0;
+
+                if (payload.type === 'gameMetadataCatalog') {
+                    gameMetadataCatalog = normalizeGameMetadataCatalog(payload.items || []);
+                    await saveSettings();
+                    refreshGameMetadataCatalogUI();
+                    importedCount = gameMetadataCatalog.length;
+                } else {
+                    const importedItems = await persistImportItems(payload.collectionName, payload.items);
+                    applyImportedItemsToLocalState(payload.type, importedItems);
+                    updateAll();
+                    importedCount = importedItems.length;
+                }
 
                 const skippedText = payload.skipped > 0
                     ? ` ${payload.skipped} invalid row${payload.skipped === 1 ? '' : 's'} were skipped.`
                     : '';
-                alert(`Imported ${importedItems.length} ${payload.label.toLowerCase()} successfully.${skippedText}`);
+                alert(`Imported ${importedCount} ${payload.label.toLowerCase()} successfully.${skippedText}`);
 
                 window.closeImportPreview();
             } catch (error) {
@@ -7438,7 +7837,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 return;
             }
 
-            const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
+            const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'];
             const rows = games.map(g => [
                 g.title,
                 g.platform,
@@ -7449,7 +7848,10 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 g.sellPrice || '',
                 g.sellDate || '',
                 g.status || 'owned',
-                g.notes || ''
+                g.notes || '',
+                normalizeMetacriticScore(g.metacriticScore || ''),
+                sanitizeURL(g.metacriticUrl || ''),
+                sanitizeURL(g.imageUrl || '')
             ]);
 
             // Use CSV format with proper escaping for Mac Excel compatibility
@@ -7477,8 +7879,8 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
         // Download Game Template
         window.downloadGameTemplate = function() {
-            const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes'];
-            const exampleRow = ['Spider-Man 2', 'PlayStation 5', 'Action', '3999', '2024-06-01', 'Mint', '2500', '2025-01-15', 'sold', 'Completed'];
+            const headers = ['Title', 'Platform', 'Genre', 'Buy Price', 'Buy Date', 'Condition', 'Sell Price', 'Sell Date', 'Status', 'Notes', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'];
+            const exampleRow = ['Spider-Man 2', 'PlayStation 5', 'Action', '3999', '2024-06-01', 'Mint', '2500', '2025-01-15', 'sold', 'Completed', '90', 'https://www.metacritic.com/game/marvels-spider-man-2/', 'https://example.com/spiderman2-cover.jpg'];
 
             const escapeCsvValue = (val) => {
                 const str = String(val);
@@ -7592,6 +7994,90 @@ window.importGamesCSV = function(event) {
 
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one purchase per row), and import it back.');
         };
+window.downloadGameMetadataTemplate = function() {
+    const headers = ['Title', 'Platform', 'Genre', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'];
+    const exampleRow = ['Elden Ring', 'PlayStation 5', 'RPG', '96', 'https://www.metacritic.com/game/elden-ring/', 'https://example.com/elden-ring-cover.jpg'];
+
+    const escapeCsvValue = (val) => {
+        const str = String(val == null ? '' : val);
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+    };
+
+    const csv = [headers, exampleRow].map(row => row.map(escapeCsvValue).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'game_metadata_catalog_template.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    alert('Template downloaded. Fill one game per row and import from Settings.');
+};
+
+window.exportGameMetadataCatalogCSV = function() {
+    if (!Array.isArray(gameMetadataCatalog) || gameMetadataCatalog.length === 0) {
+        alert('No game metadata catalog entries to export!');
+        return;
+    }
+
+    const headers = ['Title', 'Platform', 'Genre', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'];
+    const rows = gameMetadataCatalog.map(entry => [
+        entry.title,
+        entry.platform,
+        entry.genre || '',
+        entry.metacriticScore || '',
+        entry.metacriticUrl || '',
+        entry.imageUrl || ''
+    ]);
+
+    const escapeCsvValue = (val) => {
+        const str = String(val == null ? '' : val);
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+    };
+
+    const csv = [headers, ...rows]
+        .map(row => row.map(escapeCsvValue).join(','))
+        .join('\n');
+
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `game_metadata_catalog_export_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+window.importGameMetadataCatalogCSV = function(event) {
+    if (!currentUserUID) {
+        alert('User not logged in');
+        return;
+    }
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const payload = buildGameMetadataCatalogImportPayload(file.name, e.target.result || '');
+            openImportPreviewModal(payload);
+        } catch (error) {
+            alert('Could not parse this file. Please check the metadata template and try again.');
+        }
+        event.target.value = '';
+    };
+
+    reader.readAsText(file, 'UTF-8');
+};
+
 // TSV/CSV Import for Digital Purchases (GLOBAL SAFE)
 window.importDigitalCSV = function(event) {
     if (!currentUserUID) {
@@ -8199,6 +8685,14 @@ window.importDigitalCSV = function(event) {
                 <div class="input-group">
                     <label>Genre</label>
                     <select id="edit-gm-genre" required></select>
+                </div>
+                <div class="input-group">
+                    <label>Metacritic Score <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label>
+                    <input type="text" id="edit-gm-metacritic-score" placeholder="e.g. 96">
+                </div>
+                <div class="input-group">
+                    <label>Metacritic URL <span style="color:var(--text-muted);font-size:11px;">(optional)</span></label>
+                    <input type="url" id="edit-gm-metacritic-url" placeholder="https://www.metacritic.com/..." autocapitalize="off" spellcheck="false">
                 </div>
                 <div class="input-group">
                     <label>Condition</label>
