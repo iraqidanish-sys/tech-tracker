@@ -3667,8 +3667,10 @@ async function loadData() {
 
         const gadgetDocsPromise = Promise.all(gadgetsSnapshot.docs.map(async docSnap => {
             try {
-                const encryptedData = docSnap.data();
-                const data = await decryptData(encryptedData);
+                const docData = docSnap.data();
+                const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
+                    ? await decryptData(docData)
+                    : docData;
                 if (!data.status) {
                     data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
                 }
@@ -3686,8 +3688,10 @@ async function loadData() {
 
         const gameDocsPromise = Promise.all(gamesSnapshot.docs.map(async docSnap => {
             try {
-                const encryptedData = docSnap.data();
-                const data = await decryptData(encryptedData);
+                const docData = docSnap.data();
+                const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
+                    ? await decryptData(docData)
+                    : docData;
                 if (!data.status) {
                     data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
                 }
@@ -3705,8 +3709,10 @@ async function loadData() {
 
         const digitalDocsPromise = Promise.all(digitalSnapshot.docs.map(async docSnap => {
             try {
-                const encryptedData = docSnap.data();
-                const data = await decryptData(encryptedData);
+                const docData = docSnap.data();
+                const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
+                    ? await decryptData(docData)
+                    : docData;
                 return {
                     firestoreId: docSnap.id,
                     ...data
@@ -5797,34 +5803,56 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
         };
 
         // Update dashboard
-        function updateDashboard() {
-            // Gadgets stats
+        function updateDashboard(options = {}) {
+            const skipRecentItems = options.skipRecentItems === true;
+            // Gadgets stats (single pass)
             const totalGadgets = gadgets.length;
-            const ownedGadgets = gadgets.filter(g => g.status === 'owned');
-            const soldGadgets = gadgets.filter(g => g.status === 'sold');
-            const currentGadgetsValue = ownedGadgets.reduce((sum, g) => sum + g.price, 0);
-            const gadgetsProfit = soldGadgets.reduce((sum, g) => sum + (g.sellPrice - g.price), 0);
+            let soldGadgetsCount = 0;
+            let currentGadgetsValue = 0;
+            let gadgetsProfit = 0;
+            for (const g of gadgets) {
+                const status = g.status || ((g.sellPrice && g.sellDate) ? 'sold' : 'owned');
+                const price = sanitizeNumber(g.price);
+                if (status === 'sold') {
+                    soldGadgetsCount += 1;
+                    gadgetsProfit += sanitizeNumber(g.sellPrice) - price;
+                } else {
+                    currentGadgetsValue += price;
+                }
+            }
 
-            // Games stats
+            // Games stats (single pass)
             const totalGames = games.length;
-            const ownedGames = games.filter(g => g.status === 'owned');
-            const soldGames = games.filter(g => g.status === 'sold');
-            const currentGamesValue = ownedGames.reduce((sum, g) => sum + g.buyPrice, 0);
-            const gamesProfit = soldGames.reduce((sum, g) => sum + (g.sellPrice - g.buyPrice), 0);
+            let soldGamesCount = 0;
+            let currentGamesValue = 0;
+            let gamesProfit = 0;
+            for (const g of games) {
+                const status = g.status || ((g.sellPrice && g.sellDate) ? 'sold' : 'owned');
+                const buyPrice = sanitizeNumber(g.buyPrice);
+                if (status === 'sold') {
+                    soldGamesCount += 1;
+                    gamesProfit += sanitizeNumber(g.sellPrice) - buyPrice;
+                } else {
+                    currentGamesValue += buyPrice;
+                }
+            }
 
             // Digital purchases stats
             const totalDigital = digitalPurchases.length;
-            const digitalSpent = digitalPurchases.reduce((sum, d) => sum + d.amount, 0);
+            let digitalSpent = 0;
+            for (const d of digitalPurchases) {
+                digitalSpent += sanitizeNumber(d.amount);
+            }
 
             // Update dashboard
             document.getElementById('dash-total-gadgets').textContent = totalGadgets;
             document.getElementById('dash-gadgets-value').textContent = `₹${currentGadgetsValue.toFixed(0)}`;
-            document.getElementById('dash-gadgets-sold').textContent = soldGadgets.length;
+            document.getElementById('dash-gadgets-sold').textContent = soldGadgetsCount;
             document.getElementById('dash-gadgets-profit').textContent = `₹${gadgetsProfit.toFixed(0)}`;
 
             document.getElementById('dash-total-games').textContent = totalGames;
             document.getElementById('dash-games-value').textContent = `₹${currentGamesValue.toFixed(0)}`;
-            document.getElementById('dash-games-sold').textContent = soldGames.length;
+            document.getElementById('dash-games-sold').textContent = soldGamesCount;
             document.getElementById('dash-games-profit-stat').textContent = `₹${gamesProfit.toFixed(0)}`;
 
             document.getElementById('dash-total-digital').textContent = totalDigital;
@@ -5852,10 +5880,39 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 }
             });
 
-            // Recent items
-            const recent = [...gadgets, ...games, ...digitalPurchases]
-                .sort((a, b) => b.timestamp - a.timestamp)
-                .slice(0, 6);
+            if (skipRecentItems) {
+                return;
+            }
+
+            // Recent items (top-6 without sorting full dataset)
+            const recentLimit = 6;
+            const recent = [];
+
+            const insertRecentItem = function(item) {
+                const candidateTimestamp = sanitizeNumber(item && item.timestamp);
+                let insertAt = recent.length;
+
+                for (let i = 0; i < recent.length; i++) {
+                    const rowTimestamp = sanitizeNumber(recent[i].timestamp);
+                    if (candidateTimestamp > rowTimestamp) {
+                        insertAt = i;
+                        break;
+                    }
+                }
+
+                if (insertAt >= recentLimit) {
+                    return;
+                }
+
+                recent.splice(insertAt, 0, item);
+                if (recent.length > recentLimit) {
+                    recent.pop();
+                }
+            };
+
+            gadgets.forEach(insertRecentItem);
+            games.forEach(insertRecentItem);
+            digitalPurchases.forEach(insertRecentItem);
 
             const recentContainer = document.getElementById('recent-items');
             if (recent.length === 0) {
@@ -5881,7 +5938,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                     <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Buy Price</div>
-                                        <div class="price-tag">₹${item.buyPrice.toFixed(2)}</div>
+                                        <div class="price-tag">₹${sanitizeNumber(item.buyPrice).toFixed(2)}</div>
                                     </div>
                                     <div style="margin-top: 10px;">
                                         <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
@@ -5900,7 +5957,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                     <span class="item-category">${item.type}</span>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Amount</div>
-                                        <div class="price-tag">₹${item.amount.toFixed(2)}</div>
+                                        <div class="price-tag">₹${sanitizeNumber(item.amount).toFixed(2)}</div>
                                     </div>
                                     ${item.expiryDate ? `
                                     <div style="margin-top: 10px;">
@@ -5924,7 +5981,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                                     <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
                                     <div style="margin-top: 15px;">
                                         <div class="info-label">Price</div>
-                                        <div class="price-tag">₹${item.price.toFixed(2)}</div>
+                                        <div class="price-tag">₹${sanitizeNumber(item.price).toFixed(2)}</div>
                                     </div>
                                     <div style="margin-top: 10px;">
                                         <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
@@ -5942,11 +5999,11 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
         function updateAll() {
             const currentRenderToken = ++renderPassToken;
 
-            // Render dashboard stats first so numbers appear immediately.
-            updateDashboard();
-
             const activeSection = document.querySelector('.section.active');
             const activeSectionId = activeSection ? activeSection.id : '';
+
+            // Render dashboard stats immediately. Skip recent-items list unless dashboard is open.
+            updateDashboard({ skipRecentItems: activeSectionId !== 'dashboard' });
 
             if (activeSectionId === 'gadgets') {
                 renderGadgets();
