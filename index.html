@@ -4170,40 +4170,53 @@ async function loadSettings() {
 document.getElementById('gadget-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const sellPrice = document.getElementById('g-sell-price').value;
-    const sellDate = document.getElementById('g-sell-date').value;
-    const imageUrl = document.getElementById('g-final-image-url').value;
-    const condition = document.getElementById('g-condition').value;
-
-
-    const gadget = {
-        name: sanitizeText(document.getElementById('g-name').value),           // ← SANITIZED
-        category: sanitizeText(document.getElementById('g-category').value),   // ← SANITIZED
-        price: sanitizeNumber(parseFloat(document.getElementById('g-price').value)), // ← SANITIZED
-        date: document.getElementById('g-date').value,
-        sellPrice: sellPrice ? sanitizeNumber(parseFloat(sellPrice)) : null,  // ← SANITIZED
-        sellDate: sellDate || null,
-        notes: sanitizeHTML(document.getElementById('g-notes').value),        // ← SANITIZED
-        status: (sellPrice && sellDate) ? 'sold' : 'owned',
-        imageUrl: imageUrl ? sanitizeURL(imageUrl) : null,                    // ← NEW: Image URL
-        condition: condition ? sanitizeText(condition) : null,     // ← Condition text value
-        timestamp: Date.now()
-    };
-
+    // Get submit button and show loading
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.textContent : '';
+    
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Saving...';
+    }
 
     try {
+        const sellPrice = document.getElementById('g-sell-price').value;
+        const sellDate = document.getElementById('g-sell-date').value;
+        const imageUrl = document.getElementById('g-final-image-url').value;
+        const condition = document.getElementById('g-condition').value;
+
+        const gadget = {
+            name: sanitizeText(document.getElementById('g-name').value),
+            category: sanitizeText(document.getElementById('g-category').value),
+            price: sanitizeNumber(parseFloat(document.getElementById('g-price').value)),
+            date: document.getElementById('g-date').value,
+            sellPrice: sellPrice ? sanitizeNumber(parseFloat(sellPrice)) : null,
+            sellDate: sellDate || null,
+            notes: sanitizeHTML(document.getElementById('g-notes').value),
+            status: (sellPrice && sellDate) ? 'sold' : 'owned',
+            imageUrl: imageUrl ? sanitizeURL(imageUrl) : null,
+            condition: condition ? sanitizeText(condition) : null,
+            timestamp: Date.now()
+        };
+
+        const gadgetToSave = await encryptData(gadget);
+        
+        // Check size before saving (Firestore limit is 1MB)
+        const gadgetSize = new Blob([JSON.stringify(gadgetToSave)]).size;
+        if (gadgetSize > 900000) { // 900KB to be safe
+            throw new Error('Image is too large. Please use a smaller image.');
+        }
+
         if (window.editingGadgetId) {
             // UPDATE existing gadget
-            const gadgetToSave = await encryptData(gadget);
             await updateDoc(
                 doc(db, 'users', currentUserUID, 'gadgets', window.editingGadgetId),
                 gadgetToSave
             );
             window.editingGadgetId = null;
-            document.querySelector('#gadget-form .btn').textContent = 'Add to Collection';
+            if (submitBtn) submitBtn.textContent = 'Add to Collection';
         } else {
             // ADD new gadget
-            const gadgetToSave = await encryptData(gadget);
             await addDoc(
                 collection(db, 'users', currentUserUID, 'gadgets'),
                 gadgetToSave
@@ -4223,9 +4236,28 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 <div style="font-size: 13px; color: var(--text-muted);">Click to add image</div>
             `;
         }
+        
+        // Re-enable button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        }
 
     } catch (error) {
-        alert('Error adding gadget. Please try again.');
+        // Re-enable button
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+        }
+        
+        // Show specific error message
+        if (error.message && error.message.includes('too large')) {
+            alert(error.message);
+        } else if (error.code === 'permission-denied') {
+            alert('Permission denied. Please check your login status.');
+        } else {
+            alert('Error adding gadget. Please try again.');
+        }
     }
 });
 
@@ -4446,34 +4478,44 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         window.updateGadgetFromModal = async function(e) {
             e.preventDefault();
 
-
-            const hiddenInput = document.getElementById('edit-g-final-image-url');
-            if (hiddenInput) {
+            // Get submit button and show loading
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+            
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '⏳ Saving...';
             }
 
-            const sellPrice = document.getElementById('edit-g-sell-price').value;
-            const sellDate = document.getElementById('edit-g-sell-date').value;
-            const imageUrl = hiddenInput ? hiddenInput.value : '';
-            const condition = document.getElementById('edit-g-condition').value;
-
-
-            const gadget = {
-                name: sanitizeText(document.getElementById('edit-g-name').value),
-                category: sanitizeText(document.getElementById('edit-g-category').value),
-                price: sanitizeNumber(parseFloat(document.getElementById('edit-g-price').value)),
-                date: document.getElementById('edit-g-date').value,
-                sellPrice: sellPrice ? sanitizeNumber(parseFloat(sellPrice)) : null,
-                sellDate: sellDate || null,
-                notes: sanitizeHTML(document.getElementById('edit-g-notes').value),
-                status: (sellPrice && sellDate) ? 'sold' : 'owned',
-                imageUrl: imageUrl ? sanitizeURL(imageUrl) : null,
-                condition: condition ? sanitizeText(condition) : null,
-                timestamp: Date.now()
-            };
-
-
             try {
+                const hiddenInput = document.getElementById('edit-g-final-image-url');
+                const sellPrice = document.getElementById('edit-g-sell-price').value;
+                const sellDate = document.getElementById('edit-g-sell-date').value;
+                const imageUrl = hiddenInput ? hiddenInput.value : '';
+                const condition = document.getElementById('edit-g-condition').value;
+
+                const gadget = {
+                    name: sanitizeText(document.getElementById('edit-g-name').value),
+                    category: sanitizeText(document.getElementById('edit-g-category').value),
+                    price: sanitizeNumber(parseFloat(document.getElementById('edit-g-price').value)),
+                    date: document.getElementById('edit-g-date').value,
+                    sellPrice: sellPrice ? sanitizeNumber(parseFloat(sellPrice)) : null,
+                    sellDate: sellDate || null,
+                    notes: sanitizeHTML(document.getElementById('edit-g-notes').value),
+                    status: (sellPrice && sellDate) ? 'sold' : 'owned',
+                    imageUrl: imageUrl ? sanitizeURL(imageUrl) : null,
+                    condition: condition ? sanitizeText(condition) : null,
+                    timestamp: Date.now()
+                };
+
                 const gadgetToSave = await encryptData(gadget);
+                
+                // Check size before saving (Firestore limit is 1MB)
+                const gadgetSize = new Blob([JSON.stringify(gadgetToSave)]).size;
+                if (gadgetSize > 900000) { // 900KB to be safe
+                    throw new Error('Image is too large. Please use a smaller image.');
+                }
+                
                 await updateDoc(
                     doc(db, 'users', currentUserUID, 'gadgets', window.editingGadgetId),
                     gadgetToSave
@@ -4481,7 +4523,20 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 await loadData();
                 closeGadgetEditModal();
             } catch (error) {
-                alert('Error updating gadget. Please try again.');
+                // Re-enable button
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+                
+                // Show specific error message
+                if (error.message && error.message.includes('too large')) {
+                    alert(error.message);
+                } else if (error.code === 'permission-denied') {
+                    alert('Permission denied. Please check your login status.');
+                } else {
+                    alert('Error updating gadget. Please try again.');
+                }
             }
         };
 
@@ -6953,10 +7008,61 @@ window.importDigitalCSV = async function (event) {
         });
 
         // Handle file upload with mobile support and error handling
+        // Compress image for better mobile performance
+        async function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = new Image();
+                    
+                    img.onload = function() {
+                        // Create canvas for compression
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Calculate new dimensions (max 800px on longest side)
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 800;
+                        
+                        if (width > height && width > maxSize) {
+                            height = (height * maxSize) / width;
+                            width = maxSize;
+                        } else if (height > maxSize) {
+                            width = (width * maxSize) / height;
+                            height = maxSize;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and compress
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to base64 with compression (0.8 quality for JPEG)
+                        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve(compressedDataUrl);
+                    };
+                    
+                    img.onerror = function() {
+                        reject(new Error('Failed to load image'));
+                    };
+                    
+                    img.src = e.target.result;
+                };
+                
+                reader.onerror = function() {
+                    reject(new Error('Failed to read file'));
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+
         window.pickerHandleUpload = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
-
 
             // Validate file type
             if (!file.type.startsWith('image/')) {
@@ -6964,28 +7070,36 @@ window.importDigitalCSV = async function (event) {
                 return;
             }
 
-            // Validate file size (max 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Image size should be less than 5MB');
+            // Validate file size (max 10MB before compression)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image size should be less than 10MB');
                 return;
             }
 
-            try {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    document.getElementById('picker-upload-img').src = e.target.result;
+            // Show loading indicator
+            const uploadTab = document.querySelector('[onclick*="showPickerTab(\'upload\')"]');
+            if (uploadTab) {
+                const originalText = uploadTab.innerHTML;
+                uploadTab.innerHTML = '⏳ Processing...';
+                uploadTab.style.pointerEvents = 'none';
+                
+                try {
+                    // Compress image
+                    const compressedImage = await compressImage(file);
+                    
+                    // Display compressed image
+                    document.getElementById('picker-upload-img').src = compressedImage;
                     document.getElementById('picker-upload-preview').style.display = 'block';
-                    currentPickerImageUrl = e.target.result;
-                };
-
-                reader.onerror = function(error) {
-                    alert('Error reading file. Please try again.');
-                };
-
-                reader.readAsDataURL(file);
-            } catch (error) {
-                alert('Error uploading image. Please try again.');
+                    currentPickerImageUrl = compressedImage;
+                    
+                    // Reset button
+                    uploadTab.innerHTML = originalText;
+                    uploadTab.style.pointerEvents = 'auto';
+                } catch (error) {
+                    alert('Error processing image. Please try again.');
+                    uploadTab.innerHTML = originalText;
+                    uploadTab.style.pointerEvents = 'auto';
+                }
             }
         };
 
