@@ -4315,6 +4315,10 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             <!-- Expandable Details Section -->
             <div class="card-details">
                 <div class="item-info">
+                    <div class="info-row">
+                        <span class="info-label">Purchase Price</span>
+                        <span class="info-value">${currentCurrency}${sanitizeNumber(g.price).toLocaleString()}</span>
+                    </div>
                     ${g.sellPrice ? `
                     <div class="info-row">
                         <span class="info-label">Sell Price</span>
@@ -4327,12 +4331,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                     ` : ''}
                     <div class="info-row">
                         <span class="info-label">Purchase Date</span>
-                        <span class="info-value">${g.date || 'N/A'}</span>
+                        <span class="info-value">${new Date(g.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
                     </div>
                     ${g.sellDate ? `
                     <div class="info-row">
                         <span class="info-label">Sell Date</span>
-                        <span class="info-value">${g.sellDate}</span>
+                        <span class="info-value">${new Date(g.sellDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
                     </div>
                     ` : ''}
                     ${g.notes ? `
@@ -4601,6 +4605,10 @@ if (gmContainer) {
                         <div class="card-details">
                             <div class="item-info">
                                 <div class="info-row">
+                                    <span class="info-label">Buy Price</span>
+                                    <span class="info-value">₹${g.buyPrice.toFixed(2)}</span>
+                                </div>
+                                <div class="info-row">
                                     <span class="info-label">Condition</span>
                                     <span class="info-value">${sanitizeText(g.condition)}</span>
                                 </div>
@@ -4856,37 +4864,51 @@ if (gmContainer) {
                         const duration = calculateOwnershipDuration(item.buyDate, item.sellDate);
                         const status = item.status || 'owned';
                         return `
-                            <div class="item-card">
-                                <div class="item-title">${item.title}</div>
-                                <span class="item-category">${item.platform}</span>
-                                ${item.genre ? `<span class="item-category" style="margin-left: 5px;">${item.genre}</span>` : ''}
-                                <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
-                                <div style="margin-top: 15px;">
-                                    <div class="info-label">Buy Price</div>
-                                    <div class="price-tag">₹${item.buyPrice.toFixed(2)}</div>
+                            <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
+                                ${item.imageUrl ? `
+                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <img src="${sanitizeURL(item.imageUrl)}" alt="${sanitizeText(item.title)}" style="width: 100%; height: 100%; object-fit: cover;">
                                 </div>
-                                <div style="margin-top: 10px;">
-                                    <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
-                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</div>
+                                ` : ''}
+                                <div style="flex: 1; min-width: 0;">
+                                    <div class="item-title">${item.title}</div>
+                                    <span class="item-category">${item.platform}</span>
+                                    ${item.genre ? `<span class="item-category" style="margin-left: 5px;">${item.genre}</span>` : ''}
+                                    <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
+                                    <div style="margin-top: 15px;">
+                                        <div class="info-label">Buy Price</div>
+                                        <div class="price-tag">₹${item.buyPrice.toFixed(2)}</div>
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
+                                        <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</div>
+                                    </div>
                                 </div>
                             </div>
                         `;
                     } else if (item.type) {
                         // Digital purchase item
                         return `
-                            <div class="item-card">
-                                <div class="item-title">${item.name}</div>
-                                <span class="item-category">${item.type}</span>
-                                <div style="margin-top: 15px;">
-                                    <div class="info-label">Amount</div>
-                                    <div class="price-tag">₹${item.amount.toFixed(2)}</div>
-                                </div>
-                                ${item.expiryDate ? `
-                                <div style="margin-top: 10px;">
-                                    <div class="info-label">Expires</div>
-                                    <div style="color: #ffaa00; font-size: 13px; font-weight: 600; margin-top: 5px;">${new Date(item.expiryDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</div>
+                            <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
+                                ${item.imageUrl ? `
+                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <img src="${sanitizeURL(item.imageUrl)}" alt="${sanitizeText(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">
                                 </div>
                                 ` : ''}
+                                <div style="flex: 1; min-width: 0;">
+                                    <div class="item-title">${item.name}</div>
+                                    <span class="item-category">${item.type}</span>
+                                    <div style="margin-top: 15px;">
+                                        <div class="info-label">Amount</div>
+                                        <div class="price-tag">₹${item.amount.toFixed(2)}</div>
+                                    </div>
+                                    ${item.expiryDate ? `
+                                    <div style="margin-top: 10px;">
+                                        <div class="info-label">Expires</div>
+                                        <div style="color: #ffaa00; font-size: 13px; font-weight: 600; margin-top: 5px;">${new Date(item.expiryDate).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</div>
+                                    </div>
+                                    ` : ''}
+                                </div>
                             </div>
                         `;
                     } else {
@@ -4894,17 +4916,24 @@ if (gmContainer) {
                         const duration = calculateOwnershipDuration(item.date, item.sellDate);
                         const status = item.status || 'owned';
                         return `
-                            <div class="item-card">
-                                <div class="item-title">${item.name}</div>
-                                <span class="item-category">${item.category}</span>
-                                <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
-                                <div style="margin-top: 15px;">
-                                    <div class="info-label">Price</div>
-                                    <div class="price-tag">₹${item.price.toFixed(2)}</div>
+                            <div class="item-card" style="display: flex; gap: 16px; align-items: flex-start;">
+                                ${item.imageUrl ? `
+                                <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <img src="${sanitizeURL(item.imageUrl)}" alt="${sanitizeText(item.name)}" style="width: 100%; height: 100%; object-fit: cover;">
                                 </div>
-                                <div style="margin-top: 10px;">
-                                    <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
-                                    <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</div>
+                                ` : ''}
+                                <div style="flex: 1; min-width: 0;">
+                                    <div class="item-title">${item.name}</div>
+                                    <span class="item-category">${item.category}</span>
+                                    <span class="status-${status}" style="margin-left: 5px; font-size: 11px;">${status.toUpperCase()}</span>
+                                    <div style="margin-top: 15px;">
+                                        <div class="info-label">Price</div>
+                                        <div class="price-tag">₹${item.price.toFixed(2)}</div>
+                                    </div>
+                                    <div style="margin-top: 10px;">
+                                        <div class="info-label">${status === 'sold' ? 'Held For' : 'Owned For'}</div>
+                                        <div style="color: #00f5ff; font-size: 13px; font-weight: 600; margin-top: 5px; display:flex; align-items:center; gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${duration}</div>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -5152,6 +5181,10 @@ if (gmContainer) {
                     <!-- Expandable Details Section -->
                     <div class="card-details">
                         <div class="item-info">
+                            <div class="info-row">
+                                <span class="info-label">Amount</span>
+                                <span class="info-value">₹${d.amount.toFixed(2)}</span>
+                            </div>
                             <div class="info-row">
                                 <span class="info-label">Purchase Date</span>
                                 <span class="info-value">${new Date(d.date).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}</span>
