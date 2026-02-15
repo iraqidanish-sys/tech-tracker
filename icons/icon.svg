@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GearNest">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 120 128 176v160l128 56 128-56V176z" stroke-width="22"/>
+    <path d="M256 120v272" stroke-width="20"/>
+    <path d="m128 176 128 52 128-52" stroke-width="20"/>
+    <path d="m206 286 32 32 70-70" stroke-width="22"/>
+  </g>
+</svg>
