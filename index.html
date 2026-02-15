@@ -1275,61 +1275,70 @@
 
         /* Sci-Fi Home Icon Animations */
         @keyframes homeHexRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
         }
         
         @keyframes homePulseRing {
             0%, 100% { 
-                r: 20;
-                opacity: 0.8;
+                r: 30;
+                opacity: 0.3;
+                stroke-width: 2;
             }
             50% { 
-                r: 25;
-                opacity: 0.4;
+                r: 38;
+                opacity: 0.6;
+                stroke-width: 4;
             }
         }
         
         @keyframes homeCoreGlow {
             0%, 100% { 
-                opacity: 0.9;
-                filter: drop-shadow(0 0 5px #10b981);
+                opacity: 1;
+                transform: scale(1);
             }
             50% { 
-                opacity: 1;
-                filter: drop-shadow(0 0 10px #06b6d4);
+                opacity: 0.8;
+                transform: scale(1.05);
             }
         }
         
         @keyframes homeOrbit1 {
             0% { 
-                transform: rotate(0deg) translateX(30px);
+                transform: rotate(0deg) translateX(35px);
+                opacity: 1;
             }
             100% { 
-                transform: rotate(360deg) translateX(30px);
+                transform: rotate(360deg) translateX(35px);
+                opacity: 1;
             }
         }
         
         @keyframes homeOrbit2 {
             0% { 
-                transform: rotate(120deg) translateX(30px);
+                transform: rotate(120deg) translateX(35px);
+                opacity: 1;
             }
             100% { 
-                transform: rotate(480deg) translateX(30px);
+                transform: rotate(480deg) translateX(35px);
+                opacity: 1;
             }
         }
         
         @keyframes homeOrbit3 {
             0% { 
-                transform: rotate(240deg) translateX(30px);
+                transform: rotate(240deg) translateX(35px);
+                opacity: 1;
             }
             100% { 
-                transform: rotate(600deg) translateX(30px);
+                transform: rotate(600deg) translateX(35px);
+                opacity: 1;
             }
         }
         
         .home-icon-outer-hex {
-            animation: homeHexRotate 8s linear infinite;
+            animation: homeHexRotate 6s ease-in-out infinite;
             transform-origin: 50px 50px;
         }
         
@@ -1338,33 +1347,197 @@
         }
         
         .home-icon-core {
-            animation: homeCoreGlow 3s ease-in-out infinite;
+            animation: homeCoreGlow 2s ease-in-out infinite;
+            transform-origin: 50px 50px;
         }
         
         .home-icon-orbit-dot1 {
-            animation: homeOrbit1 3s linear infinite;
+            animation: homeOrbit1 2.5s linear infinite;
             transform-origin: 50px 50px;
         }
         
         .home-icon-orbit-dot2 {
-            animation: homeOrbit2 3s linear infinite;
+            animation: homeOrbit2 2.5s linear infinite;
             transform-origin: 50px 50px;
         }
         
         .home-icon-orbit-dot3 {
-            animation: homeOrbit3 3s linear infinite;
+            animation: homeOrbit3 2.5s linear infinite;
             transform-origin: 50px 50px;
         }
         
         /* Make home icon larger and more prominent when active */
-        .bottom-nav-item.active .home-icon-outer-hex {
+        .bottom-nav-item.active .home-icon-outer-hex,
+        .desktop-nav-item.active .home-icon-outer-hex {
             stroke-width: 3;
             opacity: 1;
         }
         
-        .bottom-nav-item.active .home-icon-core {
+        .bottom-nav-item.active .home-icon-core,
+        .desktop-nav-item.active .home-icon-core {
             opacity: 1;
         }
+        
+        /* Make desktop home icon stand out more */
+        .desktop-nav-item.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-purple);
+        }
+
+        /* ========== GADGETS ICON ANIMATIONS ========== */
+        @keyframes gadgetPhonePulse {
+            0%, 100% { opacity: 0.8; stroke-width: 2.5; }
+            50% { opacity: 1; stroke-width: 3; }
+        }
+        
+        @keyframes gadgetScreenGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes gadgetPulseTravel {
+            0% { cx: 35; cy: 35; opacity: 1; }
+            25% { cx: 50; cy: 35; opacity: 1; }
+            50% { cx: 50; cy: 50; opacity: 1; }
+            75% { cx: 65; cy: 50; opacity: 1; }
+            100% { cx: 65; cy: 50; opacity: 0; }
+        }
+        
+        @keyframes gadgetNodePulse1 {
+            0%, 100% { r: 3; opacity: 1; }
+            50% { r: 4; opacity: 0.6; }
+        }
+        
+        @keyframes gadgetNodePulse2 {
+            0%, 100% { r: 3; opacity: 0.6; }
+            50% { r: 4; opacity: 1; }
+        }
+        
+        .gadget-icon-phone { animation: gadgetPhonePulse 3s ease-in-out infinite; }
+        .gadget-icon-screen { animation: gadgetScreenGlow 2s ease-in-out infinite; }
+        .gadget-icon-pulse { animation: gadgetPulseTravel 3s ease-in-out infinite; }
+        .gadget-icon-node1 { animation: gadgetNodePulse1 2s ease-in-out infinite; }
+        .gadget-icon-node2 { animation: gadgetNodePulse2 2s ease-in-out infinite 0.5s; }
+        .gadget-icon-line1 { animation: gadgetScreenGlow 2s ease-in-out infinite; }
+        .gadget-icon-line2 { animation: gadgetScreenGlow 2s ease-in-out infinite 0.3s; }
+        .gadget-icon-line3 { animation: gadgetScreenGlow 2s ease-in-out infinite 0.6s; }
+
+        /* ========== GAMES ICON ANIMATIONS ========== */
+        @keyframes gameBodyFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes gameButtonPulse {
+            0%, 100% { r: 3; opacity: 1; }
+            50% { r: 4; opacity: 0.6; }
+        }
+        
+        @keyframes gameWave1 {
+            0%, 100% { r: 15; opacity: 0.4; }
+            50% { r: 18; opacity: 0.1; }
+        }
+        
+        @keyframes gameWave2 {
+            0%, 100% { r: 20; opacity: 0.3; }
+            50% { r: 25; opacity: 0.05; }
+        }
+        
+        @keyframes gameTriggerPress {
+            0%, 80%, 100% { opacity: 0.6; }
+            85%, 95% { opacity: 1; }
+        }
+        
+        .game-icon-body { animation: gameBodyFloat 3s ease-in-out infinite; }
+        .game-icon-btn1 { animation: gameButtonPulse 1.5s ease-in-out infinite; }
+        .game-icon-btn2 { animation: gameButtonPulse 1.5s ease-in-out infinite 0.2s; }
+        .game-icon-btn3 { animation: gameButtonPulse 1.5s ease-in-out infinite 0.4s; }
+        .game-icon-btn4 { animation: gameButtonPulse 1.5s ease-in-out infinite 0.6s; }
+        .game-icon-wave1 { animation: gameWave1 2.5s ease-in-out infinite; }
+        .game-icon-wave2 { animation: gameWave2 3s ease-in-out infinite; }
+        .game-icon-trigger-l { animation: gameTriggerPress 4s ease-in-out infinite; }
+        .game-icon-trigger-r { animation: gameTriggerPress 4s ease-in-out infinite 2s; }
+
+        /* ========== DIGITAL ICON ANIMATIONS ========== */
+        @keyframes digitalCardGlow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes digitalScanMove {
+            0% { y1: 35; y2: 35; opacity: 0.8; }
+            50% { y1: 52; y2: 52; opacity: 1; }
+            100% { y1: 70; y2: 70; opacity: 0; }
+        }
+        
+        @keyframes digitalChipPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes digitalParticle1 {
+            0%, 100% { cy: 30; opacity: 1; }
+            50% { cy: 20; opacity: 0; }
+        }
+        
+        @keyframes digitalParticle2 {
+            0%, 100% { cy: 32; opacity: 1; }
+            50% { cy: 22; opacity: 0; }
+        }
+        
+        @keyframes digitalParticle3 {
+            0%, 100% { cy: 75; opacity: 1; }
+            50% { cy: 85; opacity: 0; }
+        }
+        
+        .digital-icon-card { animation: digitalCardGlow 3s ease-in-out infinite; }
+        .digital-icon-scan { animation: digitalScanMove 2.5s ease-in-out infinite; }
+        .digital-icon-chip { animation: digitalChipPulse 2s ease-in-out infinite; }
+        .digital-icon-particle1 { animation: digitalParticle1 2s ease-in-out infinite; }
+        .digital-icon-particle2 { animation: digitalParticle2 2s ease-in-out infinite 0.3s; }
+        .digital-icon-particle3 { animation: digitalParticle3 2s ease-in-out infinite 0.6s; }
+
+        /* ========== SETTINGS ICON ANIMATIONS ========== */
+        @keyframes settingsGear1Rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes settingsGear2Rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        @keyframes settingsToothPulse {
+            0%, 100% { r: 3; opacity: 1; }
+            50% { r: 4; opacity: 0.6; }
+        }
+        
+        @keyframes settingsParticle1Orbit {
+            0% { transform: rotate(0deg) translateX(25px); }
+            100% { transform: rotate(360deg) translateX(25px); }
+        }
+        
+        @keyframes settingsParticle2Orbit {
+            0% { transform: rotate(180deg) translateX(25px); }
+            100% { transform: rotate(540deg) translateX(25px); }
+        }
+        
+        @keyframes settingsConnectPulse {
+            0%, 100% { opacity: 0.5; stroke-width: 1.5; }
+            50% { opacity: 1; stroke-width: 2; }
+        }
+        
+        .settings-icon-gear1 { animation: settingsGear1Rotate 6s linear infinite; transform-origin: 50px 50px; }
+        .settings-icon-gear2 { animation: settingsGear2Rotate 4s linear infinite; transform-origin: 70px 30px; }
+        .settings-icon-tooth1 { animation: settingsGear1Rotate 6s linear infinite, settingsToothPulse 2s ease-in-out infinite; transform-origin: 50px 50px; }
+        .settings-icon-tooth2 { animation: settingsGear1Rotate 6s linear infinite, settingsToothPulse 2s ease-in-out infinite 0.5s; transform-origin: 50px 50px; }
+        .settings-icon-tooth3 { animation: settingsGear1Rotate 6s linear infinite, settingsToothPulse 2s ease-in-out infinite 1s; transform-origin: 50px 50px; }
+        .settings-icon-tooth4 { animation: settingsGear1Rotate 6s linear infinite, settingsToothPulse 2s ease-in-out infinite 1.5s; transform-origin: 50px 50px; }
+        .settings-icon-inner { animation: settingsGear1Rotate 6s linear infinite; transform-origin: 50px 50px; }
+        .settings-icon-particle1 { animation: settingsParticle1Orbit 3s linear infinite; transform-origin: 50px 50px; }
+        .settings-icon-particle2 { animation: settingsParticle2Orbit 3s linear infinite; transform-origin: 50px 50px; }
+        .settings-icon-connect { animation: settingsConnectPulse 2s ease-in-out infinite; }
 
         /* Login Screen */
         #loginScreen {
@@ -1896,32 +2069,148 @@
             </div>
             <div class="desktop-nav-links" id="desktopNavLinks">
                 <div class="desktop-nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    <svg width="24" height="24" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; margin-right: 6px; overflow: visible;">
+                        <defs>
+                            <linearGradient id="homeGradDesktopNew" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="homeGlowDesktopNew">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Large pulsing circle -->
+                        <circle cx="50" cy="50" r="35" 
+                                fill="none" 
+                                stroke="url(#homeGradDesktopNew)" 
+                                stroke-width="3"
+                                opacity="0.3"
+                                filter="url(#homeGlowDesktopNew)"
+                                class="home-icon-pulse-ring"/>
+                        
+                        <!-- Rotating square -->
+                        <rect x="30" y="30" width="40" height="40" rx="5"
+                              fill="none" 
+                              stroke="url(#homeGradDesktopNew)" 
+                              stroke-width="3"
+                              opacity="0.8"
+                              filter="url(#homeGlowDesktopNew)"
+                              class="home-icon-outer-hex"/>
+                        
+                        <!-- House -->
+                        <path d="M50 35 L35 47 L35 67 L47 67 L47 55 L53 55 L53 67 L65 67 L65 47 Z" 
+                              fill="url(#homeGradDesktopNew)"
+                              opacity="1"
+                              filter="url(#homeGlowDesktopNew)"
+                              class="home-icon-core"/>
+                        
+                        <!-- Orbiting dots -->
+                        <circle cx="50" cy="50" r="5" fill="#10b981" opacity="1" filter="url(#homeGlowDesktopNew)" class="home-icon-orbit-dot1"/>
+                        <circle cx="50" cy="50" r="5" fill="#06b6d4" opacity="1" filter="url(#homeGlowDesktopNew)" class="home-icon-orbit-dot2"/>
+                        <circle cx="50" cy="50" r="5" fill="#10b981" opacity="1" filter="url(#homeGlowDesktopNew)" class="home-icon-orbit-dot3"/>
                     </svg>
                     Home
                 </div>
                 <div class="desktop-nav-item" data-section="gadgets" onclick="showSection('gadgets')">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    <svg width="24" height="24" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; margin-right: 6px; overflow: visible;">
+                        <defs>
+                            <linearGradient id="gadgetGradDesktop" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="gadgetGlowDesktop">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <rect x="25" y="15" width="50" height="70" rx="8" fill="none" stroke="url(#gadgetGradDesktop)" stroke-width="2.5" opacity="0.8" filter="url(#gadgetGlowDesktop)" class="gadget-icon-phone"/>
+                        <rect x="30" y="22" width="40" height="50" rx="3" fill="none" stroke="url(#gadgetGradDesktop)" stroke-width="1.5" opacity="0.6" class="gadget-icon-screen"/>
+                        <line x1="35" y1="35" x2="50" y2="35" stroke="#8b5cf6" stroke-width="2" class="gadget-icon-line1"/>
+                        <line x1="50" y1="35" x2="50" y2="50" stroke="#ec4899" stroke-width="2" class="gadget-icon-line2"/>
+                        <line x1="50" y1="50" x2="65" y2="50" stroke="#8b5cf6" stroke-width="2" class="gadget-icon-line3"/>
+                        <circle cx="50" cy="35" r="3" fill="#8b5cf6" filter="url(#gadgetGlowDesktop)" class="gadget-icon-node1"/>
+                        <circle cx="50" cy="50" r="3" fill="#ec4899" filter="url(#gadgetGlowDesktop)" class="gadget-icon-node2"/>
+                        <circle cx="35" cy="35" r="2.5" fill="#8b5cf6" filter="url(#gadgetGlowDesktop)" class="gadget-icon-pulse"/>
+                        <circle cx="50" cy="78" r="4" fill="none" stroke="url(#gadgetGradDesktop)" stroke-width="2" filter="url(#gadgetGlowDesktop)" class="gadget-icon-button"/>
                     </svg>
                     Gadgets
                 </div>
                 <div class="desktop-nav-item" data-section="games" onclick="showSection('games')">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                    <svg width="24" height="24" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; margin-right: 6px; overflow: visible;">
+                        <defs>
+                            <linearGradient id="gameGradDesktop" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="gameGlowDesktop">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <path d="M30 40 Q30 30 40 30 L60 30 Q70 30 70 40 L70 60 Q70 70 60 70 L40 70 Q30 70 30 60 Z" fill="none" stroke="url(#gameGradDesktop)" stroke-width="2.5" opacity="0.7" filter="url(#gameGlowDesktop)" class="game-icon-body"/>
+                        <line x1="40" y1="50" x2="46" y2="50" stroke="#f59e0b" stroke-width="2.5" class="game-icon-dpad-h"/>
+                        <line x1="43" y1="47" x2="43" y2="53" stroke="#f59e0b" stroke-width="2.5" class="game-icon-dpad-v"/>
+                        <circle cx="60" cy="45" r="3" fill="#ef4444" filter="url(#gameGlowDesktop)" class="game-icon-btn1"/>
+                        <circle cx="65" cy="50" r="3" fill="#f59e0b" filter="url(#gameGlowDesktop)" class="game-icon-btn2"/>
+                        <circle cx="60" cy="55" r="3" fill="#ef4444" filter="url(#gameGlowDesktop)" class="game-icon-btn3"/>
+                        <circle cx="55" cy="50" r="3" fill="#f59e0b" filter="url(#gameGlowDesktop)" class="game-icon-btn4"/>
+                        <circle cx="50" cy="50" r="15" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.4" class="game-icon-wave1"/>
+                        <circle cx="50" cy="50" r="20" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.3" class="game-icon-wave2"/>
                     </svg>
                     Games
                 </div>
                 <div class="desktop-nav-item" data-section="digital" onclick="showSection('digital')">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    <svg width="24" height="24" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; margin-right: 6px; overflow: visible;">
+                        <defs>
+                            <linearGradient id="digitalGradDesktop" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="digitalGlowDesktop">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <rect x="20" y="35" width="60" height="35" rx="5" fill="none" stroke="url(#digitalGradDesktop)" stroke-width="2.5" opacity="0.8" filter="url(#digitalGlowDesktop)" class="digital-icon-card"/>
+                        <rect x="20" y="43" width="60" height="5" fill="url(#digitalGradDesktop)" opacity="0.6" class="digital-icon-stripe"/>
+                        <rect x="28" y="52" width="12" height="10" rx="2" fill="none" stroke="#06b6d4" stroke-width="1.5" filter="url(#digitalGlowDesktop)" class="digital-icon-chip"/>
+                        <line x1="48" y1="55" x2="52" y2="55" stroke="#3b82f6" stroke-width="2" opacity="0.5" class="digital-icon-num1"/>
+                        <line x1="54" y1="55" x2="58" y2="55" stroke="#06b6d4" stroke-width="2" opacity="0.5" class="digital-icon-num2"/>
+                        <line x1="60" y1="55" x2="64" y2="55" stroke="#3b82f6" stroke-width="2" opacity="0.5" class="digital-icon-num3"/>
+                        <line x1="20" y1="35" x2="80" y2="35" stroke="#06b6d4" stroke-width="2" filter="url(#digitalGlowDesktop)" opacity="0.8" class="digital-icon-scan"/>
+                        <circle cx="45" cy="30" r="1.5" fill="#06b6d4" filter="url(#digitalGlowDesktop)" class="digital-icon-particle1"/>
+                        <circle cx="55" cy="32" r="1.5" fill="#3b82f6" filter="url(#digitalGlowDesktop)" class="digital-icon-particle2"/>
+                        <circle cx="50" cy="75" r="1.5" fill="#06b6d4" filter="url(#digitalGlowDesktop)" class="digital-icon-particle3"/>
                     </svg>
                     Digital
                 </div>
                 <div class="desktop-nav-item" data-section="settings" onclick="showSection('settings')">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    <svg width="24" height="24" viewBox="0 0 100 100" style="display: inline-block; vertical-align: middle; margin-right: 6px; overflow: visible;">
+                        <defs>
+                            <linearGradient id="settingsGradDesktop" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                            </linearGradient>
+                            <filter id="settingsGlowDesktop">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                            </filter>
+                        </defs>
+                        <circle cx="50" cy="50" r="18" fill="none" stroke="url(#settingsGradDesktop)" stroke-width="2.5" filter="url(#settingsGlowDesktop)" class="settings-icon-gear1"/>
+                        <circle cx="50" cy="32" r="3" fill="#a78bfa" filter="url(#settingsGlowDesktop)" class="settings-icon-tooth1"/>
+                        <circle cx="68" cy="50" r="3" fill="#6366f1" filter="url(#settingsGlowDesktop)" class="settings-icon-tooth2"/>
+                        <circle cx="50" cy="68" r="3" fill="#a78bfa" filter="url(#settingsGlowDesktop)" class="settings-icon-tooth3"/>
+                        <circle cx="32" cy="50" r="3" fill="#6366f1" filter="url(#settingsGlowDesktop)" class="settings-icon-tooth4"/>
+                        <circle cx="50" cy="50" r="8" fill="none" stroke="url(#settingsGradDesktop)" stroke-width="2" opacity="0.8" class="settings-icon-inner"/>
+                        <circle cx="70" cy="30" r="10" fill="none" stroke="#a78bfa" stroke-width="2" opacity="0.6" filter="url(#settingsGlowDesktop)" class="settings-icon-gear2"/>
+                        <circle cx="50" cy="50" r="2" fill="#a78bfa" filter="url(#settingsGlowDesktop)" class="settings-icon-particle1"/>
+                        <circle cx="50" cy="50" r="2" fill="#6366f1" filter="url(#settingsGlowDesktop)" class="settings-icon-particle2"/>
+                        <line x1="60" y1="40" x2="70" y2="30" stroke="#6366f1" stroke-width="1.5" opacity="0.5" class="settings-icon-connect"/>
                     </svg>
                     Settings
                 </div>
@@ -2245,11 +2534,61 @@
                     <div class="bottom-nav-icon">
                         <svg width="32" height="32" viewBox="0 0 100 100" style="overflow: visible;">
                             <defs>
-                                <linearGradient id="homeGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <linearGradient id="homeGradMobile" x1="0%" y1="0%" x2="100%" y2="100%">
                                     <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
                                     <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
                                 </linearGradient>
-                                <filter id="homeGlow">
+                                <filter id="homeGlowMobile">
+                                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            
+                            <!-- Large pulsing circle background -->
+                            <circle cx="50" cy="50" r="35" 
+                                    fill="none" 
+                                    stroke="url(#homeGradMobile)" 
+                                    stroke-width="3"
+                                    opacity="0.3"
+                                    filter="url(#homeGlowMobile)"
+                                    class="home-icon-pulse-ring"/>
+                            
+                            <!-- Rotating square frame -->
+                            <rect x="30" y="30" width="40" height="40" rx="5"
+                                  fill="none" 
+                                  stroke="url(#homeGradMobile)" 
+                                  stroke-width="3"
+                                  opacity="0.8"
+                                  filter="url(#homeGlowMobile)"
+                                  class="home-icon-outer-hex"/>
+                            
+                            <!-- House shape - larger and brighter -->
+                            <path d="M50 35 L35 47 L35 67 L47 67 L47 55 L53 55 L53 67 L65 67 L65 47 Z" 
+                                  fill="url(#homeGradMobile)"
+                                  opacity="1"
+                                  filter="url(#homeGlowMobile)"
+                                  class="home-icon-core"/>
+                            
+                            <!-- Big orbiting dots - very visible -->
+                            <circle cx="50" cy="50" r="5" fill="#10b981" opacity="1" filter="url(#homeGlowMobile)" class="home-icon-orbit-dot1"/>
+                            <circle cx="50" cy="50" r="5" fill="#06b6d4" opacity="1" filter="url(#homeGlowMobile)" class="home-icon-orbit-dot2"/>
+                            <circle cx="50" cy="50" r="5" fill="#10b981" opacity="1" filter="url(#homeGlowMobile)" class="home-icon-orbit-dot3"/>
+                        </svg>
+                    </div>
+                    <div class="bottom-nav-label">Home</div>
+                </div>
+                <div class="bottom-nav-item" data-section="gadgets">
+                    <div class="bottom-nav-icon">
+                        <svg width="32" height="32" viewBox="0 0 100 100" style="overflow: visible;">
+                            <defs>
+                                <linearGradient id="gadgetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                                </linearGradient>
+                                <filter id="gadgetGlow">
                                     <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                                     <feMerge>
                                         <feMergeNode in="coloredBlur"/>
@@ -2258,67 +2597,221 @@
                                 </filter>
                             </defs>
                             
-                            <!-- Outer rotating hexagon -->
-                            <polygon points="50,10 80,30 80,70 50,90 20,70 20,30" 
-                                     fill="none" 
-                                     stroke="url(#homeGrad1)" 
-                                     stroke-width="2.5"
-                                     opacity="0.6"
-                                     filter="url(#homeGlow)"
-                                     class="home-icon-outer-hex"/>
+                            <!-- Phone outline -->
+                            <rect x="25" y="15" width="50" height="70" rx="8" 
+                                  fill="none" 
+                                  stroke="url(#gadgetGrad)" 
+                                  stroke-width="2.5"
+                                  opacity="0.8"
+                                  filter="url(#gadgetGlow)"
+                                  class="gadget-icon-phone"/>
                             
-                            <!-- Middle pulsing circle -->
-                            <circle cx="50" cy="50" r="20" 
+                            <!-- Screen with circuit pattern -->
+                            <rect x="30" y="22" width="40" height="50" rx="3" 
+                                  fill="none" 
+                                  stroke="url(#gadgetGrad)" 
+                                  stroke-width="1.5"
+                                  opacity="0.6"
+                                  class="gadget-icon-screen"/>
+                            
+                            <!-- Circuit lines -->
+                            <line x1="35" y1="35" x2="50" y2="35" stroke="#8b5cf6" stroke-width="2" class="gadget-icon-line1"/>
+                            <line x1="50" y1="35" x2="50" y2="50" stroke="#ec4899" stroke-width="2" class="gadget-icon-line2"/>
+                            <line x1="50" y1="50" x2="65" y2="50" stroke="#8b5cf6" stroke-width="2" class="gadget-icon-line3"/>
+                            
+                            <!-- Circuit nodes pulsing -->
+                            <circle cx="50" cy="35" r="3" fill="#8b5cf6" filter="url(#gadgetGlow)" class="gadget-icon-node1"/>
+                            <circle cx="50" cy="50" r="3" fill="#ec4899" filter="url(#gadgetGlow)" class="gadget-icon-node2"/>
+                            
+                            <!-- Energy pulse traveling -->
+                            <circle cx="35" cy="35" r="2.5" fill="#8b5cf6" filter="url(#gadgetGlow)" class="gadget-icon-pulse"/>
+                            
+                            <!-- Bottom button -->
+                            <circle cx="50" cy="78" r="4" 
                                     fill="none" 
-                                    stroke="url(#homeGrad1)" 
+                                    stroke="url(#gadgetGrad)" 
                                     stroke-width="2"
-                                    opacity="0.8"
-                                    filter="url(#homeGlow)"
-                                    class="home-icon-pulse-ring"/>
-                            
-                            <!-- Inner core - house shape -->
-                            <path d="M50 35 L35 45 L35 65 L50 65 L50 55 L55 55 L55 65 L65 65 L65 45 Z" 
-                                  fill="url(#homeGrad1)"
-                                  opacity="0.9"
-                                  filter="url(#homeGlow)"
-                                  class="home-icon-core"/>
-                            
-                            <!-- Energy dots orbiting -->
-                            <circle cx="50" cy="50" r="3" fill="#10b981" filter="url(#homeGlow)" class="home-icon-orbit-dot1"/>
-                            <circle cx="50" cy="50" r="3" fill="#06b6d4" filter="url(#homeGlow)" class="home-icon-orbit-dot2"/>
-                            <circle cx="50" cy="50" r="3" fill="#10b981" filter="url(#homeGlow)" class="home-icon-orbit-dot3"/>
-                        </svg>
-                    </div>
-                    <div class="bottom-nav-label">Home</div>
-                </div>
-                <div class="bottom-nav-item" data-section="gadgets">
-                    <div class="bottom-nav-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    filter="url(#gadgetGlow)"
+                                    class="gadget-icon-button"/>
                         </svg>
                     </div>
                     <div class="bottom-nav-label">Gadgets</div>
                 </div>
                 <div class="bottom-nav-item" data-section="games">
                     <div class="bottom-nav-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                        <svg width="32" height="32" viewBox="0 0 100 100" style="overflow: visible;">
+                            <defs>
+                                <linearGradient id="gameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                                </linearGradient>
+                                <filter id="gameGlow">
+                                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            
+                            <!-- Controller body -->
+                            <path d="M30 40 Q30 30 40 30 L60 30 Q70 30 70 40 L70 60 Q70 70 60 70 L40 70 Q30 70 30 60 Z" 
+                                  fill="none" 
+                                  stroke="url(#gameGrad)" 
+                                  stroke-width="2.5"
+                                  opacity="0.7"
+                                  filter="url(#gameGlow)"
+                                  class="game-icon-body"/>
+                            
+                            <!-- D-pad (left side) -->
+                            <line x1="40" y1="50" x2="46" y2="50" stroke="#f59e0b" stroke-width="2.5" class="game-icon-dpad-h"/>
+                            <line x1="43" y1="47" x2="43" y2="53" stroke="#f59e0b" stroke-width="2.5" class="game-icon-dpad-v"/>
+                            
+                            <!-- Action buttons (right side) - pulsing -->
+                            <circle cx="60" cy="45" r="3" fill="#ef4444" filter="url(#gameGlow)" class="game-icon-btn1"/>
+                            <circle cx="65" cy="50" r="3" fill="#f59e0b" filter="url(#gameGlow)" class="game-icon-btn2"/>
+                            <circle cx="60" cy="55" r="3" fill="#ef4444" filter="url(#gameGlow)" class="game-icon-btn3"/>
+                            <circle cx="55" cy="50" r="3" fill="#f59e0b" filter="url(#gameGlow)" class="game-icon-btn4"/>
+                            
+                            <!-- Trigger indicators (top) -->
+                            <rect x="35" y="25" width="8" height="3" rx="1" fill="url(#gameGrad)" filter="url(#gameGlow)" class="game-icon-trigger-l"/>
+                            <rect x="57" y="25" width="8" height="3" rx="1" fill="url(#gameGrad)" filter="url(#gameGlow)" class="game-icon-trigger-r"/>
+                            
+                            <!-- Energy waves -->
+                            <circle cx="50" cy="50" r="15" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.4" class="game-icon-wave1"/>
+                            <circle cx="50" cy="50" r="20" fill="none" stroke="#ef4444" stroke-width="1.5" opacity="0.3" class="game-icon-wave2"/>
                         </svg>
                     </div>
                     <div class="bottom-nav-label">Games</div>
                 </div>
                 <div class="bottom-nav-item" data-section="digital">
                     <div class="bottom-nav-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        <svg width="32" height="32" viewBox="0 0 100 100" style="overflow: visible;">
+                            <defs>
+                                <linearGradient id="digitalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                </linearGradient>
+                                <filter id="digitalGlow">
+                                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            
+                            <!-- Card outline -->
+                            <rect x="20" y="35" width="60" height="35" rx="5" 
+                                  fill="none" 
+                                  stroke="url(#digitalGrad)" 
+                                  stroke-width="2.5"
+                                  opacity="0.8"
+                                  filter="url(#digitalGlow)"
+                                  class="digital-icon-card"/>
+                            
+                            <!-- Magnetic stripe -->
+                            <rect x="20" y="43" width="60" height="5" 
+                                  fill="url(#digitalGrad)" 
+                                  opacity="0.6"
+                                  class="digital-icon-stripe"/>
+                            
+                            <!-- Chip (animated) -->
+                            <rect x="28" y="52" width="12" height="10" rx="2" 
+                                  fill="none" 
+                                  stroke="#06b6d4" 
+                                  stroke-width="1.5"
+                                  filter="url(#digitalGlow)"
+                                  class="digital-icon-chip"/>
+                            <line x1="31" y1="52" x2="31" y2="62" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
+                            <line x1="34" y1="52" x2="34" y2="62" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
+                            <line x1="37" y1="52" x2="37" y2="62" stroke="#06b6d4" stroke-width="1" opacity="0.6"/>
+                            
+                            <!-- Card numbers (simplified) -->
+                            <line x1="48" y1="55" x2="52" y2="55" stroke="#3b82f6" stroke-width="2" opacity="0.5" class="digital-icon-num1"/>
+                            <line x1="54" y1="55" x2="58" y2="55" stroke="#06b6d4" stroke-width="2" opacity="0.5" class="digital-icon-num2"/>
+                            <line x1="60" y1="55" x2="64" y2="55" stroke="#3b82f6" stroke-width="2" opacity="0.5" class="digital-icon-num3"/>
+                            <line x1="66" y1="55" x2="70" y2="55" stroke="#06b6d4" stroke-width="2" opacity="0.5" class="digital-icon-num4"/>
+                            
+                            <!-- Scanning line (animated) -->
+                            <line x1="20" y1="35" x2="80" y2="35" 
+                                  stroke="#06b6d4" 
+                                  stroke-width="2"
+                                  filter="url(#digitalGlow)"
+                                  opacity="0.8"
+                                  class="digital-icon-scan"/>
+                            
+                            <!-- Data particles -->
+                            <circle cx="45" cy="30" r="1.5" fill="#06b6d4" filter="url(#digitalGlow)" class="digital-icon-particle1"/>
+                            <circle cx="55" cy="32" r="1.5" fill="#3b82f6" filter="url(#digitalGlow)" class="digital-icon-particle2"/>
+                            <circle cx="50" cy="75" r="1.5" fill="#06b6d4" filter="url(#digitalGlow)" class="digital-icon-particle3"/>
                         </svg>
                     </div>
                     <div class="bottom-nav-label">Digital</div>
                 </div>
                 <div class="bottom-nav-item" data-section="settings">
                     <div class="bottom-nav-icon">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        <svg width="32" height="32" viewBox="0 0 100 100" style="overflow: visible;">
+                            <defs>
+                                <linearGradient id="settingsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+                                </linearGradient>
+                                <filter id="settingsGlow">
+                                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+                            
+                            <!-- Main gear (rotating) -->
+                            <circle cx="50" cy="50" r="18" 
+                                    fill="none" 
+                                    stroke="url(#settingsGrad)" 
+                                    stroke-width="2.5"
+                                    filter="url(#settingsGlow)"
+                                    class="settings-icon-gear1"/>
+                            
+                            <!-- Gear teeth (main) -->
+                            <circle cx="50" cy="32" r="3" fill="#a78bfa" filter="url(#settingsGlow)" class="settings-icon-tooth1"/>
+                            <circle cx="68" cy="50" r="3" fill="#6366f1" filter="url(#settingsGlow)" class="settings-icon-tooth2"/>
+                            <circle cx="50" cy="68" r="3" fill="#a78bfa" filter="url(#settingsGlow)" class="settings-icon-tooth3"/>
+                            <circle cx="32" cy="50" r="3" fill="#6366f1" filter="url(#settingsGlow)" class="settings-icon-tooth4"/>
+                            
+                            <!-- Inner circle -->
+                            <circle cx="50" cy="50" r="8" 
+                                    fill="none" 
+                                    stroke="url(#settingsGrad)" 
+                                    stroke-width="2"
+                                    opacity="0.8"
+                                    class="settings-icon-inner"/>
+                            
+                            <!-- Smaller gear (counter-rotating) -->
+                            <circle cx="70" cy="30" r="10" 
+                                    fill="none" 
+                                    stroke="#a78bfa" 
+                                    stroke-width="2"
+                                    opacity="0.6"
+                                    filter="url(#settingsGlow)"
+                                    class="settings-icon-gear2"/>
+                            <circle cx="70" cy="30" r="4" 
+                                    fill="none" 
+                                    stroke="#6366f1" 
+                                    stroke-width="1.5"
+                                    opacity="0.7"/>
+                            
+                            <!-- Energy particles orbiting -->
+                            <circle cx="50" cy="50" r="2" fill="#a78bfa" filter="url(#settingsGlow)" class="settings-icon-particle1"/>
+                            <circle cx="50" cy="50" r="2" fill="#6366f1" filter="url(#settingsGlow)" class="settings-icon-particle2"/>
+                            
+                            <!-- Connection lines pulsing -->
+                            <line x1="60" y1="40" x2="70" y2="30" 
+                                  stroke="#6366f1" 
+                                  stroke-width="1.5"
+                                  opacity="0.5"
+                                  class="settings-icon-connect"/>
                         </svg>
                     </div>
                     <div class="bottom-nav-label">More</div>
