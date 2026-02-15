@@ -601,6 +601,20 @@
             font-weight: 700;
             cursor: pointer;
             font-size: 14px;
+            overflow: hidden;
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            transition: border-color 0.2s ease;
+        }
+
+        .user-avatar:hover {
+            border-color: rgba(16, 185, 129, 0.8);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         /* Main Container */
@@ -1743,7 +1757,7 @@
             .top-nav { padding: 0 12px; height: 54px; }
             .logo { font-size: 17px; }
 
-            .user-avatar { width: 32px; height: 32px; font-size: 12px; }
+            .user-avatar { width: 32px; height: 32px; font-size: 12px; border-width: 1.5px; }
 
             #profileMenu { right: -8px !important; min-width: 190px !important; }
         }
@@ -3440,11 +3454,15 @@ onAuthStateChanged(auth, async (user) => {
             const displayName = user.displayName || user.email.split('@')[0];
             document.getElementById('userEmail').textContent = user.email;
 
-            // Update avatar with initials
+            // Update avatar with photo or initials
             const userAvatar = document.getElementById('userAvatar');
             if (userAvatar) {
-                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                userAvatar.textContent = initials;
+                if (user.photoURL) {
+                    userAvatar.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" onerror="this.parentElement.textContent='${displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2)}'">`;
+                } else {
+                    const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    userAvatar.textContent = initials;
+                }
             }
 
             // Populate profile dropdown
@@ -7839,31 +7857,38 @@ window.importDigitalCSV = async function (event) {
         document.addEventListener('DOMContentLoaded', () => {
             const urlInput = document.getElementById('picker-image-url');
             if (urlInput) {
-                urlInput.addEventListener('input', function() {
-                    const url = this.value.trim();
-                    const preview = document.getElementById('picker-url-preview');
-                    const img = document.getElementById('picker-url-img');
-
-                    if (url) {
-                        // Test if URL is a valid image
-                        const testImg = new Image();
-                        testImg.onload = function() {
-                            img.src = url;
-                            preview.style.display = 'block';
-                            currentPickerImageUrl = url;
-                        };
-                        testImg.onerror = function() {
-                            preview.style.display = 'none';
-                            currentPickerImageUrl = null;
-                        };
-                        testImg.src = url;
-                    } else {
-                        preview.style.display = 'none';
-                        currentPickerImageUrl = null;
-                    }
+                // Also trigger preview on Enter key
+                urlInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); window.previewPickerUrl(); }
+                });
+                // Auto-preview on paste after a short delay
+                urlInput.addEventListener('paste', function() {
+                    setTimeout(() => window.previewPickerUrl(), 100);
                 });
             }
         });
+
+        window.previewPickerUrl = function() {
+            const urlInput = document.getElementById('picker-image-url');
+            if (!urlInput) return;
+            const url = urlInput.value.trim();
+            const preview = document.getElementById('picker-url-preview');
+            const img = document.getElementById('picker-url-img');
+            if (!url) return;
+            const testImg = new Image();
+            testImg.onload = function() {
+                img.src = url;
+                preview.style.display = 'block';
+                currentPickerImageUrl = url;
+            };
+            testImg.onerror = function() {
+                preview.style.display = 'none';
+                currentPickerImageUrl = null;
+                urlInput.style.borderColor = 'rgba(239,68,68,0.5)';
+                setTimeout(() => urlInput.style.borderColor = 'rgba(148,163,184,0.2)', 1500);
+            };
+            testImg.src = url;
+        };
 
         // Handle file upload with mobile support and error handling
         // Compress image for better mobile performance
@@ -8041,7 +8066,18 @@ window.importDigitalCSV = async function (event) {
 
         <!-- Tab 1: URL (Default) -->
         <div id="picker-url" class="tab-content active">
-            <input type="text" id="picker-image-url" placeholder="Paste image URL here..." style="width: 100%; margin-bottom: 8px;">
+            <div style="border: 2px dashed rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 16px; background: rgba(16, 185, 129, 0.05); text-align: center; margin-bottom: 10px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:6px;color:#10b981;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <div style="font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">Paste an image URL</div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <input type="text" id="picker-image-url" placeholder="https://example.com/image.jpg"
+                           style="flex:1; padding:9px 12px; background:rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:8px; color:#f1f5f9; font-size:13px; font-family:inherit; outline:none;">
+                    <button type="button" onclick="previewPickerUrl()"
+                            style="padding:9px 14px; background:linear-gradient(135deg,#10b981,#06b6d4); border:none; border-radius:8px; color:white; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">
+                        Preview
+                    </button>
+                </div>
+            </div>
             <div id="picker-url-preview" class="upload-preview" style="display: none; margin: 0 auto;">
                 <img id="picker-url-img" src="" alt="Preview">
             </div>
