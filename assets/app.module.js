@@ -7,27 +7,7 @@
             console.debug = function() {};
         }
 
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        // Updated: Fixed syntax errors - Feb 2026
-        import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  writeBatch  // ← ADD THIS for batch deletion
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import {
-    getAuth,
-    signInWithPopup,
-    GoogleAuthProvider,
-    onAuthStateChanged,
-    signOut,
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        // Cloudflare-native build (Firebase auth/data fallback removed)
 
 
         // ============================================
@@ -228,20 +208,7 @@
             }
         };
 
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAJtyDC0fI_AzGcKxVHBvF-Focs4doWxMM",
-            authDomain: "tech-tracker-87dbc.firebaseapp.com",
-            projectId: "tech-tracker-87dbc",
-            storageBucket: "tech-tracker-87dbc.firebasestorage.app",
-            messagingSenderId: "446800872416",
-            appId: "1:446800872416:web:8d094886bf870c9669a185",
-            measurementId: "G-GSWW5KLR2H"
-        };
-
-
-        // Safety timeout - hide loading screen after 5 seconds if Firebase fails
+        // Safety timeout - hide loading screen after 5 seconds if session bootstrap fails
         setTimeout(() => {
             const loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen && loadingScreen.style.display !== 'none') {
@@ -249,19 +216,12 @@
                 document.getElementById('loginScreen').style.display = 'flex';
             }
         }, 5000);
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
         // Global user state
         let currentUser = null;
         let currentUserUID = null;
         let currentCurrency = '₹';  // ← ADD THIS LINE
-        let dataBackendMode = 'firebase';
+        let dataBackendMode = 'cloudflare';
         let cloudflareIdentityPromise = null;
-        let cloudflareSessionInitialized = false;
         let cloudflareSnapshotCache = null;
         let cloudflareSaveChain = Promise.resolve();
 
@@ -452,17 +412,12 @@ function syncPathForSection(section) {
 
 window.openAdminPanel = function() {
     if (!currentUser) {
-        alert('Please sign in first.');
+        window.location.assign('/admin');
         return;
     }
 
     if (!isAdmin(currentUser)) {
         alert('Admin access only.');
-        return;
-    }
-
-    if (!isAdminRoutePath()) {
-        window.location.assign('/admin');
         return;
     }
 
@@ -582,47 +537,6 @@ function sanitizeNumber(value, defaultValue = 0) {
 async function initializeUser(user) {
     try {
         currentUserUID = user.uid;
-
-        if (isCloudflareBackendActive()) {
-            await loadSettings();
-            if (encryptionManager.isEncryptionEnabled()) {
-                const modal = document.getElementById('unlockModal');
-                modal.style.display = 'flex';
-                modal.classList.add('active');
-            } else {
-                await loadData();
-            }
-            return;
-        }
-
-        const profileRef = collection(db, "users", user.uid, "profile");
-        const profileSnapshot = await getDocs(profileRef);
-
-        if (profileSnapshot.empty) {
-            await addDoc(collection(db, "users", user.uid, "profile"), {
-                email: user.email,
-                displayName: user.displayName || "User",
-                createdAt: new Date(),
-                role: "user",
-                status: "active"
-            });
-            await addDoc(collection(db, "users", user.uid, "settings"), {
-                currency: "₹",  // ← Changed from "INR" to "₹"
-                theme: "dark",
-                locale: "en-IN",
-                dateFormat: "DD/MM/YYYY",
-                notifications: true
-            });
-        }
-
-        // LOAD USER'S CURRENCY SETTING
-        const settingsRef = collection(db, "users", user.uid, "settings");
-        const settingsSnapshot = await getDocs(settingsRef);
-        if (!settingsSnapshot.empty) {
-            const userSettings = settingsSnapshot.docs[0].data();
-            currentCurrency = userSettings.currency || '₹';
-        }
-
         await loadSettings();
 
         // ============================================
@@ -660,7 +574,7 @@ async function initializeUser(user) {
             }
         });
 
-        // Settings (loaded from Firestore)
+        // Settings (loaded from Cloudflare snapshot)
         var gadgetCategories = [];
         var gamePlatforms = [];
         var gameGenres = [];
@@ -669,41 +583,11 @@ async function initializeUser(user) {
         var gameMetadataCatalog = [];
         var gameMetadataEditingIndex = -1;
 
-       // Authentication State Management
-onAuthStateChanged(auth, async (user) => {
+       // Authentication State Management (Cloudflare Access)
+async function bootstrapCloudflareSession() {
     try {
-        document.getElementById('loadingScreen').style.display = 'none';
-
-        if (user) {
-            dataBackendMode = 'firebase';
-            cloudflareIdentityPromise = null;
-            cloudflareSessionInitialized = false;
-            cloudflareSnapshotCache = null;
-
-            currentUser = user;
-            currentUserUID = user.uid;
-
-            applySignedInUserUI(user);
-
-            // Initialize user data
-            await initializeUser(user);
-
-            if (isAdminRoutePath()) {
-                if (isAdmin(user)) {
-                    if (typeof window.showSection === 'function') {
-                        window.showSection('admin');
-                    }
-                } else {
-                    alert('This account is not an admin. Sign out and sign in with your admin email.');
-                    window.history.replaceState({}, '', '/');
-                    if (typeof window.showSection === 'function') {
-                        window.showSection('dashboard');
-                    }
-                }
-            }
-
-            return;
-        }
+        dataBackendMode = 'cloudflare';
+        cloudflareSnapshotCache = null;
 
         if (!cloudflareIdentityPromise) {
             cloudflareIdentityPromise = fetchCloudflareIdentity();
@@ -713,123 +597,72 @@ onAuthStateChanged(auth, async (user) => {
             cloudflareIdentityPromise = null;
         }
 
-        if (cloudflareUser) {
-            dataBackendMode = 'cloudflare';
-            currentUser = cloudflareUser;
-            currentUserUID = cloudflareUser.uid;
-            applySignedInUserUI(cloudflareUser);
+        if (!cloudflareUser) {
+            currentUser = null;
+            currentUserUID = null;
+            hideAdminNavItems();
 
-            if (!cloudflareSessionInitialized) {
-                await initializeUser(cloudflareUser);
-                cloudflareSessionInitialized = true;
-            }
+            const loginScreen = document.getElementById('loginScreen');
+            const mainApp = document.getElementById('mainApp');
 
-            if (isAdminRoutePath()) {
-                if (isAdmin(cloudflareUser)) {
-                    if (typeof window.showSection === 'function') {
-                        window.showSection('admin');
-                    }
-                } else {
-                    alert('This account is not an admin. Sign in with your admin email in Cloudflare Access.');
-                    window.history.replaceState({}, '', '/');
-                    if (typeof window.showSection === 'function') {
-                        window.showSection('dashboard');
+            if (loginScreen) {
+                loginScreen.style.display = 'flex';
+                loginScreen.style.visibility = 'visible';
+                loginScreen.style.opacity = '1';
+                if (isAdminRoutePath()) {
+                    const errorDiv = document.getElementById('loginError');
+                    if (errorDiv) {
+                        errorDiv.textContent = 'Admin area: sign in with your admin account to continue.';
+                        errorDiv.style.display = 'block';
                     }
                 }
             }
 
+            if (mainApp) {
+                mainApp.style.display = 'none';
+            }
             return;
         }
 
-        // User not logged in
-        dataBackendMode = 'firebase';
-        currentUser = null;
-        currentUserUID = null;
-        cloudflareSessionInitialized = false;
+        currentUser = cloudflareUser;
+        currentUserUID = cloudflareUser.uid;
+        applySignedInUserUI(cloudflareUser);
 
-        // Hide admin panel
-        hideAdminNavItems();
+        if (isAdminRoutePath()) {
+            if (isAdmin(cloudflareUser)) {
+                if (typeof window.showSection === 'function') {
+                    window.showSection('admin');
+                }
+            } else {
+                alert('This account is not an admin. Sign in with your admin email in Cloudflare Access.');
+                window.history.replaceState({}, '', '/');
+                if (typeof window.showSection === 'function') {
+                    window.showSection('dashboard');
+                }
+            }
+        }
 
+        await initializeUser(cloudflareUser);
+    } catch (error) {
         const loginScreen = document.getElementById('loginScreen');
         const mainApp = document.getElementById('mainApp');
-
-        if (loginScreen) {
-            loginScreen.style.display = 'flex';
-            loginScreen.style.visibility = 'visible';
-            loginScreen.style.opacity = '1';
-            if (isAdminRoutePath()) {
-                const errorDiv = document.getElementById('loginError');
-                if (errorDiv) {
-                    errorDiv.textContent = 'Admin area: sign in with your admin account to continue.';
-                    errorDiv.style.display = 'block';
-                }
-            }
-        }
-
-        if (mainApp) {
-            mainApp.style.display = 'none';
-        }
-    } catch (error) {
-        // Ensure loading screen is hidden and login screen is shown even on error
-        document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
+        if (loginScreen) loginScreen.style.display = 'flex';
+        if (mainApp) mainApp.style.display = 'none';
+    } finally {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) loadingScreen.style.display = 'none';
     }
-});
+}
 
-        // Google Sign In (Enhanced with User Profile Creation)
-        // Wait for DOM to be ready
+bootstrapCloudflareSession();
+
+        // Login button for Cloudflare Access bootstrap
         setTimeout(() => {
-            const signInBtn = document.getElementById('googleSignInBtn');
+            const signInBtn = document.getElementById('accessSignInBtn');
             if (signInBtn) {
-                signInBtn.addEventListener('click', async () => {
-    try {
-        if (isCloudflareBackendActive()) {
-            window.location.reload();
-            return;
-        }
-        document.getElementById('loginError').style.display = 'none';
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-
-
-        // Create or update user profile
-        const userProfileRef = doc(db, 'userProfiles', user.uid);
-        const userProfileSnap = await getDoc(userProfileRef);
-
-        if (!userProfileSnap.exists()) {
-            // New user - create profile
-            await setDoc(userProfileRef, {
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                createdAt: new Date().toISOString(),
-                blocked: false
-            });
-        } else {
-            // Existing user - check if blocked
-            const userData = userProfileSnap.data();
-            if (userData.blocked) {
-                await signOut(auth);
-                const errorDiv = document.getElementById('loginError');
-                errorDiv.textContent = 'Your account has been blocked. Please contact support.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            // Update last login
-            await updateDoc(userProfileRef, {
-                lastLogin: new Date().toISOString()
-            });
-        }
-
-    } catch (error) {
-        const errorDiv = document.getElementById('loginError');
-        errorDiv.textContent = `Sign in failed: ${error.message}`;
-        errorDiv.style.display = 'block';
-    }
-});
-            } else {
+                signInBtn.addEventListener('click', () => {
+                    window.location.assign('/admin');
+                });
             }
         }, 100);
 
@@ -848,8 +681,6 @@ onAuthStateChanged(auth, async (user) => {
                     window.location.href = `/cdn-cgi/access/logout?returnTo=${returnTo}`;
                     return;
                 }
-
-                await signOut(auth);
             } catch (error) {
                 alert('Failed to sign out: ' + error.message);
             }
@@ -892,95 +723,16 @@ async function loadData() {
             }));
         };
 
-        let loadedGadgets = [];
-        let loadedGames = [];
-        let loadedDigitalPurchases = [];
+        const snapshot = await fetchCloudflareSnapshot();
+        const dataRoot = snapshot && typeof snapshot === 'object' && snapshot.data && typeof snapshot.data === 'object'
+            ? snapshot.data
+            : {};
 
-        if (isCloudflareBackendActive()) {
-            const snapshot = await fetchCloudflareSnapshot();
-            const dataRoot = snapshot && typeof snapshot === 'object' && snapshot.data && typeof snapshot.data === 'object'
-                ? snapshot.data
-                : {};
-
-            [loadedGadgets, loadedGames, loadedDigitalPurchases] = await Promise.all([
-                mapSnapshotItems(dataRoot.gadgets, 'g', true),
-                mapSnapshotItems(dataRoot.games, 'gm', true),
-                mapSnapshotItems(dataRoot.digitalPurchases, 'd', false)
-            ]);
-        } else {
-            // Fetch all collections in parallel to reduce dashboard wait time.
-            const [gadgetsSnapshot, gamesSnapshot, digitalSnapshot] = await Promise.all([
-                getDocs(collection(db, 'users', currentUserUID, 'gadgets')),
-                getDocs(collection(db, 'users', currentUserUID, 'games')),
-                getDocs(collection(db, 'users', currentUserUID, 'digitalPurchases'))
-            ]);
-
-            const gadgetDocsPromise = Promise.all(gadgetsSnapshot.docs.map(async docSnap => {
-                try {
-                    const docData = docSnap.data();
-                    const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
-                        ? await decryptData(docData)
-                        : docData;
-                    if (!data.status) {
-                        data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
-                    }
-                    return {
-                        firestoreId: docSnap.id,
-                        ...data
-                    };
-                } catch (error) {
-                    return {
-                        firestoreId: docSnap.id,
-                        ...docSnap.data()
-                    };
-                }
-            }));
-
-            const gameDocsPromise = Promise.all(gamesSnapshot.docs.map(async docSnap => {
-                try {
-                    const docData = docSnap.data();
-                    const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
-                        ? await decryptData(docData)
-                        : docData;
-                    if (!data.status) {
-                        data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
-                    }
-                    return {
-                        firestoreId: docSnap.id,
-                        ...data
-                    };
-                } catch (error) {
-                    return {
-                        firestoreId: docSnap.id,
-                        ...docSnap.data()
-                    };
-                }
-            }));
-
-            const digitalDocsPromise = Promise.all(digitalSnapshot.docs.map(async docSnap => {
-                try {
-                    const docData = docSnap.data();
-                    const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
-                        ? await decryptData(docData)
-                        : docData;
-                    return {
-                        firestoreId: docSnap.id,
-                        ...data
-                    };
-                } catch (error) {
-                    return {
-                        firestoreId: docSnap.id,
-                        ...docSnap.data()
-                    };
-                }
-            }));
-
-            [loadedGadgets, loadedGames, loadedDigitalPurchases] = await Promise.all([
-                gadgetDocsPromise,
-                gameDocsPromise,
-                digitalDocsPromise
-            ]);
-        }
+        const [loadedGadgets, loadedGames, loadedDigitalPurchases] = await Promise.all([
+            mapSnapshotItems(dataRoot.gadgets, 'g', true),
+            mapSnapshotItems(dataRoot.games, 'gm', true),
+            mapSnapshotItems(dataRoot.digitalPurchases, 'd', false)
+        ]);
 
         gadgets = loadedGadgets
             .map(g => ({ ...g, category: normalizeLabel(g.category || 'Other') || 'Other' }))
@@ -1006,8 +758,8 @@ async function loadData() {
 
         // More detailed error message
         let errorMsg = 'Error loading data. ';
-        if (error.code === 'failed-precondition') {
-            errorMsg += 'Database index missing. Please contact support.';
+        if (error && error.message && error.message.includes('missing_access_identity')) {
+            errorMsg += 'Cloudflare Access session not found. Please sign in again.';
         } else if (error.message && error.message.includes('locked')) {
             errorMsg += 'Please unlock your data first.';
         } else {
@@ -1726,36 +1478,10 @@ async function loadData() {
 async function loadSettings() {
 
     try {
-        let settings = null;
-
-        if (isCloudflareBackendActive()) {
-            const snapshot = await fetchCloudflareSnapshot();
-            settings = snapshot && snapshot.settings && typeof snapshot.settings === 'object'
-                ? snapshot.settings
-                : {};
-        } else {
-            const settingsRef = doc(db, 'settings', 'appConfig');
-            const settingsSnap = await getDoc(settingsRef);
-
-            if (settingsSnap.exists()) {
-                settings = settingsSnap.data();
-            } else {
-                // Create default settings ONCE
-                const defaultSettings = {
-                    gadgetCategories: getDefaultGadgetCategories(),
-                    gamePlatforms: getDefaultGamePlatforms(),
-                    gameGenres: getDefaultGameGenres(),
-                    digitalTypes: getDefaultDigitalTypes(),
-                    customIcons: [],
-                    gameMetadataCatalog: []
-                };
-
-                await setDoc(settingsRef, defaultSettings);
-                settings = defaultSettings;
-            }
-        }
-
-        settings = settings || {};
+        const snapshot = await fetchCloudflareSnapshot();
+        const settings = snapshot && snapshot.settings && typeof snapshot.settings === 'object'
+            ? snapshot.settings
+            : {};
 
         currentCurrency = settings.currency || currentCurrency || '₹';
         gadgetCategories = (settings.gadgetCategories || getDefaultGadgetCategories())
@@ -1812,15 +1538,10 @@ async function loadSettings() {
             gameMetadataCatalog = payload.gameMetadataCatalog;
         }
 
-        if (isCloudflareBackendActive()) {
-            await persistCloudflareSnapshot({
-                source: 'cloudflare-web-settings',
-                includeAppConfig: true
-            });
-        } else {
-            const settingsRef = doc(db, 'settings', 'appConfig');
-            await setDoc(settingsRef, payload, { merge: true });
-        }
+        await persistCloudflareSnapshot({
+            source: 'cloudflare-web-settings',
+            includeAppConfig: true
+        });
 
         updateAllDropdowns();
         renderSettingsLists();
@@ -2655,10 +2376,6 @@ async function loadSettings() {
     }
 
     if (section === 'admin') {
-        if (!isAdminRoutePath()) {
-            window.location.assign('/admin');
-            return;
-        }
         syncPathForSection('admin');
     } else {
         syncPathForSection(section);
@@ -2702,7 +2419,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
         const gadgetToSave = await encryptData(gadget);
         
-        // Check size before saving (Firestore limit is 1MB)
+        // Check payload size before saving (keep under ~1MB for safety)
         const gadgetSize = new Blob([JSON.stringify(gadgetToSave)]).size;
         if (gadgetSize > 900000) { // 900KB to be safe
             throw new Error('Image is too large. Please use a smaller image.');
@@ -2711,28 +2428,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         if (window.editingGadgetId) {
             // UPDATE existing gadget
             const editingGadgetId = window.editingGadgetId;
-            if (isCloudflareBackendActive()) {
-                await saveCloudflareCollectionItem('gadgets', gadget, editingGadgetId);
-            } else {
-                await updateDoc(
-                    doc(db, 'users', currentUserUID, 'gadgets', editingGadgetId),
-                    gadgetToSave
-                );
-                upsertLocalCollectionItem('gadgets', { firestoreId: editingGadgetId, ...gadget });
-            }
+            await saveCloudflareCollectionItem('gadgets', gadget, editingGadgetId);
             window.editingGadgetId = null;
             if (submitBtn) submitBtn.textContent = 'Add to Collection';
         } else {
             // ADD new gadget
-            if (isCloudflareBackendActive()) {
-                await saveCloudflareCollectionItem('gadgets', gadget);
-            } else {
-                const gadgetDocRef = await addDoc(
-                    collection(db, 'users', currentUserUID, 'gadgets'),
-                    gadgetToSave
-                );
-                upsertLocalCollectionItem('gadgets', { firestoreId: gadgetDocRef.id, ...gadget });
-            }
+            await saveCloudflareCollectionItem('gadgets', gadget);
         }
         e.target.reset();
         document.getElementById('g-date').valueAsDate = new Date();
@@ -3504,12 +3205,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
             deleteCallback = async () => {
                 try {
-                    if (isCloudflareBackendActive()) {
-                        await deleteCloudflareCollectionItem('gadgets', firestoreId);
-                    } else {
-                        await deleteDoc(doc(db, 'users', currentUserUID, 'gadgets', firestoreId));
-                        removeLocalCollectionItem('gadgets', firestoreId);
-                    }
+                    await deleteCloudflareCollectionItem('gadgets', firestoreId);
                 } catch (error) {
                     alert('Error deleting gadget. Please try again.');
                 }
@@ -3598,22 +3294,14 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
                 const gadgetToSave = await encryptData(gadget);
                 
-                // Check size before saving (Firestore limit is 1MB)
+                // Check payload size before saving (keep under ~1MB for safety)
                 const gadgetSize = new Blob([JSON.stringify(gadgetToSave)]).size;
                 if (gadgetSize > 900000) { // 900KB to be safe
                     throw new Error('Image is too large. Please use a smaller image.');
                 }
                 
                 const gadgetIdToUpdate = window.editingGadgetId;
-                if (isCloudflareBackendActive()) {
-                    await saveCloudflareCollectionItem('gadgets', gadget, gadgetIdToUpdate);
-                } else {
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'gadgets', gadgetIdToUpdate),
-                        gadgetToSave
-                    );
-                    upsertLocalCollectionItem('gadgets', { firestoreId: gadgetIdToUpdate, ...gadget });
-                }
+                await saveCloudflareCollectionItem('gadgets', gadget, gadgetIdToUpdate);
                 closeGadgetEditModal();
             } catch (error) {
                 // Re-enable button
@@ -3665,16 +3353,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
     // UPDATE existing game (do NOT delete)
     const editingGameId = window.editingGameId;
-    if (isCloudflareBackendActive()) {
-        await saveCloudflareCollectionItem('games', game, editingGameId);
-    } else {
-        const gameToSave = await encryptData(game);
-        await updateDoc(
-            doc(db, 'users', currentUserUID, 'games', editingGameId),
-            gameToSave
-        );
-        upsertLocalCollectionItem('games', { firestoreId: editingGameId, ...game });
-    }
+    await saveCloudflareCollectionItem('games', game, editingGameId);
 
     window.editingGameId = null;
     document.querySelector('#game-form .btn').textContent = 'Add to Collection';
@@ -3682,16 +3361,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 } else {
 
     // ADD new game
-    if (isCloudflareBackendActive()) {
-        await saveCloudflareCollectionItem('games', game);
-    } else {
-        const gameToSave = await encryptData(game);
-        const gameDocRef = await addDoc(
-            collection(db, 'users', currentUserUID, 'games'),
-            gameToSave
-        );
-        upsertLocalCollectionItem('games', { firestoreId: gameDocRef.id, ...game });
-    }
+    await saveCloudflareCollectionItem('games', game);
 }
 e.target.reset();
 document.getElementById('gm-buy-date').valueAsDate = new Date();
@@ -3862,12 +3532,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             deleteCallback = async () => {
                 try {
-                    if (isCloudflareBackendActive()) {
-                        await deleteCloudflareCollectionItem('games', firestoreId);
-                    } else {
-                        await deleteDoc(doc(db, 'users', currentUserUID, 'games', firestoreId));
-                        removeLocalCollectionItem('games', firestoreId);
-                    }
+                    await deleteCloudflareCollectionItem('games', firestoreId);
                 } catch (error) {
                     alert('Error deleting game. Please try again.');
                 }
@@ -3954,16 +3619,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             try {
                 const gameIdToUpdate = window.editingGameId;
-                if (isCloudflareBackendActive()) {
-                    await saveCloudflareCollectionItem('games', game, gameIdToUpdate);
-                } else {
-                    const gameToSave = await encryptData(game);
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'games', gameIdToUpdate),
-                        gameToSave
-                    );
-                    upsertLocalCollectionItem('games', { firestoreId: gameIdToUpdate, ...game });
-                }
+                await saveCloudflareCollectionItem('games', game, gameIdToUpdate);
                 closeGameEditModal();
             } catch (error) {
                 alert('Error updating game. Please try again.');
@@ -4289,32 +3945,14 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                if (window.editingDigitalId) {
 
                 const editingDigitalId = window.editingDigitalId;
-                if (isCloudflareBackendActive()) {
-                    await saveCloudflareCollectionItem('digitalPurchases', digital, editingDigitalId);
-                } else {
-                    const digitalToSave = await encryptData(digital);
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'digitalPurchases', editingDigitalId),
-                        digitalToSave
-                    );
-                    upsertLocalCollectionItem('digitalPurchases', { firestoreId: editingDigitalId, ...digital });
-                }
+                await saveCloudflareCollectionItem('digitalPurchases', digital, editingDigitalId);
 
                 window.editingDigitalId = null;
                 document.querySelector('#digital-form .btn').textContent = 'Add Purchase';
 
                 } else {
 
-                if (isCloudflareBackendActive()) {
-                    await saveCloudflareCollectionItem('digitalPurchases', digital);
-                } else {
-                    const digitalToSave = await encryptData(digital);
-                    const digitalDocRef = await addDoc(
-                        collection(db, 'users', currentUserUID, 'digitalPurchases'),
-                        digitalToSave
-                    );
-                    upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalDocRef.id, ...digital });
-                }
+                await saveCloudflareCollectionItem('digitalPurchases', digital);
             }
             e.target.reset();
             document.getElementById('d-date').valueAsDate = new Date();
@@ -4515,12 +4153,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             deleteCallback = async () => {
                 try {
-                    if (isCloudflareBackendActive()) {
-                        await deleteCloudflareCollectionItem('digitalPurchases', firestoreId);
-                    } else {
-                        await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId));
-                        removeLocalCollectionItem('digitalPurchases', firestoreId);
-                    }
+                    await deleteCloudflareCollectionItem('digitalPurchases', firestoreId);
                 } catch (error) {
                     alert('Error deleting purchase. Please try again.');
                 }
@@ -4675,16 +4308,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             try {
                 const digitalIdToUpdate = window.editingDigitalId;
-                if (isCloudflareBackendActive()) {
-                    await saveCloudflareCollectionItem('digitalPurchases', digital, digitalIdToUpdate);
-                } else {
-                    const digitalToSave = await encryptData(digital);
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'digitalPurchases', digitalIdToUpdate),
-                        digitalToSave
-                    );
-                    upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalIdToUpdate, ...digital });
-                }
+                await saveCloudflareCollectionItem('digitalPurchases', digital, digitalIdToUpdate);
                 closeDigitalEditModal();
             } catch (error) {
                 alert('Error updating digital purchase. Please try again.');
@@ -5068,39 +4692,16 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
         async function persistImportItems(collectionName, items) {
             const imported = [];
 
-            if (isCloudflareBackendActive()) {
-                const prefixMap = {
-                    gadgets: 'g',
-                    games: 'gm',
-                    digitalPurchases: 'd'
-                };
-                const prefix = prefixMap[collectionName] || 'item';
-                for (const item of items) {
-                    imported.push({
-                        firestoreId: generateLocalItemId(prefix),
-                        ...item
-                    });
-                }
-                return imported;
-            }
-
-            const batchSize = 200;
-
-            for (let i = 0; i < items.length; i += batchSize) {
-                const chunk = items.slice(i, i + batchSize);
-                const batch = writeBatch(db);
-                const refs = [];
-
-                for (const item of chunk) {
-                    const ref = doc(collection(db, 'users', currentUserUID, collectionName));
-                    const itemToSave = await encryptData(item);
-                    batch.set(ref, itemToSave);
-                    refs.push({ ref, item });
-                }
-
-                await batch.commit();
-                refs.forEach(entry => {
-                    imported.push({ firestoreId: entry.ref.id, ...entry.item });
+            const prefixMap = {
+                gadgets: 'g',
+                games: 'gm',
+                digitalPurchases: 'd'
+            };
+            const prefix = prefixMap[collectionName] || 'item';
+            for (const item of items) {
+                imported.push({
+                    firestoreId: generateLocalItemId(prefix),
+                    ...item
                 });
             }
 
@@ -5174,7 +4775,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 } else {
                     const importedItems = await persistImportItems(payload.collectionName, payload.items);
                     applyImportedItemsToLocalState(payload.type, importedItems);
-                    if (isCloudflareBackendActive() && importedItems.length > 0) {
+                    if (importedItems.length > 0) {
                         await persistCloudflareSnapshot({ source: 'cloudflare-web-import' });
                     }
                     updateAll();
@@ -5207,7 +4808,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             input.click();
         };
 
-        function buildCloudflareMigrationSnapshot(source = 'firebase-web') {
+        function buildCloudflareMigrationSnapshot(source = 'cloudflare-web') {
             return {
                 version: 1,
                 source,
@@ -5240,7 +4841,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 return;
             }
 
-            const snapshot = buildCloudflareMigrationSnapshot('firebase-web-backup');
+            const snapshot = buildCloudflareMigrationSnapshot('cloudflare-web-backup');
             const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -5258,7 +4859,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    source: snapshotPayload && snapshotPayload.source ? snapshotPayload.source : 'firebase-web',
+                    source: snapshotPayload && snapshotPayload.source ? snapshotPayload.source : 'cloudflare-web',
                     includeAppConfig,
                     snapshot: snapshotPayload
                 })
@@ -5288,7 +4889,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 return;
             }
 
-            const snapshot = buildCloudflareMigrationSnapshot('firebase-web-live');
+            const snapshot = buildCloudflareMigrationSnapshot('cloudflare-web-live');
             const counts = {
                 gadgets: snapshot.data.gadgets.length,
                 games: snapshot.data.games.length,
@@ -5322,7 +4923,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 try {
                     const raw = String(loadEvent && loadEvent.target ? (loadEvent.target.result || '') : '');
                     const parsed = JSON.parse(raw);
-                    const snapshot = buildCloudflareMigrationSnapshot('firebase-web-file');
+                    const snapshot = buildCloudflareMigrationSnapshot('cloudflare-web-file');
                     const sourceSnapshot = parsed && typeof parsed === 'object' ? parsed : {};
 
                     // Keep strict expected shape but preserve imported data where valid.
@@ -5927,53 +5528,24 @@ window.importDigitalCSV = function(event) {
                 await encryptionManager.setupNewUser(password);
 
                 // Re-encrypt all existing data
-                if (isCloudflareBackendActive()) {
-                    const encryptedSnapshot = buildCloudflareMigrationSnapshot('cloudflare-web-encrypted');
-                    encryptedSnapshot.data.gadgets = await Promise.all(gadgets.map(async (gadget) => ({
-                        firestoreId: gadget.firestoreId || generateLocalItemId('g'),
-                        ...(await encryptData(gadget))
-                    })));
-                    encryptedSnapshot.data.games = await Promise.all(games.map(async (game) => ({
-                        firestoreId: game.firestoreId || generateLocalItemId('gm'),
-                        ...(await encryptData(game))
-                    })));
-                    encryptedSnapshot.data.digitalPurchases = await Promise.all(digitalPurchases.map(async (digital) => ({
-                        firestoreId: digital.firestoreId || generateLocalItemId('d'),
-                        ...(await encryptData(digital))
-                    })));
+                const encryptedSnapshot = buildCloudflareMigrationSnapshot('cloudflare-web-encrypted');
+                encryptedSnapshot.data.gadgets = await Promise.all(gadgets.map(async (gadget) => ({
+                    firestoreId: gadget.firestoreId || generateLocalItemId('g'),
+                    ...(await encryptData(gadget))
+                })));
+                encryptedSnapshot.data.games = await Promise.all(games.map(async (game) => ({
+                    firestoreId: game.firestoreId || generateLocalItemId('gm'),
+                    ...(await encryptData(game))
+                })));
+                encryptedSnapshot.data.digitalPurchases = await Promise.all(digitalPurchases.map(async (digital) => ({
+                    firestoreId: digital.firestoreId || generateLocalItemId('d'),
+                    ...(await encryptData(digital))
+                })));
 
-                    await uploadSnapshotToCloudflare(encryptedSnapshot, {
-                        includeAppConfig: isAdmin(currentUser)
-                    });
-                    cloudflareSnapshotCache = encryptedSnapshot;
-                } else {
-                    // Re-save all gadgets with encryption
-                    for (const gadget of gadgets) {
-                        const encryptedData = await encryptData(gadget);
-                        await updateDoc(
-                            doc(db, 'users', currentUserUID, 'gadgets', gadget.firestoreId),
-                            encryptedData
-                        );
-                    }
-
-                    // Re-save all games with encryption
-                    for (const game of games) {
-                        const encryptedData = await encryptData(game);
-                        await updateDoc(
-                            doc(db, 'users', currentUserUID, 'games', game.firestoreId),
-                            encryptedData
-                        );
-                    }
-
-                    // Re-save all digital purchases with encryption
-                    for (const digital of digitalPurchases) {
-                        const encryptedData = await encryptData(digital);
-                        await updateDoc(
-                            doc(db, 'users', currentUserUID, 'digitalPurchases', digital.firestoreId),
-                            encryptedData
-                        );
-                    }
-                }
+                await uploadSnapshotToCloudflare(encryptedSnapshot, {
+                    includeAppConfig: isAdmin(currentUser)
+                });
+                cloudflareSnapshotCache = encryptedSnapshot;
 
                 document.body.classList.add('encrypted');
 
@@ -6069,4 +5641,4 @@ window.importDigitalCSV = function(event) {
         }
     }, 1000);
 
-    // Data will be loaded automatically after authentication via onAuthStateChanged
+    // Data loads automatically after Cloudflare session bootstrap
