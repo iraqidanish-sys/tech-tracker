@@ -5079,21 +5079,26 @@ async function loadSettings() {
     }
 }
 
-                // Create new settings document
-                async function saveSettings() {
+                // Create/update settings document
+                async function saveSettings(options = {}) {
 
     try {
 
         const settingsRef = doc(db, 'settings', 'appConfig');
-
-        await setDoc(settingsRef, {
+        const includeGameMetadataCatalog = options && options.includeGameMetadataCatalog === true;
+        const payload = {
             gadgetCategories,
             gamePlatforms,
             gameGenres,
             digitalTypes,
-            customIcons,
-            gameMetadataCatalog
-        });
+            customIcons
+        };
+
+        if (includeGameMetadataCatalog) {
+            payload.gameMetadataCatalog = gameMetadataCatalog;
+        }
+
+        await setDoc(settingsRef, payload, { merge: true });
 
         updateAllDropdowns();
         renderSettingsLists();
@@ -5565,7 +5570,7 @@ async function loadSettings() {
                 setGameMetadataEditorState(gameMetadataEditingIndex - 1);
             }
 
-            await saveSettings();
+            await saveSettings({ includeGameMetadataCatalog: true });
             setGameMetadataEditorStatus('Catalog entry deleted.', false);
         };
 
@@ -5598,7 +5603,7 @@ async function loadSettings() {
             }
 
             gameMetadataCatalog = normalizeGameMetadataCatalog(gameMetadataCatalog);
-            await saveSettings();
+            await saveSettings({ includeGameMetadataCatalog: true });
             window.clearGameMetadataCatalogEditor();
             setGameMetadataEditorStatus('Catalog entry saved.', false);
         };
@@ -8321,7 +8326,7 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                     });
 
                     gameMetadataCatalog = normalizeGameMetadataCatalog(Array.from(catalogMap.values()));
-                    await saveSettings();
+                    await saveSettings({ includeGameMetadataCatalog: true });
                     refreshGameMetadataCatalogUI();
                     importedCount = incomingCatalog.length;
                     importMessage = `Catalog merged. Added ${addedCount} new and updated ${updatedCount} existing entries. Total catalog size: ${gameMetadataCatalog.length}.`;
