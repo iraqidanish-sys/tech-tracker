@@ -264,14 +264,172 @@
         let currentUser = null;
         let currentUserUID = null;
         let currentCurrency = '₹';  // ← ADD THIS LINE
+        let dataBackendMode = 'firebase';
+        let cloudflareIdentityPromise = null;
+        let cloudflareSessionInitialized = false;
+        let cloudflareSnapshotCache = null;
+        let cloudflareSaveChain = Promise.resolve();
 
         // ========== ADMIN CONFIGURATION ==========
 const ADMIN_EMAILS = [
     'iraqidanish@gmail.com',  // ← REPLACE WITH YOUR ACTUAL EMAIL
-];
+].map((email) => String(email || '').trim().toLowerCase()).filter(Boolean);
+
+function normalizeEmail(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function isCloudflareBackendActive() {
+    return dataBackendMode === 'cloudflare';
+}
+
+function generateLocalItemId(prefix = 'item') {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function buildCloudflarePseudoUser(email) {
+    const normalized = normalizeEmail(email);
+    if (!normalized) return null;
+    const displayName = normalized.split('@')[0] || 'user';
+    return {
+        uid: `cf:${normalized}`,
+        email: normalized,
+        displayName,
+        photoURL: ''
+    };
+}
+
+async function fetchCloudflareIdentity() {
+    try {
+        const response = await fetch(`/api/v1/me?t=${Date.now()}`, {
+            method: 'GET',
+            cache: 'no-store',
+            credentials: 'same-origin'
+        });
+        if (!response.ok) return null;
+        const payload = await response.json();
+        const email = normalizeEmail(payload && payload.user ? payload.user.email : '');
+        return buildCloudflarePseudoUser(email);
+    } catch {
+        return null;
+    }
+}
+
+function hideAdminNavItems() {
+    const adminNav = document.getElementById('admin-nav');
+    if (adminNav) adminNav.style.display = 'none';
+    const adminBottomNav = document.getElementById('admin-bottom-nav');
+    if (adminBottomNav) adminBottomNav.style.display = 'none';
+    const profileMenuAdmin = document.getElementById('profileMenuAdmin');
+    if (profileMenuAdmin) profileMenuAdmin.style.display = 'none';
+}
+
+function applySignedInUserUI(user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('userInfo').style.display = 'block';
+
+    const displayName = user.displayName || user.email.split('@')[0];
+    document.getElementById('userEmail').textContent = user.email;
+
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar) {
+        if (user.photoURL) {
+            userAvatar.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" onerror="this.parentElement.textContent='${displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2)}'">`;
+        } else {
+            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            userAvatar.textContent = initials;
+        }
+    }
+
+    if (window.updateProfileMenu) window.updateProfileMenu(user);
+
+    if (isAdmin(user)) {
+        const adminNav = document.getElementById('admin-nav');
+        if (adminNav) adminNav.style.display = 'block';
+        const adminBottomNav = document.getElementById('admin-bottom-nav');
+        if (adminBottomNav) adminBottomNav.style.display = 'flex';
+        const profileMenuAdmin = document.getElementById('profileMenuAdmin');
+        if (profileMenuAdmin) profileMenuAdmin.style.display = 'flex';
+    } else {
+        hideAdminNavItems();
+    }
+}
+
+async function fetchCloudflareSnapshot(options = {}) {
+    const forceRefresh = options && options.forceRefresh === true;
+    if (!forceRefresh && cloudflareSnapshotCache) {
+        return cloudflareSnapshotCache;
+    }
+
+    const response = await fetch(`/api/v1/snapshot?t=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+        credentials: 'same-origin'
+    });
+
+    let payload = null;
+    try {
+        payload = await response.json();
+    } catch {
+        payload = null;
+    }
+
+    if (!response.ok) {
+        const message = payload && payload.message
+            ? payload.message
+            : 'Unable to load Cloudflare snapshot.';
+        throw new Error(message);
+    }
+
+    const snapshot = payload && payload.snapshot && typeof payload.snapshot === 'object'
+        ? payload.snapshot
+        : {};
+    cloudflareSnapshotCache = snapshot;
+    return snapshot;
+}
+
+async function persistCloudflareSnapshot(options = {}) {
+    if (!isCloudflareBackendActive()) return null;
+
+    const source = options && options.source ? String(options.source) : 'cloudflare-web-live';
+    const includeAppConfig = options && options.includeAppConfig === true && isAdmin(currentUser);
+
+    const saveTask = async function() {
+        const snapshotPayload = buildCloudflareMigrationSnapshot(source);
+        snapshotPayload.source = source;
+        await uploadSnapshotToCloudflare(snapshotPayload, { includeAppConfig });
+        cloudflareSnapshotCache = snapshotPayload;
+        return snapshotPayload;
+    };
+
+    cloudflareSaveChain = cloudflareSaveChain
+        .catch(() => null)
+        .then(saveTask);
+
+    return cloudflareSaveChain;
+}
+
+async function saveCloudflareCollectionItem(collectionName, item, existingId = '') {
+    const prefixMap = {
+        gadgets: 'g',
+        games: 'gm',
+        digitalPurchases: 'd'
+    };
+    const firestoreId = existingId || generateLocalItemId(prefixMap[collectionName] || 'item');
+    upsertLocalCollectionItem(collectionName, { firestoreId, ...item });
+    await persistCloudflareSnapshot({ source: 'cloudflare-web-live' });
+    return firestoreId;
+}
+
+async function deleteCloudflareCollectionItem(collectionName, firestoreId) {
+    removeLocalCollectionItem(collectionName, firestoreId);
+    await persistCloudflareSnapshot({ source: 'cloudflare-web-live' });
+}
 
 function isAdmin(user) {
-    return user && ADMIN_EMAILS.includes(user.email);
+    if (!user || !user.email) return false;
+    return ADMIN_EMAILS.includes(normalizeEmail(user.email));
 }
 
 function requireAdminAccess(actionText = 'perform this action') {
@@ -279,6 +437,44 @@ function requireAdminAccess(actionText = 'perform this action') {
     alert(`Admin access is required to ${actionText}.`);
     return false;
 }
+
+function normalizeAppPath(pathname = window.location.pathname) {
+    const rawPath = String(pathname || '/').split('?')[0].split('#')[0];
+    const cleanPath = rawPath.replace(/\/+$/, '');
+    return cleanPath || '/';
+}
+
+function isAdminRoutePath(pathname = window.location.pathname) {
+    return normalizeAppPath(pathname) === '/admin';
+}
+
+function syncPathForSection(section) {
+    const targetPath = section === 'admin' ? '/admin' : '/';
+    if (normalizeAppPath() !== targetPath) {
+        window.history.replaceState({}, '', targetPath);
+    }
+}
+
+window.openAdminPanel = function() {
+    if (!currentUser) {
+        alert('Please sign in first.');
+        return;
+    }
+
+    if (!isAdmin(currentUser)) {
+        alert('Admin access only.');
+        return;
+    }
+
+    if (!isAdminRoutePath()) {
+        window.location.assign('/admin');
+        return;
+    }
+
+    if (typeof window.showSection === 'function') {
+        window.showSection('admin');
+    }
+};
 
 // ========== INPUT SANITIZATION ==========
 
@@ -391,6 +587,19 @@ function sanitizeNumber(value, defaultValue = 0) {
 async function initializeUser(user) {
     try {
         currentUserUID = user.uid;
+
+        if (isCloudflareBackendActive()) {
+            await loadSettings();
+            if (encryptionManager.isEncryptionEnabled()) {
+                const modal = document.getElementById('unlockModal');
+                modal.style.display = 'flex';
+                modal.classList.add('active');
+            } else {
+                await loadData();
+            }
+            return;
+        }
+
         const profileRef = collection(db, "users", user.uid, "profile");
         const profileSnapshot = await getDocs(profileRef);
 
@@ -471,83 +680,100 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById('loadingScreen').style.display = 'none';
 
         if (user) {
+            dataBackendMode = 'firebase';
+            cloudflareIdentityPromise = null;
+            cloudflareSessionInitialized = false;
+            cloudflareSnapshotCache = null;
 
             currentUser = user;
             currentUserUID = user.uid;
 
-
-            // Check if admin (for future admin panel if needed)
-            if (isAdmin(user)) {
-            }
-
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('userInfo').style.display = 'block';
-
-            // Set user name and email
-            const displayName = user.displayName || user.email.split('@')[0];
-            document.getElementById('userEmail').textContent = user.email;
-
-            // Update avatar with photo or initials
-            const userAvatar = document.getElementById('userAvatar');
-            if (userAvatar) {
-                if (user.photoURL) {
-                    userAvatar.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" onerror="this.parentElement.textContent='${displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2)}'">`;
-                } else {
-                    const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                    userAvatar.textContent = initials;
-                }
-            }
-
-            // Populate profile dropdown
-            if (window.updateProfileMenu) window.updateProfileMenu(user);
-
-            // Show admin nav if admin
-            if (isAdmin(user)) {
-                const adminNav = document.getElementById('admin-nav');
-                if (adminNav) adminNav.style.display = 'block';
-
-                // Show admin in bottom nav (mobile)
-                const adminBottomNav = document.getElementById('admin-bottom-nav');
-                if (adminBottomNav) adminBottomNav.style.display = 'flex';
-
-                // Also show admin option in profile menu
-                const profileMenuAdmin = document.getElementById('profileMenuAdmin');
-                if (profileMenuAdmin) profileMenuAdmin.style.display = 'flex';
-            }
+            applySignedInUserUI(user);
 
             // Initialize user data
             await initializeUser(user);
 
-        } else {
-            // User not logged in
-            currentUser = null;
-            currentUserUID = null;
+            if (isAdminRoutePath()) {
+                if (isAdmin(user)) {
+                    if (typeof window.showSection === 'function') {
+                        window.showSection('admin');
+                    }
+                } else {
+                    alert('This account is not an admin. Sign out and sign in with your admin email.');
+                    window.history.replaceState({}, '', '/');
+                    if (typeof window.showSection === 'function') {
+                        window.showSection('dashboard');
+                    }
+                }
+            }
 
+            return;
+        }
 
-            // Hide admin panel
-            const adminNav = document.getElementById('admin-nav');
-        if (adminNav) adminNav.style.display = 'none';
+        if (!cloudflareIdentityPromise) {
+            cloudflareIdentityPromise = fetchCloudflareIdentity();
+        }
+        const cloudflareUser = await cloudflareIdentityPromise;
+        if (!cloudflareUser) {
+            cloudflareIdentityPromise = null;
+        }
 
-        // Hide admin bottom nav
-        const adminBottomNav = document.getElementById('admin-bottom-nav');
-        if (adminBottomNav) adminBottomNav.style.display = 'none';
+        if (cloudflareUser) {
+            dataBackendMode = 'cloudflare';
+            currentUser = cloudflareUser;
+            currentUserUID = cloudflareUser.uid;
+            applySignedInUserUI(cloudflareUser);
+
+            if (!cloudflareSessionInitialized) {
+                await initializeUser(cloudflareUser);
+                cloudflareSessionInitialized = true;
+            }
+
+            if (isAdminRoutePath()) {
+                if (isAdmin(cloudflareUser)) {
+                    if (typeof window.showSection === 'function') {
+                        window.showSection('admin');
+                    }
+                } else {
+                    alert('This account is not an admin. Sign in with your admin email in Cloudflare Access.');
+                    window.history.replaceState({}, '', '/');
+                    if (typeof window.showSection === 'function') {
+                        window.showSection('dashboard');
+                    }
+                }
+            }
+
+            return;
+        }
+
+        // User not logged in
+        dataBackendMode = 'firebase';
+        currentUser = null;
+        currentUserUID = null;
+        cloudflareSessionInitialized = false;
+
+        // Hide admin panel
+        hideAdminNavItems();
 
         const loginScreen = document.getElementById('loginScreen');
         const mainApp = document.getElementById('mainApp');
-
 
         if (loginScreen) {
             loginScreen.style.display = 'flex';
             loginScreen.style.visibility = 'visible';
             loginScreen.style.opacity = '1';
-        } else {
+            if (isAdminRoutePath()) {
+                const errorDiv = document.getElementById('loginError');
+                if (errorDiv) {
+                    errorDiv.textContent = 'Admin area: sign in with your admin account to continue.';
+                    errorDiv.style.display = 'block';
+                }
+            }
         }
 
         if (mainApp) {
             mainApp.style.display = 'none';
         }
-    }
     } catch (error) {
         // Ensure loading screen is hidden and login screen is shown even on error
         document.getElementById('loadingScreen').style.display = 'none';
@@ -563,6 +789,10 @@ onAuthStateChanged(auth, async (user) => {
             if (signInBtn) {
                 signInBtn.addEventListener('click', async () => {
     try {
+        if (isCloudflareBackendActive()) {
+            window.location.reload();
+            return;
+        }
         document.getElementById('loginError').style.display = 'none';
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
@@ -618,6 +848,12 @@ onAuthStateChanged(auth, async (user) => {
                 encryptionManager.lockData();
                 document.body.classList.remove('encrypted');
 
+                if (isCloudflareBackendActive()) {
+                    const returnTo = encodeURIComponent(`${window.location.origin}/`);
+                    window.location.href = `/cdn-cgi/access/logout?returnTo=${returnTo}`;
+                    return;
+                }
+
                 await signOut(auth);
             } catch (error) {
                 alert('Failed to sign out: ' + error.message);
@@ -631,85 +867,125 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('sidebar').classList.toggle('mobile-open');
         };
 
-      // Load user data from Firestore
+      // Load user data from backend
 async function loadData() {
 
     if (!currentUserUID) return;
 
     try {
-
-        // Fetch all collections in parallel to reduce dashboard wait time.
-        const [gadgetsSnapshot, gamesSnapshot, digitalSnapshot] = await Promise.all([
-            getDocs(collection(db, 'users', currentUserUID, 'gadgets')),
-            getDocs(collection(db, 'users', currentUserUID, 'games')),
-            getDocs(collection(db, 'users', currentUserUID, 'digitalPurchases'))
-        ]);
-
-        const gadgetDocsPromise = Promise.all(gadgetsSnapshot.docs.map(async docSnap => {
-            try {
-                const docData = docSnap.data();
-                const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
-                    ? await decryptData(docData)
-                    : docData;
-                if (!data.status) {
-                    data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+        const mapSnapshotItems = async function(items, prefix, includeStatusFix) {
+            const rows = Array.isArray(items) ? items : [];
+            return Promise.all(rows.map(async (row) => {
+                const raw = row && typeof row === 'object' ? row : {};
+                try {
+                    const data = (raw && raw.encrypted && encryptionManager.isUnlocked)
+                        ? await decryptData(raw)
+                        : raw;
+                    if (includeStatusFix && !data.status) {
+                        data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+                    }
+                    return {
+                        firestoreId: raw.firestoreId || generateLocalItemId(prefix),
+                        ...data
+                    };
+                } catch {
+                    return {
+                        firestoreId: raw.firestoreId || generateLocalItemId(prefix),
+                        ...raw
+                    };
                 }
-                return {
-                    firestoreId: docSnap.id,
-                    ...data
-                };
-            } catch (error) {
-                return {
-                    firestoreId: docSnap.id,
-                    ...docSnap.data()
-                };
-            }
-        }));
+            }));
+        };
 
-        const gameDocsPromise = Promise.all(gamesSnapshot.docs.map(async docSnap => {
-            try {
-                const docData = docSnap.data();
-                const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
-                    ? await decryptData(docData)
-                    : docData;
-                if (!data.status) {
-                    data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+        let loadedGadgets = [];
+        let loadedGames = [];
+        let loadedDigitalPurchases = [];
+
+        if (isCloudflareBackendActive()) {
+            const snapshot = await fetchCloudflareSnapshot();
+            const dataRoot = snapshot && typeof snapshot === 'object' && snapshot.data && typeof snapshot.data === 'object'
+                ? snapshot.data
+                : {};
+
+            [loadedGadgets, loadedGames, loadedDigitalPurchases] = await Promise.all([
+                mapSnapshotItems(dataRoot.gadgets, 'g', true),
+                mapSnapshotItems(dataRoot.games, 'gm', true),
+                mapSnapshotItems(dataRoot.digitalPurchases, 'd', false)
+            ]);
+        } else {
+            // Fetch all collections in parallel to reduce dashboard wait time.
+            const [gadgetsSnapshot, gamesSnapshot, digitalSnapshot] = await Promise.all([
+                getDocs(collection(db, 'users', currentUserUID, 'gadgets')),
+                getDocs(collection(db, 'users', currentUserUID, 'games')),
+                getDocs(collection(db, 'users', currentUserUID, 'digitalPurchases'))
+            ]);
+
+            const gadgetDocsPromise = Promise.all(gadgetsSnapshot.docs.map(async docSnap => {
+                try {
+                    const docData = docSnap.data();
+                    const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
+                        ? await decryptData(docData)
+                        : docData;
+                    if (!data.status) {
+                        data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+                    }
+                    return {
+                        firestoreId: docSnap.id,
+                        ...data
+                    };
+                } catch (error) {
+                    return {
+                        firestoreId: docSnap.id,
+                        ...docSnap.data()
+                    };
                 }
-                return {
-                    firestoreId: docSnap.id,
-                    ...data
-                };
-            } catch (error) {
-                return {
-                    firestoreId: docSnap.id,
-                    ...docSnap.data()
-                };
-            }
-        }));
+            }));
 
-        const digitalDocsPromise = Promise.all(digitalSnapshot.docs.map(async docSnap => {
-            try {
-                const docData = docSnap.data();
-                const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
-                    ? await decryptData(docData)
-                    : docData;
-                return {
-                    firestoreId: docSnap.id,
-                    ...data
-                };
-            } catch (error) {
-                return {
-                    firestoreId: docSnap.id,
-                    ...docSnap.data()
-                };
-            }
-        }));
+            const gameDocsPromise = Promise.all(gamesSnapshot.docs.map(async docSnap => {
+                try {
+                    const docData = docSnap.data();
+                    const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
+                        ? await decryptData(docData)
+                        : docData;
+                    if (!data.status) {
+                        data.status = (data.sellPrice && data.sellDate) ? 'sold' : 'owned';
+                    }
+                    return {
+                        firestoreId: docSnap.id,
+                        ...data
+                    };
+                } catch (error) {
+                    return {
+                        firestoreId: docSnap.id,
+                        ...docSnap.data()
+                    };
+                }
+            }));
 
-        const [loadedGadgets, loadedGames, loadedDigitalPurchases] = await Promise.all([
-            gadgetDocsPromise,
-            gameDocsPromise,
-            digitalDocsPromise
-        ]);
+            const digitalDocsPromise = Promise.all(digitalSnapshot.docs.map(async docSnap => {
+                try {
+                    const docData = docSnap.data();
+                    const data = (docData && docData.encrypted && encryptionManager.isUnlocked)
+                        ? await decryptData(docData)
+                        : docData;
+                    return {
+                        firestoreId: docSnap.id,
+                        ...data
+                    };
+                } catch (error) {
+                    return {
+                        firestoreId: docSnap.id,
+                        ...docSnap.data()
+                    };
+                }
+            }));
+
+            [loadedGadgets, loadedGames, loadedDigitalPurchases] = await Promise.all([
+                gadgetDocsPromise,
+                gameDocsPromise,
+                digitalDocsPromise
+            ]);
+        }
 
         gadgets = loadedGadgets
             .map(g => ({ ...g, category: normalizeLabel(g.category || 'Other') || 'Other' }))
@@ -737,7 +1013,7 @@ async function loadData() {
         let errorMsg = 'Error loading data. ';
         if (error.code === 'failed-precondition') {
             errorMsg += 'Database index missing. Please contact support.';
-        } else if (error.message.includes('locked')) {
+        } else if (error.message && error.message.includes('locked')) {
             errorMsg += 'Please unlock your data first.';
         } else {
             errorMsg += 'Please refresh the page. If the problem persists, clear your browser cache.';
@@ -1451,63 +1727,63 @@ async function loadData() {
             return exactByTitle[0] || null;
         }
 
-       // Load GLOBAL Settings from Firestore
+       // Load GLOBAL Settings from backend
 async function loadSettings() {
 
     try {
+        let settings = null;
 
-        const settingsRef = doc(db, 'settings', 'appConfig');
-        const settingsSnap = await getDoc(settingsRef);
-
-        if (settingsSnap.exists()) {
-
-            const settings = settingsSnap.data();
-
-            gadgetCategories = (settings.gadgetCategories || getDefaultGadgetCategories())
-                .map(normalizeLabel)
-                .filter(Boolean);
-            gamePlatforms = (settings.gamePlatforms || getDefaultGamePlatforms())
-                .map(normalizeLabel)
-                .filter(Boolean);
-            gameGenres = (settings.gameGenres || getDefaultGameGenres())
-                .map(normalizeLabel)
-                .filter(Boolean);
-            digitalTypes = (settings.digitalTypes || getDefaultDigitalTypes())
-                .map(normalizeLabel)
-                .filter(Boolean);
-            customIcons = (settings.customIcons || [])
-                .map(icon => ({ ...icon, platform: normalizeLabel(icon.platform || '') }))
-                .filter(icon => icon.platform && icon.iconUrl);
-            gameMetadataCatalog = normalizeGameMetadataCatalog(settings.gameMetadataCatalog || []);
-
-            if (gadgetCategories.length === 0) gadgetCategories = getDefaultGadgetCategories();
-            if (gamePlatforms.length === 0) gamePlatforms = getDefaultGamePlatforms();
-            if (gameGenres.length === 0) gameGenres = getDefaultGameGenres();
-            if (digitalTypes.length === 0) digitalTypes = getDefaultDigitalTypes();
-
-
+        if (isCloudflareBackendActive()) {
+            const snapshot = await fetchCloudflareSnapshot();
+            settings = snapshot && snapshot.settings && typeof snapshot.settings === 'object'
+                ? snapshot.settings
+                : {};
         } else {
+            const settingsRef = doc(db, 'settings', 'appConfig');
+            const settingsSnap = await getDoc(settingsRef);
 
-            // Create default settings ONCE
-            const defaultSettings = {
-                gadgetCategories: getDefaultGadgetCategories(),
-                gamePlatforms: getDefaultGamePlatforms(),
-                gameGenres: getDefaultGameGenres(),
-                digitalTypes: getDefaultDigitalTypes(),
-                customIcons: [],
-                gameMetadataCatalog: []
-            };
+            if (settingsSnap.exists()) {
+                settings = settingsSnap.data();
+            } else {
+                // Create default settings ONCE
+                const defaultSettings = {
+                    gadgetCategories: getDefaultGadgetCategories(),
+                    gamePlatforms: getDefaultGamePlatforms(),
+                    gameGenres: getDefaultGameGenres(),
+                    digitalTypes: getDefaultDigitalTypes(),
+                    customIcons: [],
+                    gameMetadataCatalog: []
+                };
 
-            await setDoc(settingsRef, defaultSettings);
-
-            gadgetCategories = defaultSettings.gadgetCategories;
-            gamePlatforms = defaultSettings.gamePlatforms;
-            gameGenres = defaultSettings.gameGenres;
-            digitalTypes = defaultSettings.digitalTypes;
-            customIcons = defaultSettings.customIcons;
-            gameMetadataCatalog = defaultSettings.gameMetadataCatalog;
-
+                await setDoc(settingsRef, defaultSettings);
+                settings = defaultSettings;
+            }
         }
+
+        settings = settings || {};
+
+        currentCurrency = settings.currency || currentCurrency || '₹';
+        gadgetCategories = (settings.gadgetCategories || getDefaultGadgetCategories())
+            .map(normalizeLabel)
+            .filter(Boolean);
+        gamePlatforms = (settings.gamePlatforms || getDefaultGamePlatforms())
+            .map(normalizeLabel)
+            .filter(Boolean);
+        gameGenres = (settings.gameGenres || getDefaultGameGenres())
+            .map(normalizeLabel)
+            .filter(Boolean);
+        digitalTypes = (settings.digitalTypes || getDefaultDigitalTypes())
+            .map(normalizeLabel)
+            .filter(Boolean);
+        customIcons = (settings.customIcons || [])
+            .map(icon => ({ ...icon, platform: normalizeLabel(icon.platform || '') }))
+            .filter(icon => icon.platform && icon.iconUrl);
+        gameMetadataCatalog = normalizeGameMetadataCatalog(settings.gameMetadataCatalog || []);
+
+        if (gadgetCategories.length === 0) gadgetCategories = getDefaultGadgetCategories();
+        if (gamePlatforms.length === 0) gamePlatforms = getDefaultGamePlatforms();
+        if (gameGenres.length === 0) gameGenres = getDefaultGameGenres();
+        if (digitalTypes.length === 0) digitalTypes = getDefaultDigitalTypes();
 
         updateAllDropdowns();
         renderSettingsLists();
@@ -1527,7 +1803,6 @@ async function loadSettings() {
 
     try {
 
-        const settingsRef = doc(db, 'settings', 'appConfig');
         const includeGameMetadataCatalog = options && options.includeGameMetadataCatalog === true;
         const payload = {
             gadgetCategories,
@@ -1538,10 +1813,19 @@ async function loadSettings() {
         };
 
         if (includeGameMetadataCatalog) {
-            payload.gameMetadataCatalog = gameMetadataCatalog;
+            payload.gameMetadataCatalog = normalizeGameMetadataCatalog(gameMetadataCatalog);
+            gameMetadataCatalog = payload.gameMetadataCatalog;
         }
 
-        await setDoc(settingsRef, payload, { merge: true });
+        if (isCloudflareBackendActive()) {
+            await persistCloudflareSnapshot({
+                source: 'cloudflare-web-settings',
+                includeAppConfig: true
+            });
+        } else {
+            const settingsRef = doc(db, 'settings', 'appConfig');
+            await setDoc(settingsRef, payload, { merge: true });
+        }
 
         updateAllDropdowns();
         renderSettingsLists();
@@ -2375,6 +2659,16 @@ async function loadSettings() {
         if (sidebar) sidebar.classList.remove('mobile-open');
     }
 
+    if (section === 'admin') {
+        if (!isAdminRoutePath()) {
+            window.location.assign('/admin');
+            return;
+        }
+        syncPathForSection('admin');
+    } else {
+        syncPathForSection(section);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -2422,20 +2716,28 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
         if (window.editingGadgetId) {
             // UPDATE existing gadget
             const editingGadgetId = window.editingGadgetId;
-            await updateDoc(
-                doc(db, 'users', currentUserUID, 'gadgets', editingGadgetId),
-                gadgetToSave
-            );
+            if (isCloudflareBackendActive()) {
+                await saveCloudflareCollectionItem('gadgets', gadget, editingGadgetId);
+            } else {
+                await updateDoc(
+                    doc(db, 'users', currentUserUID, 'gadgets', editingGadgetId),
+                    gadgetToSave
+                );
+                upsertLocalCollectionItem('gadgets', { firestoreId: editingGadgetId, ...gadget });
+            }
             window.editingGadgetId = null;
             if (submitBtn) submitBtn.textContent = 'Add to Collection';
-            upsertLocalCollectionItem('gadgets', { firestoreId: editingGadgetId, ...gadget });
         } else {
             // ADD new gadget
-            const gadgetDocRef = await addDoc(
-                collection(db, 'users', currentUserUID, 'gadgets'),
-                gadgetToSave
-            );
-            upsertLocalCollectionItem('gadgets', { firestoreId: gadgetDocRef.id, ...gadget });
+            if (isCloudflareBackendActive()) {
+                await saveCloudflareCollectionItem('gadgets', gadget);
+            } else {
+                const gadgetDocRef = await addDoc(
+                    collection(db, 'users', currentUserUID, 'gadgets'),
+                    gadgetToSave
+                );
+                upsertLocalCollectionItem('gadgets', { firestoreId: gadgetDocRef.id, ...gadget });
+            }
         }
         e.target.reset();
         document.getElementById('g-date').valueAsDate = new Date();
@@ -3207,8 +3509,12 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
             deleteCallback = async () => {
                 try {
-                    await deleteDoc(doc(db, 'users', currentUserUID, 'gadgets', firestoreId));
-                    removeLocalCollectionItem('gadgets', firestoreId);
+                    if (isCloudflareBackendActive()) {
+                        await deleteCloudflareCollectionItem('gadgets', firestoreId);
+                    } else {
+                        await deleteDoc(doc(db, 'users', currentUserUID, 'gadgets', firestoreId));
+                        removeLocalCollectionItem('gadgets', firestoreId);
+                    }
                 } catch (error) {
                     alert('Error deleting gadget. Please try again.');
                 }
@@ -3304,11 +3610,15 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
                 }
                 
                 const gadgetIdToUpdate = window.editingGadgetId;
-                await updateDoc(
-                    doc(db, 'users', currentUserUID, 'gadgets', gadgetIdToUpdate),
-                    gadgetToSave
-                );
-                upsertLocalCollectionItem('gadgets', { firestoreId: gadgetIdToUpdate, ...gadget });
+                if (isCloudflareBackendActive()) {
+                    await saveCloudflareCollectionItem('gadgets', gadget, gadgetIdToUpdate);
+                } else {
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'gadgets', gadgetIdToUpdate),
+                        gadgetToSave
+                    );
+                    upsertLocalCollectionItem('gadgets', { firestoreId: gadgetIdToUpdate, ...gadget });
+                }
                 closeGadgetEditModal();
             } catch (error) {
                 // Re-enable button
@@ -3360,25 +3670,33 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
 
     // UPDATE existing game (do NOT delete)
     const editingGameId = window.editingGameId;
-    const gameToSave = await encryptData(game);
-    await updateDoc(
-        doc(db, 'users', currentUserUID, 'games', editingGameId),
-        gameToSave
-    );
+    if (isCloudflareBackendActive()) {
+        await saveCloudflareCollectionItem('games', game, editingGameId);
+    } else {
+        const gameToSave = await encryptData(game);
+        await updateDoc(
+            doc(db, 'users', currentUserUID, 'games', editingGameId),
+            gameToSave
+        );
+        upsertLocalCollectionItem('games', { firestoreId: editingGameId, ...game });
+    }
 
     window.editingGameId = null;
     document.querySelector('#game-form .btn').textContent = 'Add to Collection';
-    upsertLocalCollectionItem('games', { firestoreId: editingGameId, ...game });
 
 } else {
 
     // ADD new game
-    const gameToSave = await encryptData(game);
-    const gameDocRef = await addDoc(
-        collection(db, 'users', currentUserUID, 'games'),
-        gameToSave
-    );
-    upsertLocalCollectionItem('games', { firestoreId: gameDocRef.id, ...game });
+    if (isCloudflareBackendActive()) {
+        await saveCloudflareCollectionItem('games', game);
+    } else {
+        const gameToSave = await encryptData(game);
+        const gameDocRef = await addDoc(
+            collection(db, 'users', currentUserUID, 'games'),
+            gameToSave
+        );
+        upsertLocalCollectionItem('games', { firestoreId: gameDocRef.id, ...game });
+    }
 }
 e.target.reset();
 document.getElementById('gm-buy-date').valueAsDate = new Date();
@@ -3549,8 +3867,12 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             deleteCallback = async () => {
                 try {
-                    await deleteDoc(doc(db, 'users', currentUserUID, 'games', firestoreId));
-                    removeLocalCollectionItem('games', firestoreId);
+                    if (isCloudflareBackendActive()) {
+                        await deleteCloudflareCollectionItem('games', firestoreId);
+                    } else {
+                        await deleteDoc(doc(db, 'users', currentUserUID, 'games', firestoreId));
+                        removeLocalCollectionItem('games', firestoreId);
+                    }
                 } catch (error) {
                     alert('Error deleting game. Please try again.');
                 }
@@ -3636,13 +3958,17 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             game = applyCatalogFallbackToGameRecord(game);
 
             try {
-                const gameToSave = await encryptData(game);
                 const gameIdToUpdate = window.editingGameId;
-                await updateDoc(
-                    doc(db, 'users', currentUserUID, 'games', gameIdToUpdate),
-                    gameToSave
-                );
-                upsertLocalCollectionItem('games', { firestoreId: gameIdToUpdate, ...game });
+                if (isCloudflareBackendActive()) {
+                    await saveCloudflareCollectionItem('games', game, gameIdToUpdate);
+                } else {
+                    const gameToSave = await encryptData(game);
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'games', gameIdToUpdate),
+                        gameToSave
+                    );
+                    upsertLocalCollectionItem('games', { firestoreId: gameIdToUpdate, ...game });
+                }
                 closeGameEditModal();
             } catch (error) {
                 alert('Error updating game. Please try again.');
@@ -3968,24 +4294,32 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                if (window.editingDigitalId) {
 
                 const editingDigitalId = window.editingDigitalId;
-                const digitalToSave = await encryptData(digital);
-                await updateDoc(
-                doc(db, 'users', currentUserUID, 'digitalPurchases', editingDigitalId),
-                digitalToSave
-                );
+                if (isCloudflareBackendActive()) {
+                    await saveCloudflareCollectionItem('digitalPurchases', digital, editingDigitalId);
+                } else {
+                    const digitalToSave = await encryptData(digital);
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'digitalPurchases', editingDigitalId),
+                        digitalToSave
+                    );
+                    upsertLocalCollectionItem('digitalPurchases', { firestoreId: editingDigitalId, ...digital });
+                }
 
                 window.editingDigitalId = null;
                 document.querySelector('#digital-form .btn').textContent = 'Add Purchase';
-                upsertLocalCollectionItem('digitalPurchases', { firestoreId: editingDigitalId, ...digital });
 
                 } else {
 
-                const digitalToSave = await encryptData(digital);
-                const digitalDocRef = await addDoc(
-            collection(db, 'users', currentUserUID, 'digitalPurchases'),
-            digitalToSave
-            );
-                upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalDocRef.id, ...digital });
+                if (isCloudflareBackendActive()) {
+                    await saveCloudflareCollectionItem('digitalPurchases', digital);
+                } else {
+                    const digitalToSave = await encryptData(digital);
+                    const digitalDocRef = await addDoc(
+                        collection(db, 'users', currentUserUID, 'digitalPurchases'),
+                        digitalToSave
+                    );
+                    upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalDocRef.id, ...digital });
+                }
             }
             e.target.reset();
             document.getElementById('d-date').valueAsDate = new Date();
@@ -4186,8 +4520,12 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             deleteCallback = async () => {
                 try {
-                    await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId));
-                    removeLocalCollectionItem('digitalPurchases', firestoreId);
+                    if (isCloudflareBackendActive()) {
+                        await deleteCloudflareCollectionItem('digitalPurchases', firestoreId);
+                    } else {
+                        await deleteDoc(doc(db, 'users', currentUserUID, 'digitalPurchases', firestoreId));
+                        removeLocalCollectionItem('digitalPurchases', firestoreId);
+                    }
                 } catch (error) {
                     alert('Error deleting purchase. Please try again.');
                 }
@@ -4341,13 +4679,17 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             };
 
             try {
-                const digitalToSave = await encryptData(digital);
                 const digitalIdToUpdate = window.editingDigitalId;
-                await updateDoc(
-                    doc(db, 'users', currentUserUID, 'digitalPurchases', digitalIdToUpdate),
-                    digitalToSave
-                );
-                upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalIdToUpdate, ...digital });
+                if (isCloudflareBackendActive()) {
+                    await saveCloudflareCollectionItem('digitalPurchases', digital, digitalIdToUpdate);
+                } else {
+                    const digitalToSave = await encryptData(digital);
+                    await updateDoc(
+                        doc(db, 'users', currentUserUID, 'digitalPurchases', digitalIdToUpdate),
+                        digitalToSave
+                    );
+                    upsertLocalCollectionItem('digitalPurchases', { firestoreId: digitalIdToUpdate, ...digital });
+                }
                 closeDigitalEditModal();
             } catch (error) {
                 alert('Error updating digital purchase. Please try again.');
@@ -4730,6 +5072,23 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
         async function persistImportItems(collectionName, items) {
             const imported = [];
+
+            if (isCloudflareBackendActive()) {
+                const prefixMap = {
+                    gadgets: 'g',
+                    games: 'gm',
+                    digitalPurchases: 'd'
+                };
+                const prefix = prefixMap[collectionName] || 'item';
+                for (const item of items) {
+                    imported.push({
+                        firestoreId: generateLocalItemId(prefix),
+                        ...item
+                    });
+                }
+                return imported;
+            }
+
             const batchSize = 200;
 
             for (let i = 0; i < items.length; i += batchSize) {
@@ -4820,6 +5179,9 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 } else {
                     const importedItems = await persistImportItems(payload.collectionName, payload.items);
                     applyImportedItemsToLocalState(payload.type, importedItems);
+                    if (isCloudflareBackendActive() && importedItems.length > 0) {
+                        await persistCloudflareSnapshot({ source: 'cloudflare-web-import' });
+                    }
                     updateAll();
                     importedCount = importedItems.length;
                     importMessage = `Imported ${importedCount} ${payload.label.toLowerCase()} successfully.`;
@@ -4848,6 +5210,158 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             if (!input) return;
             input.value = '';
             input.click();
+        };
+
+        function buildCloudflareMigrationSnapshot(source = 'firebase-web') {
+            return {
+                version: 1,
+                source,
+                exportedAt: new Date().toISOString(),
+                user: {
+                    uid: currentUserUID || '',
+                    email: (currentUser && currentUser.email) ? currentUser.email : ''
+                },
+                data: {
+                    gadgets: Array.isArray(gadgets) ? gadgets : [],
+                    games: Array.isArray(games) ? games : [],
+                    digitalPurchases: Array.isArray(digitalPurchases) ? digitalPurchases : []
+                },
+                settings: {
+                    currency: currentCurrency || '₹',
+                    gadgetCategories: Array.isArray(gadgetCategories) ? gadgetCategories : [],
+                    gamePlatforms: Array.isArray(gamePlatforms) ? gamePlatforms : [],
+                    gameGenres: Array.isArray(gameGenres) ? gameGenres : [],
+                    digitalTypes: Array.isArray(digitalTypes) ? digitalTypes : [],
+                    customIcons: Array.isArray(customIcons) ? customIcons : [],
+                    gameMetadataCatalog: Array.isArray(gameMetadataCatalog) ? gameMetadataCatalog : []
+                }
+            };
+        }
+
+        window.downloadCloudflareMigrationBackup = function() {
+            if (!requireAdminAccess('export Cloudflare migration backup')) return;
+            if (!currentUserUID) {
+                alert('User not logged in');
+                return;
+            }
+
+            const snapshot = buildCloudflareMigrationSnapshot('firebase-web-backup');
+            const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gearnest_cloudflare_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+        async function uploadSnapshotToCloudflare(snapshotPayload, options = {}) {
+            const includeAppConfig = options.includeAppConfig === true;
+            const response = await fetch('/api/v1/snapshot', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    source: snapshotPayload && snapshotPayload.source ? snapshotPayload.source : 'firebase-web',
+                    includeAppConfig,
+                    snapshot: snapshotPayload
+                })
+            });
+
+            let payload = null;
+            try {
+                payload = await response.json();
+            } catch {
+                payload = null;
+            }
+
+            if (!response.ok) {
+                const message = payload && payload.message
+                    ? payload.message
+                    : 'Upload failed. Ensure /api/* is protected by Cloudflare Access and D1 binding is configured.';
+                throw new Error(message);
+            }
+
+            return payload;
+        }
+
+        window.uploadCurrentDataToCloudflare = async function() {
+            if (!requireAdminAccess('upload data to Cloudflare')) return;
+            if (!currentUserUID) {
+                alert('User not logged in');
+                return;
+            }
+
+            const snapshot = buildCloudflareMigrationSnapshot('firebase-web-live');
+            const counts = {
+                gadgets: snapshot.data.gadgets.length,
+                games: snapshot.data.games.length,
+                digitalPurchases: snapshot.data.digitalPurchases.length
+            };
+
+            if (!confirm(`Upload current data to Cloudflare D1 now?\n\nGadgets: ${counts.gadgets}\nGames: ${counts.games}\nDigital: ${counts.digitalPurchases}`)) {
+                return;
+            }
+
+            try {
+                const result = await uploadSnapshotToCloudflare(snapshot, { includeAppConfig: true });
+                const savedCounts = result && result.counts ? result.counts : counts;
+                alert(`Cloudflare upload complete.\n\nGadgets: ${savedCounts.gadgets || 0}\nGames: ${savedCounts.games || 0}\nDigital: ${savedCounts.digitalPurchases || 0}`);
+            } catch (error) {
+                alert(`Cloudflare upload failed: ${error.message}`);
+            }
+        };
+
+        window.uploadCloudflareBackupFile = function(event) {
+            if (!requireAdminAccess('upload backup JSON to Cloudflare')) {
+                if (event && event.target) event.target.value = '';
+                return;
+            }
+
+            const file = event && event.target ? event.target.files[0] : null;
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(loadEvent) {
+                try {
+                    const raw = String(loadEvent && loadEvent.target ? (loadEvent.target.result || '') : '');
+                    const parsed = JSON.parse(raw);
+                    const snapshot = buildCloudflareMigrationSnapshot('firebase-web-file');
+                    const sourceSnapshot = parsed && typeof parsed === 'object' ? parsed : {};
+
+                    // Keep strict expected shape but preserve imported data where valid.
+                    snapshot.data = {
+                        gadgets: Array.isArray(sourceSnapshot?.data?.gadgets) ? sourceSnapshot.data.gadgets : [],
+                        games: Array.isArray(sourceSnapshot?.data?.games) ? sourceSnapshot.data.games : [],
+                        digitalPurchases: Array.isArray(sourceSnapshot?.data?.digitalPurchases) ? sourceSnapshot.data.digitalPurchases : []
+                    };
+                    snapshot.settings = {
+                        ...snapshot.settings,
+                        currency: sourceSnapshot?.settings?.currency || snapshot.settings.currency,
+                        gadgetCategories: Array.isArray(sourceSnapshot?.settings?.gadgetCategories) ? sourceSnapshot.settings.gadgetCategories : snapshot.settings.gadgetCategories,
+                        gamePlatforms: Array.isArray(sourceSnapshot?.settings?.gamePlatforms) ? sourceSnapshot.settings.gamePlatforms : snapshot.settings.gamePlatforms,
+                        gameGenres: Array.isArray(sourceSnapshot?.settings?.gameGenres) ? sourceSnapshot.settings.gameGenres : snapshot.settings.gameGenres,
+                        digitalTypes: Array.isArray(sourceSnapshot?.settings?.digitalTypes) ? sourceSnapshot.settings.digitalTypes : snapshot.settings.digitalTypes,
+                        customIcons: Array.isArray(sourceSnapshot?.settings?.customIcons) ? sourceSnapshot.settings.customIcons : snapshot.settings.customIcons,
+                        gameMetadataCatalog: Array.isArray(sourceSnapshot?.settings?.gameMetadataCatalog) ? sourceSnapshot.settings.gameMetadataCatalog : snapshot.settings.gameMetadataCatalog
+                    };
+
+                    const totalItems = snapshot.data.gadgets.length + snapshot.data.games.length + snapshot.data.digitalPurchases.length;
+                    if (!confirm(`Upload backup file to Cloudflare now?\n\nTotal items: ${totalItems}`)) {
+                        event.target.value = '';
+                        return;
+                    }
+
+                    await uploadSnapshotToCloudflare(snapshot, { includeAppConfig: true });
+                    alert('Backup uploaded to Cloudflare successfully.');
+                } catch (error) {
+                    alert(`Could not upload backup: ${error.message}`);
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
         };
 
         // TSV/CSV Export for Gadgets
@@ -5418,32 +5932,52 @@ window.importDigitalCSV = function(event) {
                 await encryptionManager.setupNewUser(password);
 
                 // Re-encrypt all existing data
+                if (isCloudflareBackendActive()) {
+                    const encryptedSnapshot = buildCloudflareMigrationSnapshot('cloudflare-web-encrypted');
+                    encryptedSnapshot.data.gadgets = await Promise.all(gadgets.map(async (gadget) => ({
+                        firestoreId: gadget.firestoreId || generateLocalItemId('g'),
+                        ...(await encryptData(gadget))
+                    })));
+                    encryptedSnapshot.data.games = await Promise.all(games.map(async (game) => ({
+                        firestoreId: game.firestoreId || generateLocalItemId('gm'),
+                        ...(await encryptData(game))
+                    })));
+                    encryptedSnapshot.data.digitalPurchases = await Promise.all(digitalPurchases.map(async (digital) => ({
+                        firestoreId: digital.firestoreId || generateLocalItemId('d'),
+                        ...(await encryptData(digital))
+                    })));
 
-                // Re-save all gadgets with encryption
-                for (const gadget of gadgets) {
-                    const encryptedData = await encryptData(gadget);
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'gadgets', gadget.firestoreId),
-                        encryptedData
-                    );
-                }
+                    await uploadSnapshotToCloudflare(encryptedSnapshot, {
+                        includeAppConfig: isAdmin(currentUser)
+                    });
+                    cloudflareSnapshotCache = encryptedSnapshot;
+                } else {
+                    // Re-save all gadgets with encryption
+                    for (const gadget of gadgets) {
+                        const encryptedData = await encryptData(gadget);
+                        await updateDoc(
+                            doc(db, 'users', currentUserUID, 'gadgets', gadget.firestoreId),
+                            encryptedData
+                        );
+                    }
 
-                // Re-save all games with encryption
-                for (const game of games) {
-                    const encryptedData = await encryptData(game);
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'games', game.firestoreId),
-                        encryptedData
-                    );
-                }
+                    // Re-save all games with encryption
+                    for (const game of games) {
+                        const encryptedData = await encryptData(game);
+                        await updateDoc(
+                            doc(db, 'users', currentUserUID, 'games', game.firestoreId),
+                            encryptedData
+                        );
+                    }
 
-                // Re-save all digital purchases with encryption
-                for (const digital of digitalPurchases) {
-                    const encryptedData = await encryptData(digital);
-                    await updateDoc(
-                        doc(db, 'users', currentUserUID, 'digitalPurchases', digital.firestoreId),
-                        encryptedData
-                    );
+                    // Re-save all digital purchases with encryption
+                    for (const digital of digitalPurchases) {
+                        const encryptedData = await encryptData(digital);
+                        await updateDoc(
+                            doc(db, 'users', currentUserUID, 'digitalPurchases', digital.firestoreId),
+                            encryptedData
+                        );
+                    }
                 }
 
                 document.body.classList.add('encrypted');

@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "gearnest",
+  "compatibility_date": "2026-02-16",
+  "pages_build_output_dir": ".",
+  "d1_databases": [
+    {
+      "binding": "GEARNEST_DB",
+      "database_name": "gearnest-db",
+      "database_id": "ca605462-44f6-4cc2-9174-a332cae003b8"
+    }
+  ],
+  "vars": {
+    "ADMIN_EMAILS": "iraqidanish@gmail.com"
+  }
+}
