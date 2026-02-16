@@ -1,8 +1,12 @@
-const CACHE_NAME = 'gearnest-v4';
+const CACHE_NAME = 'gearnest-v6';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
+  './assets/app.css',
+  './assets/app.module.js',
+  './assets/app.ui.js',
+  './assets/pwa-install.js',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
