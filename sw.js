@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gearnest-v3';
+const CACHE_NAME = 'gearnest-v4';
 const APP_SHELL = [
   './',
   './index.html',

@@ -5855,12 +5855,56 @@ async function loadSettings() {
             return '';
         }
 
+        function collapseAllAddForms() {
+            document.querySelectorAll('.add-form-collapsible.open').forEach(wrapper => {
+                wrapper.classList.remove('open');
+                if (wrapper.id) {
+                    const btn = document.querySelector(`[data-toggle="${wrapper.id}"]`);
+                    if (btn) btn.classList.remove('open');
+                }
+            });
+        }
+
+        function resetGameAddFormDraftOnSectionLeave() {
+            if (window.editingGameId) return;
+            const form = document.getElementById('game-form');
+            if (!form) return;
+
+            form.reset();
+            const buyDateInput = document.getElementById('gm-buy-date');
+            if (buyDateInput) buyDateInput.valueAsDate = new Date();
+
+            setGameCoverPreview('gm', '', 'Click to add cover');
+            const searchInput = document.getElementById('gm-catalog-search');
+            if (searchInput) searchInput.value = '';
+            gameCatalogLastApplied = null;
+            gameCatalogLastSearchQuery = '';
+            if (typeof window.closeGameCatalogResults === 'function') {
+                window.closeGameCatalogResults();
+            }
+            if (typeof window.updateGameCatalogSearchHint === 'function') {
+                window.updateGameCatalogSearchHint();
+            }
+        }
+        window.resetGameAddFormDraftOnSectionLeave = resetGameAddFormDraftOnSectionLeave;
+
         // Section navigation
     window.showSection = function(section, el) {
+    const previousActiveSection = document.querySelector('.section.active');
+    const previousSectionId = previousActiveSection ? previousActiveSection.id : '';
+
     if (section === 'admin' && !isAdmin(currentUser)) {
         alert('Admin access only.');
         section = 'dashboard';
     }
+
+    if (previousSectionId && previousSectionId !== section) {
+        collapseAllAddForms();
+        if (previousSectionId === 'games') {
+            resetGameAddFormDraftOnSectionLeave();
+        }
+    }
+
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
@@ -10081,6 +10125,11 @@ window.importDigitalCSV = function(event) {
             const isOpen = wrapper.classList.contains('open');
             wrapper.classList.toggle('open', !isOpen);
             if (btn) btn.classList.toggle('open', !isOpen);
+            if (isOpen && wrapperId === 'games-add-wrapper' && !window.editingGameId) {
+                if (typeof window.resetGameAddFormDraftOnSectionLeave === 'function') {
+                    window.resetGameAddFormDraftOnSectionLeave();
+                }
+            }
         };
     </script>
 
