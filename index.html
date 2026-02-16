@@ -8201,16 +8201,23 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
             const skippedText = payload.skipped > 0
                 ? ` ${payload.skipped} invalid row${payload.skipped === 1 ? '' : 's'} will be skipped.`
                 : '';
-            summaryEl.textContent = `${payload.items.length} row${payload.items.length === 1 ? '' : 's'} ready from ${payload.fileName}.${skippedText}`;
+            const actionLabel = payload.type === 'gameMetadataCatalog' ? 'ready to merge' : 'ready';
+            summaryEl.textContent = `${payload.items.length} row${payload.items.length === 1 ? '' : 's'} ${actionLabel} from ${payload.fileName}.${skippedText}`;
 
             headEl.innerHTML = `<tr>${payload.columns.map(col => `<th>${escapeImportPreviewCell(col)}</th>`).join('')}</tr>`;
             bodyEl.innerHTML = payload.previewRows
                 .map(row => `<tr>${row.map(cell => `<td>${escapeImportPreviewCell(cell)}</td>`).join('')}</tr>`)
                 .join('');
 
-            footnoteEl.textContent = payload.items.length > IMPORT_PREVIEW_LIMIT
-                ? `Showing first ${IMPORT_PREVIEW_LIMIT} rows for preview. All ${payload.items.length} rows will be imported after confirmation.`
-                : 'This preview shows exactly what will be imported.';
+            if (payload.type === 'gameMetadataCatalog') {
+                footnoteEl.textContent = payload.items.length > IMPORT_PREVIEW_LIMIT
+                    ? `Showing first ${IMPORT_PREVIEW_LIMIT} rows for preview. All ${payload.items.length} rows will be merged into the existing catalog after confirmation.`
+                    : 'Rows will be merged into the existing catalog after confirmation.';
+            } else {
+                footnoteEl.textContent = payload.items.length > IMPORT_PREVIEW_LIMIT
+                    ? `Showing first ${IMPORT_PREVIEW_LIMIT} rows for preview. All ${payload.items.length} rows will be imported after confirmation.`
+                    : 'This preview shows exactly what will be imported.';
+            }
 
             confirmBtn.disabled = false;
             confirmBtn.textContent = `Import ${payload.items.length} row${payload.items.length === 1 ? '' : 's'}`;
@@ -8287,27 +8294,49 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
 
             try {
                 let importedCount = 0;
+                let importMessage = '';
 
                 if (payload.type === 'gameMetadataCatalog') {
                     if (!requireAdminAccess('import game metadata catalog')) {
                         window.closeImportPreview();
                         return;
                     }
-                    gameMetadataCatalog = normalizeGameMetadataCatalog(payload.items || []);
+
+                    const existingCatalog = Array.isArray(gameMetadataCatalog) ? gameMetadataCatalog : [];
+                    const incomingCatalog = normalizeGameMetadataCatalog(payload.items || []);
+                    const catalogMap = new Map(
+                        existingCatalog.map(entry => [buildGameMetadataKey(entry.title, entry.platform), entry])
+                    );
+
+                    let addedCount = 0;
+                    let updatedCount = 0;
+                    incomingCatalog.forEach(entry => {
+                        const key = buildGameMetadataKey(entry.title, entry.platform);
+                        if (catalogMap.has(key)) {
+                            updatedCount += 1;
+                        } else {
+                            addedCount += 1;
+                        }
+                        catalogMap.set(key, entry);
+                    });
+
+                    gameMetadataCatalog = normalizeGameMetadataCatalog(Array.from(catalogMap.values()));
                     await saveSettings();
                     refreshGameMetadataCatalogUI();
-                    importedCount = gameMetadataCatalog.length;
+                    importedCount = incomingCatalog.length;
+                    importMessage = `Catalog merged. Added ${addedCount} new and updated ${updatedCount} existing entries. Total catalog size: ${gameMetadataCatalog.length}.`;
                 } else {
                     const importedItems = await persistImportItems(payload.collectionName, payload.items);
                     applyImportedItemsToLocalState(payload.type, importedItems);
                     updateAll();
                     importedCount = importedItems.length;
+                    importMessage = `Imported ${importedCount} ${payload.label.toLowerCase()} successfully.`;
                 }
 
                 const skippedText = payload.skipped > 0
                     ? ` ${payload.skipped} invalid row${payload.skipped === 1 ? '' : 's'} were skipped.`
                     : '';
-                alert(`Imported ${importedCount} ${payload.label.toLowerCase()} successfully.${skippedText}`);
+                alert(`${importMessage}${skippedText}`);
 
                 window.closeImportPreview();
             } catch (error) {
