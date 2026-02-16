@@ -1618,6 +1618,124 @@
             transform: translateY(-1px);
         }
 
+        .settings-gmc-panel {
+            border: 1px solid rgba(16, 185, 129, 0.22);
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.85) 100%);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .settings-gmc-panel > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .settings-gmc-panel > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .settings-gmc-panel > summary::after {
+            content: '+';
+            color: #10b981;
+            font-size: 18px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .settings-gmc-panel[open] > summary::after {
+            content: '-';
+        }
+
+        .settings-gmc-panel-body {
+            padding: 12px 14px 14px;
+            border-top: 1px solid rgba(16, 185, 129, 0.16);
+            display: grid;
+            gap: 10px;
+        }
+
+        .settings-gmc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 8px;
+        }
+
+        .settings-gmc-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.9) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 10px;
+            padding: 10px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .settings-gmc-card--active {
+            border-color: rgba(16, 185, 129, 0.55);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(30, 41, 59, 0.9) 100%);
+        }
+
+        .settings-gmc-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .settings-gmc-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .settings-gmc-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .settings-gmc-btn {
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .settings-gmc-btn-edit {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.35);
+            color: #93c5fd;
+        }
+
+        .settings-gmc-btn-delete {
+            background: rgba(239, 68, 68, 0.14);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+
+        .settings-gmc-empty {
+            grid-column: 1 / -1;
+            padding: 12px;
+            border: 1px dashed rgba(148, 163, 184, 0.35);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
         .import-preview-modal-content {
             width: min(960px, 94vw);
             max-width: 960px;
@@ -2811,7 +2929,7 @@
                                     </div>
                                     <div id="gm-catalog-results" class="custom-select-options game-catalog-results"></div>
                                 </div>
-                                <div id="gm-catalog-match-hint" class="game-catalog-hint">Import your game metadata catalog in Settings to enable quick auto-fill.</div>
+                                <div id="gm-catalog-match-hint" class="game-catalog-hint">Admin can import the game metadata catalog in Admin panel to enable quick auto-fill.</div>
                             </div>
                             <div class="input-group"><label>Title</label><input type="text" id="gm-title" placeholder="e.g. Elden Ring" required oninput="updateGameCatalogSearchHint()"></div>
                             <div class="input-group"><label>Platform</label>
@@ -2988,40 +3106,10 @@
                                 <button type="button" class="settings-data-tool-btn" onclick="exportDigitalCSV()">Export CSV</button>
                             </div>
                         </div>
-                        <div class="settings-data-tool-card">
-                            <div class="settings-data-tool-title">Game Metadata Catalog</div>
-                            <div class="settings-data-tool-actions">
-                                <button type="button" class="settings-data-tool-btn" onclick="downloadGameMetadataTemplate()">Download Template</button>
-                                <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-game-metadata')">Import CSV</button>
-                                <button type="button" class="settings-data-tool-btn" onclick="exportGameMetadataCatalogCSV()">Export CSV</button>
-                            </div>
-                        </div>
                     </div>
                     <input type="file" id="settings-import-gadgets" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGadgetsCSV(event)">
                     <input type="file" id="settings-import-games" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGamesCSV(event)">
                     <input type="file" id="settings-import-digital" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importDigitalCSV(event)">
-                    <input type="file" id="settings-import-game-metadata" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGameMetadataCatalogCSV(event)">
-                </div>
-
-                <div class="add-form" style="margin-bottom:24px;">
-                    <h3 style="margin-bottom:12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Manage Game Metadata Catalog</h3>
-                    <div class="form-grid" style="margin-bottom:10px;">
-                        <div class="input-group"><label>Title</label><input type="text" id="settings-gmc-title" placeholder="e.g. Elden Ring"></div>
-                        <div class="input-group"><label>Platform</label><input type="text" id="settings-gmc-platform" placeholder="e.g. PlayStation 5"></div>
-                        <div class="input-group"><label>Genre</label><input type="text" id="settings-gmc-genre" placeholder="e.g. RPG"></div>
-                        <div class="input-group"><label>Metacritic Score</label><input type="text" id="settings-gmc-score" placeholder="e.g. 96"></div>
-                        <div class="input-group"><label>Metacritic URL</label><input type="url" id="settings-gmc-url" placeholder="https://www.metacritic.com/..."></div>
-                        <div class="input-group"><label>Cover Image URL</label><input type="url" id="settings-gmc-image" placeholder="https://example.com/cover.jpg"></div>
-                    </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-                        <button type="button" id="settings-gmc-save-btn" class="btn" onclick="saveGameMetadataCatalogEntry()">Add Entry</button>
-                        <button type="button" class="btn" style="background:rgba(148,163,184,0.15);border:1px solid rgba(148,163,184,0.35);" onclick="clearGameMetadataCatalogEditor()">Clear</button>
-                    </div>
-                    <div id="settings-gmc-editor-status" style="font-size:12px;color:var(--text-muted);margin-bottom:10px;"></div>
-                    <div style="display:flex;gap:8px;margin-bottom:10px;">
-                        <input type="text" id="settings-game-metadata-search" placeholder="Search catalog entries by title/platform/genre..." style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;" oninput="renderGameMetadataCatalogManager()">
-                    </div>
-                    <div id="settings-game-metadata-list" style="display:grid;gap:8px;"></div>
                 </div>
 
                 <div class="add-form" style="margin-bottom:24px;">
@@ -3083,6 +3171,45 @@
             <!-- ==================== ADMIN ==================== -->
             <div id="admin" class="section">
                 <h1 style="font-size:42px;font-weight:800;margin-bottom:28px;display:flex;align-items:center;gap:12px;"><span style="display:inline-flex;background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);border-radius:12px;padding:8px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg></span> Admin Panel</h1>
+                <div class="add-form" style="margin-bottom:24px;">
+                    <h3 style="margin-bottom:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 21h8"/><path d="M16 7h4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7h4"/></svg>Game Metadata Catalog Tools</h3>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Admin-only controls for importing, exporting, and managing game metadata.</p>
+                    <div class="settings-data-tools-grid">
+                        <div class="settings-data-tool-card">
+                            <div class="settings-data-tool-title">Game Metadata Catalog</div>
+                            <div class="settings-data-tool-actions">
+                                <button type="button" class="settings-data-tool-btn" onclick="downloadGameMetadataTemplate()">Download Template</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="triggerSettingsImport('settings-import-game-metadata')">Import CSV</button>
+                                <button type="button" class="settings-data-tool-btn" onclick="exportGameMetadataCatalogCSV()">Export CSV</button>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="settings-import-game-metadata" accept=".csv,text/csv,text/plain" style="display:none;" onchange="importGameMetadataCatalogCSV(event)">
+                </div>
+                <details class="settings-gmc-panel">
+                    <summary>
+                        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>Manage Game Metadata Catalog</span>
+                    </summary>
+                    <div class="settings-gmc-panel-body">
+                        <div class="form-grid">
+                            <div class="input-group"><label>Title</label><input type="text" id="settings-gmc-title" placeholder="e.g. Elden Ring"></div>
+                            <div class="input-group"><label>Platform</label><input type="text" id="settings-gmc-platform" placeholder="e.g. PlayStation 5"></div>
+                            <div class="input-group"><label>Genre</label><input type="text" id="settings-gmc-genre" placeholder="e.g. RPG"></div>
+                            <div class="input-group"><label>Metacritic Score</label><input type="text" id="settings-gmc-score" placeholder="e.g. 96"></div>
+                            <div class="input-group"><label>Metacritic URL</label><input type="url" id="settings-gmc-url" placeholder="https://www.metacritic.com/..."></div>
+                            <div class="input-group"><label>Cover Image URL</label><input type="url" id="settings-gmc-image" placeholder="https://example.com/cover.jpg"></div>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <button type="button" id="settings-gmc-save-btn" class="btn" onclick="saveGameMetadataCatalogEntry()">Add Entry</button>
+                            <button type="button" class="btn" style="background:rgba(148,163,184,0.15);border:1px solid rgba(148,163,184,0.35);" onclick="clearGameMetadataCatalogEditor()">Clear</button>
+                        </div>
+                        <div id="settings-gmc-editor-status" style="font-size:12px;color:var(--text-muted);"></div>
+                        <div style="display:flex;gap:8px;">
+                            <input type="text" id="settings-game-metadata-search" placeholder="Search catalog entries by title/platform/genre..." style="flex:1;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:#fff;font-family:inherit;" oninput="renderGameMetadataCatalogManager()">
+                        </div>
+                        <div id="settings-game-metadata-list" class="settings-gmc-grid"></div>
+                    </div>
+                </details>
                 <div class="add-form" style="margin-bottom:24px;">
                     <h3 style="margin-bottom:16px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Find User</h3>
                     <div style="display:flex;gap:8px;margin-bottom:16px;">
@@ -3702,6 +3829,12 @@ const ADMIN_EMAILS = [
 
 function isAdmin(user) {
     return user && ADMIN_EMAILS.includes(user.email);
+}
+
+function requireAdminAccess(actionText = 'perform this action') {
+    if (isAdmin(currentUser)) return true;
+    alert(`Admin access is required to ${actionText}.`);
+    return false;
 }
 
 // ========== INPUT SANITIZATION ==========
@@ -5336,6 +5469,7 @@ async function loadSettings() {
         }
 
         window.clearGameMetadataCatalogEditor = function() {
+            if (!requireAdminAccess('manage game metadata catalog')) return;
             const fields = readGameMetadataEditorInputs();
             Object.values(fields).forEach(input => {
                 if (input) input.value = '';
@@ -5348,6 +5482,11 @@ async function loadSettings() {
             const listEl = document.getElementById('settings-game-metadata-list');
             const searchInput = document.getElementById('settings-game-metadata-search');
             if (!listEl) return;
+
+            if (!isAdmin(currentUser)) {
+                listEl.innerHTML = '<div class="settings-gmc-empty">Admin access required.</div>';
+                return;
+            }
 
             if (gameMetadataEditingIndex >= gameMetadataCatalog.length) {
                 setGameMetadataEditorState(-1);
@@ -5371,7 +5510,7 @@ async function loadSettings() {
                 const emptyLabel = gameMetadataCatalog.length === 0
                     ? 'No catalog entries yet. Import CSV or add one above.'
                     : 'No entries match this search.';
-                listEl.innerHTML = `<div style="padding:12px;border:1px dashed rgba(148,163,184,0.35);border-radius:8px;color:var(--text-muted);font-size:12px;">${sanitizeText(emptyLabel)}</div>`;
+                listEl.innerHTML = `<div class="settings-gmc-empty">${sanitizeText(emptyLabel)}</div>`;
                 return;
             }
 
@@ -5380,25 +5519,15 @@ async function loadSettings() {
                 if (entry.genre) metaParts.push(entry.genre);
                 if (entry.metacriticScore) metaParts.push(`MC ${entry.metacriticScore}`);
                 const metaLine = metaParts.join(' | ');
-                const coverMarkup = entry.imageUrl
-                    ? `<img src="${sanitizeURL(entry.imageUrl)}" alt="${sanitizeText(entry.title)} cover" style="width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0;">`
-                    : `<div style="width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.22);color:#10b981;flex-shrink:0;">${getGamepadPlaceholderSvg({ size: 15, strokeWidth: 2 })}</div>`;
-                const activeStyle = index === gameMetadataEditingIndex
-                    ? 'border-color:rgba(16,185,129,0.55);background:rgba(16,185,129,0.08);'
-                    : '';
+                const activeClass = index === gameMetadataEditingIndex ? ' settings-gmc-card--active' : '';
 
                 return `
-                    <div class="settings-list-item" style="${activeStyle}">
-                        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
-                            ${coverMarkup}
-                            <div style="min-width:0;flex:1;display:grid;gap:2px;">
-                                <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sanitizeText(entry.title)}</div>
-                                <div style="font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${sanitizeText(metaLine)}</div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:6px;flex-shrink:0;">
-                            <button type="button" onclick="editGameMetadataCatalogEntry(${index})" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.35);color:#93c5fd;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">Edit</button>
-                            <button type="button" onclick="deleteGameMetadataCatalogEntry(${index})" style="background:rgba(239,68,68,0.14);border:1px solid rgba(239,68,68,0.35);color:#fca5a5;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">Delete</button>
+                    <div class="settings-gmc-card${activeClass}">
+                        <div class="settings-gmc-title">${sanitizeText(entry.title)}</div>
+                        <div class="settings-gmc-meta">${sanitizeText(metaLine)}</div>
+                        <div class="settings-gmc-actions">
+                            <button type="button" class="settings-gmc-btn settings-gmc-btn-edit" onclick="editGameMetadataCatalogEntry(${index})">Edit</button>
+                            <button type="button" class="settings-gmc-btn settings-gmc-btn-delete" onclick="deleteGameMetadataCatalogEntry(${index})">Delete</button>
                         </div>
                     </div>
                 `;
@@ -5406,6 +5535,7 @@ async function loadSettings() {
         };
 
         window.editGameMetadataCatalogEntry = function(index) {
+            if (!requireAdminAccess('edit game metadata catalog entries')) return;
             const entry = gameMetadataCatalog[index];
             if (!entry) return;
             const fields = readGameMetadataEditorInputs();
@@ -5421,6 +5551,7 @@ async function loadSettings() {
         };
 
         window.deleteGameMetadataCatalogEntry = async function(index) {
+            if (!requireAdminAccess('delete game metadata catalog entries')) return;
             const entry = gameMetadataCatalog[index];
             if (!entry) return;
             if (!confirm(`Delete catalog entry: ${entry.title} (${entry.platform})?`)) return;
@@ -5439,6 +5570,7 @@ async function loadSettings() {
         };
 
         window.saveGameMetadataCatalogEntry = async function() {
+            if (!requireAdminAccess('save game metadata catalog entries')) return;
             const candidate = getGameMetadataEditorEntry();
             if (!candidate) {
                 alert('Title is required to save a catalog entry.');
@@ -5720,6 +5852,10 @@ async function loadSettings() {
 
         // Section navigation
     window.showSection = function(section, el) {
+    if (section === 'admin' && !isAdmin(currentUser)) {
+        alert('Admin access only.');
+        section = 'dashboard';
+    }
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
@@ -6247,7 +6383,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             }
 
             if (gameMetadataCatalog.length === 0) {
-                listEl.innerHTML = '<div class="custom-select-option game-catalog-result-empty">Import metadata in Settings to enable game suggestions.</div>';
+                listEl.innerHTML = '<div class="custom-select-option game-catalog-result-empty">Admin can import metadata in Admin panel to enable game suggestions.</div>';
                 listEl.classList.add('active');
                 return;
             }
@@ -6411,7 +6547,7 @@ document.getElementById('gadget-form').addEventListener('submit', async (e) => {
             if (!query) {
                 hint.textContent = gameMetadataCatalog.length > 0
                     ? `Catalog ready. ${gameMetadataCatalog.length} game entries available.`
-                    : 'Import your game metadata catalog in Settings to enable quick auto-fill.';
+                    : 'Admin can import the game metadata catalog in Admin panel to enable quick auto-fill.';
                 return;
             }
 
@@ -8153,6 +8289,10 @@ if (gamesBtn) { gamesBtn.classList.remove('open'); }
                 let importedCount = 0;
 
                 if (payload.type === 'gameMetadataCatalog') {
+                    if (!requireAdminAccess('import game metadata catalog')) {
+                        window.closeImportPreview();
+                        return;
+                    }
                     gameMetadataCatalog = normalizeGameMetadataCatalog(payload.items || []);
                     await saveSettings();
                     refreshGameMetadataCatalogUI();
@@ -8446,6 +8586,7 @@ window.importGamesCSV = function(event) {
             alert('Template downloaded! Open it in Excel or Google Sheets, fill in your data (one purchase per row), and import it back.');
         };
 window.downloadGameMetadataTemplate = function() {
+    if (!requireAdminAccess('download game metadata templates')) return;
     const headers = ['Title', 'Platform', 'Genre', 'Metacritic Score', 'Metacritic URL', 'Cover Image URL'];
     const exampleRow = ['Elden Ring', 'PlayStation 5', 'RPG', '96', 'https://www.metacritic.com/game/elden-ring/', 'https://example.com/elden-ring-cover.jpg'];
 
@@ -8466,10 +8607,11 @@ window.downloadGameMetadataTemplate = function() {
     a.click();
     URL.revokeObjectURL(url);
 
-    alert('Template downloaded. Fill one game per row and import from Settings.');
+    alert('Template downloaded. Fill one game per row and import from Admin.');
 };
 
 window.exportGameMetadataCatalogCSV = function() {
+    if (!requireAdminAccess('export game metadata catalog')) return;
     if (!Array.isArray(gameMetadataCatalog) || gameMetadataCatalog.length === 0) {
         alert('No game metadata catalog entries to export!');
         return;
@@ -8507,6 +8649,10 @@ window.exportGameMetadataCatalogCSV = function() {
 };
 
 window.importGameMetadataCatalogCSV = function(event) {
+    if (!requireAdminAccess('import game metadata catalog')) {
+        if (event && event.target) event.target.value = '';
+        return;
+    }
     if (!currentUserUID) {
         alert('User not logged in');
         return;
