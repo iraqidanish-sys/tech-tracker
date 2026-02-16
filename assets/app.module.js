@@ -16,13 +16,9 @@
   getDocs,
   deleteDoc,
   doc,
-  query,
-  orderBy,
   setDoc,
   getDoc,
   updateDoc,
-  where,      // ← ADD THIS for user search
-  limit,      // ← ADD THIS for pagination
   writeBatch  // ← ADD THIS for batch deletion
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         import {
@@ -31,7 +27,6 @@
     GoogleAuthProvider,
     onAuthStateChanged,
     signOut,
-    deleteUser  // ← ADD THIS for account deletion
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 
@@ -6054,189 +6049,6 @@ window.importDigitalCSV = function(event) {
                 errorDiv.style.display = 'block';
             }
         };
-
-        // ========== ADMIN FUNCTIONS ==========
-
-        let currentSearchedUID = null;
-
-        // Search for user by email
-        window.searchUser = async function() {
-            const email = sanitizeText(document.getElementById('admin-search-email').value);
-            if (!email) {
-                alert('Please enter an email');
-                return;
-            }
-
-            try {
-                const usersRef = collection(db, 'userProfiles');
-                const q = query(usersRef, where('email', '==', email), limit(1));
-                const snapshot = await getDocs(q);
-
-                if (snapshot.empty) {
-                    alert('User not found');
-                    return;
-                }
-
-                const userDoc = snapshot.docs[0];
-                const userData = userDoc.data();
-                currentSearchedUID = userDoc.id;
-
-                document.getElementById('admin-user-details').style.display = 'block';
-                document.getElementById('admin-user-info').innerHTML = `
-                    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 20px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
-                        <p style="margin-bottom: 12px;"><strong style="color: #94a3b8;">Email:</strong> <span style="color: #f1f5f9;">${userData.email}</span></p>
-                        <p style="margin-bottom: 12px;"><strong style="color: #94a3b8;">UID:</strong> <span style="color: #f1f5f9; font-family: monospace; font-size: 12px;">${currentSearchedUID}</span></p>
-                        <p style="margin-bottom: 12px;"><strong style="color: #94a3b8;">Status:</strong> <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${userData.blocked ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%)' : 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%)'}; color: ${userData.blocked ? '#fbbf24' : '#10b981'}; border: 1px solid ${userData.blocked ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.4)'};">${userData.blocked ? 'BLOCKED' : 'ACTIVE'}</span></p>
-                        <p><strong style="color: #94a3b8;">Joined:</strong> <span style="color: #f1f5f9;">${new Date(userData.createdAt).toLocaleDateString()}</span></p>
-                    </div>
-                `;
-
-            } catch (error) {
-                alert('Failed to search user');
-            }
-        };
-
-        // Block a user
-        window.blockUser = async function() {
-            if (!currentSearchedUID) return;
-
-            if (!confirm('Are you sure you want to block this user?')) return;
-
-            try {
-                await updateDoc(doc(db, 'userProfiles', currentSearchedUID), {
-                    blocked: true,
-                    blockedAt: new Date().toISOString()
-                });
-
-                alert('User blocked successfully');
-                await searchUser();
-
-            } catch (error) {
-                alert('Failed to block user');
-            }
-        };
-
-        // Unblock a user
-        window.unblockUser = async function() {
-            if (!currentSearchedUID) return;
-
-            try {
-                await updateDoc(doc(db, 'userProfiles', currentSearchedUID), {
-                    blocked: false,
-                    unblockedAt: new Date().toISOString()
-                });
-
-                alert('User unblocked successfully');
-                await searchUser();
-
-            } catch (error) {
-                alert('Failed to unblock user');
-            }
-        };
-
-        // Load all users
-        window.loadAllUsers = async function() {
-            try {
-                const usersRef = collection(db, 'userProfiles');
-                const q = query(usersRef, orderBy('createdAt', 'desc'), limit(50));
-                const snapshot = await getDocs(q);
-
-                if (snapshot.empty) {
-                    document.getElementById('admin-users-list').innerHTML = '<p>No users found</p>';
-                    return;
-                }
-
-                const usersList = snapshot.docs.map(doc => {
-                    const data = doc.data();
-                    return `
-                        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 16px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(148, 163, 184, 0.2); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;">
-                            <div>
-                                <strong style="color: #f1f5f9; font-size: 15px;">${data.email}</strong>
-                                <span style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-left: 10px; background: ${data.blocked ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%)' : 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%)'}; color: ${data.blocked ? '#fbbf24' : '#10b981'}; border: 1px solid ${data.blocked ? 'rgba(245, 158, 11, 0.4)' : 'rgba(16, 185, 129, 0.4)'};">
-                                    ${data.blocked ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> BLOCKED' : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> ACTIVE'}
-                                </span>
-                            </div>
-                            <div>
-                                <small style="color: #94a3b8; font-weight: 500;">${new Date(data.createdAt).toLocaleDateString()}</small>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                document.getElementById('admin-users-list').innerHTML = usersList;
-
-            } catch (error) {
-                alert('Failed to load users');
-            }
-        };
-
-        // ========== ACCOUNT DELETION ==========
-
-        window.requestAccountDeletion = async function() {
-            const user = auth.currentUser;
-            if (!user) {
-                alert('Please log in first');
-                return;
-            }
-
-            const confirm1 = confirm(
-                'Warning: This will permanently delete your account and all data.\n\n' +
-                'Are you absolutely sure?'
-            );
-            if (!confirm1) return;
-
-            const confirm2 = prompt(
-                'Type "DELETE" (in capitals) to confirm account deletion:'
-            );
-            if (confirm2 !== 'DELETE') {
-                alert('Account deletion cancelled');
-                return;
-            }
-
-            try {
-                alert('Processing deletion... Please wait.');
-
-                // Delete user data
-                await deleteUserData(user.uid);
-
-                // Delete user profile
-                await deleteDoc(doc(db, 'userProfiles', user.uid));
-
-                // Delete auth account
-                await deleteUser(user);
-
-                alert('Account deleted successfully. You will be signed out.');
-                window.location.reload();
-
-            } catch (error) {
-
-                if (error.code === 'auth/requires-recent-login') {
-                    alert(
-                        'For security, you must sign in again before deleting your account.\n\n' +
-                        'Please sign out, sign back in, and try again.'
-                    );
-                } else {
-                    alert('Failed to delete account: ' + error.message);
-                }
-            }
-        };
-
-        async function deleteUserData(uid) {
-            const collections = ['gadgets', 'games', 'digitalPurchases'];
-
-            for (const collectionName of collections) {
-                const collectionRef = collection(db, 'users', uid, collectionName);
-                const snapshot = await getDocs(collectionRef);
-
-                const batch = writeBatch(db);
-                snapshot.docs.forEach(doc => {
-                    batch.delete(doc.ref);
-                });
-
-                await batch.commit();
-            }
-
-    }
 
     // Initialize
     document.getElementById('g-date').valueAsDate = new Date();
