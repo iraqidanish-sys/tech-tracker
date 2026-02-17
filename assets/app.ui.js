@@ -90,8 +90,18 @@
             return icons[category] || `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M10 8V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v3"/></svg>`;
         }
 
+        function normalizeLabelFallback(value) {
+            return String(value || '')
+                .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
         function getCategoryEmoji(category) {
-            return normalizeLabel(category || 'Other');
+            const normalizeFn = typeof window.normalizeLabel === 'function'
+                ? window.normalizeLabel
+                : normalizeLabelFallback;
+            return normalizeFn(category || 'Other');
         }
 
         // Make functions global
@@ -351,55 +361,84 @@
         };
 
         // Save the picked image
-        window.savePickedImage = function() {
+        window.savePickedImage = async function() {
 
             if (!currentPickerImageUrl) {
                 alert('Please select or enter an image first');
                 return;
             }
 
-            const sanitizeFn = typeof window.sanitizeURL === 'function' ? window.sanitizeURL : null;
-            const sanitizedPickerUrl = sanitizeFn ? sanitizeFn(currentPickerImageUrl) : '';
-            if (!sanitizedPickerUrl) {
-                alert('The selected image URL is invalid. Please try another URL.');
-                return;
+            const saveBtn = document.getElementById('picker-save-btn');
+            const originalSaveBtnHtml = saveBtn ? saveBtn.innerHTML : '';
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
             }
-            currentPickerImageUrl = sanitizedPickerUrl;
 
-            if (!currentPickerTarget) {
+            try {
+                let resolvedImageUrl = currentPickerImageUrl;
+                const uploadFn = typeof window.uploadImageToCloudflareMedia === 'function'
+                    ? window.uploadImageToCloudflareMedia
+                    : null;
+                if (uploadFn) {
+                    resolvedImageUrl = await uploadFn(currentPickerImageUrl);
+                }
+
+                const sanitizeFn = typeof window.sanitizeURL === 'function' ? window.sanitizeURL : null;
+                const fallbackSanitizer = (value) => {
+                    const clean = String(value || '').trim();
+                    if (!clean) return '';
+                    if (clean.startsWith('data:image/')) return clean;
+                    if (/^https?:\/\//i.test(clean)) return clean;
+                    return '';
+                };
+                const sanitizedPickerUrl = sanitizeFn ? sanitizeFn(resolvedImageUrl) : fallbackSanitizer(resolvedImageUrl);
+                if (!sanitizedPickerUrl) {
+                    alert('The selected image URL is invalid. Please try another URL.');
+                    return;
+                }
+                currentPickerImageUrl = sanitizedPickerUrl;
+
+                if (!currentPickerTarget) {
+                    closeImagePicker();
+                    return;
+                }
+
+                // Determine which form to update
+                const prefix = currentPickerTarget === 'gadget' ? 'g' :
+                              currentPickerTarget === 'edit-gadget' ? 'edit-g' :
+                              currentPickerTarget === 'game' ? 'gm' :
+                              currentPickerTarget === 'edit-game' ? 'edit-gm' :
+                              currentPickerTarget === 'digital' ? 'd' :
+                              currentPickerTarget === 'edit-digital' ? 'edit-d' : '';
+
+
+                if (prefix) {
+                    // Update hidden input
+                    const hiddenInput = document.getElementById(`${prefix}-final-image-url`);
+                    if (hiddenInput) {
+                        hiddenInput.value = currentPickerImageUrl;
+                    } else {
+                    }
+
+                    // Update preview container with horizontal layout
+                    const container = document.getElementById(`${prefix}-image-preview-container`);
+                    if (container) {
+                        container.innerHTML = `
+                            <img src="${currentPickerImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                            <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added</div>
+                        `;
+                    } else {
+                    }
+                }
+
                 closeImagePicker();
-                return;
-            }
-
-            // Determine which form to update
-            const prefix = currentPickerTarget === 'gadget' ? 'g' :
-                          currentPickerTarget === 'edit-gadget' ? 'edit-g' :
-                          currentPickerTarget === 'game' ? 'gm' :
-                          currentPickerTarget === 'edit-game' ? 'edit-gm' :
-                          currentPickerTarget === 'digital' ? 'd' :
-                          currentPickerTarget === 'edit-digital' ? 'edit-d' : '';
-
-
-            if (prefix) {
-                // Update hidden input
-                const hiddenInput = document.getElementById(`${prefix}-final-image-url`);
-                if (hiddenInput) {
-                    hiddenInput.value = currentPickerImageUrl;
-                } else {
-                }
-
-                // Update preview container with horizontal layout
-                const container = document.getElementById(`${prefix}-image-preview-container`);
-                if (container) {
-                    container.innerHTML = `
-                        <img src="${currentPickerImageUrl}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
-                        <div style="font-size: 13px; color: var(--text-primary); flex: 1;">Image added</div>
-                    `;
-                } else {
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalSaveBtnHtml;
                 }
             }
-
-            closeImagePicker();
         };
 
         if (typeof window.showSection !== 'function') {

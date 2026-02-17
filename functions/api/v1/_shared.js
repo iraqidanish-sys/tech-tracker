@@ -28,6 +28,14 @@ const DEFAULT_SNAPSHOT = {
   }
 };
 
+const ITEM_COLLECTION_MAP = Object.freeze({
+  gadgets: 'gadgets',
+  games: 'games',
+  digitalPurchases: 'digitalPurchases'
+});
+
+const ITEM_COLLECTION_NAMES = Object.keys(ITEM_COLLECTION_MAP);
+
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -133,6 +141,12 @@ function normalizeSnapshot(input) {
   }
 
   return snapshot;
+}
+
+function normalizeCollectionName(input = '') {
+  const clean = String(input || '').trim();
+  if (!clean) return '';
+  return ITEM_COLLECTION_MAP[clean] || '';
 }
 
 async function parseJsonBody(request) {
@@ -255,17 +269,193 @@ async function upsertAppConfig(db, config, updatedBy = '') {
   return payload;
 }
 
+async function ensureUserItemsTable(db) {
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS user_items (
+         email TEXT NOT NULL,
+         collection_name TEXT NOT NULL,
+         item_id TEXT NOT NULL,
+         payload_json TEXT NOT NULL,
+         updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+         PRIMARY KEY (email, collection_name, item_id)
+       )`
+    )
+    .run();
+
+  await db
+    .prepare(
+      `CREATE INDEX IF NOT EXISTS idx_user_items_email_collection_updated
+       ON user_items(email, collection_name, updated_at DESC)`
+    )
+    .run();
+}
+
+function normalizeItemPayload(raw = {}, fallbackId = '') {
+  const source = objectOrEmpty(raw);
+  const cleanId = String(source.firestoreId || fallbackId || '').trim();
+  const payload = {
+    ...source,
+    firestoreId: cleanId
+  };
+  return payload;
+}
+
+async function readItemsByEmail(db, email, options = {}) {
+  const collection = normalizeCollectionName(options.collection || '');
+  const baseQuery = collection
+    ? 'SELECT collection_name, item_id, payload_json, updated_at FROM user_items WHERE email = ? AND collection_name = ? ORDER BY updated_at DESC'
+    : 'SELECT collection_name, item_id, payload_json, updated_at FROM user_items WHERE email = ? ORDER BY updated_at DESC';
+
+  const stmt = collection
+    ? db.prepare(baseQuery).bind(email, collection)
+    : db.prepare(baseQuery).bind(email);
+
+  const result = await stmt.all();
+  const rows = Array.isArray(result?.results) ? result.results : [];
+  const grouped = {
+    gadgets: [],
+    games: [],
+    digitalPurchases: []
+  };
+
+  let latestUpdatedAt = '';
+  for (const row of rows) {
+    const rowCollection = normalizeCollectionName(row.collection_name || '');
+    if (!rowCollection) continue;
+
+    let parsed = {};
+    try {
+      parsed = JSON.parse(row.payload_json || '{}');
+    } catch {
+      parsed = {};
+    }
+
+    const cleanId = String(row.item_id || '').trim();
+    if (!cleanId) continue;
+
+    grouped[rowCollection].push(normalizeItemPayload(parsed, cleanId));
+    if (!latestUpdatedAt && row.updated_at) {
+      latestUpdatedAt = row.updated_at;
+    }
+  }
+
+  const counts = {
+    gadgets: grouped.gadgets.length,
+    games: grouped.games.length,
+    digitalPurchases: grouped.digitalPurchases.length
+  };
+
+  return {
+    data: grouped,
+    counts,
+    totalCount: counts.gadgets + counts.games + counts.digitalPurchases,
+    updatedAt: latestUpdatedAt
+  };
+}
+
+async function upsertItemByEmail(db, email, collectionName, itemId, payload) {
+  const collection = normalizeCollectionName(collectionName);
+  const cleanItemId = String(itemId || '').trim();
+  if (!collection) {
+    throw new Error('Invalid collection name');
+  }
+  if (!cleanItemId) {
+    throw new Error('Missing item id');
+  }
+
+  const normalizedPayload = normalizeItemPayload(payload, cleanItemId);
+  await db
+    .prepare(
+      `INSERT INTO user_items (email, collection_name, item_id, payload_json, updated_at)
+       VALUES (?, ?, ?, ?, datetime('now'))
+       ON CONFLICT(email, collection_name, item_id) DO UPDATE SET
+         payload_json = excluded.payload_json,
+         updated_at = datetime('now')`
+    )
+    .bind(email, collection, cleanItemId, JSON.stringify(normalizedPayload))
+    .run();
+
+  return normalizedPayload;
+}
+
+async function upsertItemsByEmail(db, email, collectionName, items = []) {
+  const collection = normalizeCollectionName(collectionName);
+  if (!collection) {
+    throw new Error('Invalid collection name');
+  }
+
+  const rows = Array.isArray(items) ? items : [];
+  const saved = [];
+  for (const row of rows) {
+    const item = objectOrEmpty(row);
+    const itemId = String(item.firestoreId || '').trim();
+    if (!itemId) continue;
+    const stored = await upsertItemByEmail(db, email, collection, itemId, item);
+    saved.push(stored);
+  }
+  return saved;
+}
+
+async function deleteItemByEmail(db, email, collectionName, itemId) {
+  const collection = normalizeCollectionName(collectionName);
+  const cleanItemId = String(itemId || '').trim();
+  if (!collection) {
+    throw new Error('Invalid collection name');
+  }
+  if (!cleanItemId) {
+    throw new Error('Missing item id');
+  }
+
+  await db
+    .prepare('DELETE FROM user_items WHERE email = ? AND collection_name = ? AND item_id = ?')
+    .bind(email, collection, cleanItemId)
+    .run();
+}
+
+function extractSnapshotItems(snapshot, collectionName) {
+  const collection = normalizeCollectionName(collectionName);
+  if (!collection) return [];
+  const root = objectOrEmpty(snapshot);
+  const data = objectOrEmpty(root.data);
+  const rows = arrayOrEmpty(data[collection]);
+  return rows
+    .map((row) => normalizeItemPayload(row, row && row.firestoreId ? row.firestoreId : ''))
+    .filter((row) => String(row.firestoreId || '').trim());
+}
+
+async function migrateSnapshotItemsToTable(db, email, snapshot) {
+  let inserted = 0;
+  for (const collection of ITEM_COLLECTION_NAMES) {
+    const items = extractSnapshotItems(snapshot, collection);
+    if (items.length === 0) continue;
+    const saved = await upsertItemsByEmail(db, email, collection, items);
+    inserted += saved.length;
+  }
+  return inserted;
+}
+
 export {
   DEFAULT_SNAPSHOT,
+  ITEM_COLLECTION_NAMES,
+  deleteItemByEmail,
   ensureDb,
+  ensureUserItemsTable,
+  extractSnapshotItems,
   getAccessEmail,
   isAdminEmail,
   json,
+  migrateSnapshotItemsToTable,
+  normalizeCollectionName,
   normalizeEmail,
+  normalizeItemPayload,
   normalizeSnapshot,
   parseJsonBody,
   readAppConfig,
+  readItemsByEmail,
   readSnapshotByEmail,
+  upsertItemByEmail,
+  upsertItemsByEmail,
   upsertAppConfig,
   upsertSnapshotByEmail
 };

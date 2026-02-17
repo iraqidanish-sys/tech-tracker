@@ -1,10 +1,11 @@
-const CACHE_NAME = 'gearnest-v8';
+const CACHE_NAME = 'gearnest-v12';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   './assets/app.css',
   './assets/app.module.js',
+  './assets/icon-catalog.js',
   './assets/app.ui.js',
   './assets/pwa-install.js',
   './icons/icon-180.png',
@@ -35,6 +36,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(
@@ -45,6 +47,27 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  const isCriticalAsset =
+    url.pathname.startsWith('/assets/') ||
+    url.pathname === '/manifest.json' ||
+    url.pathname === '/index.html' ||
+    url.pathname === '/sw.js';
+
+  if (isCriticalAsset) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(request).then((cachedResponse) => cachedResponse || Response.error()))
     );
     return;
   }
@@ -63,7 +86,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return networkResponse;
         })
-        .catch(() => caches.match('./index.html'));
+        .catch(() => Response.error());
     })
   );
 });

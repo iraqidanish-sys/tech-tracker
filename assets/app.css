@@ -26,6 +26,12 @@
             --card-image-size: 100px;
             --card-image-radius: 12px;
             --card-image-placeholder-size: 42px;
+
+            /* iOS/standalone safe-area support */
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-right: env(safe-area-inset-right, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-left: env(safe-area-inset-left, 0px);
         }
 
         * {
@@ -34,11 +40,17 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: 100%;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            min-height: 100svh;
+            min-height: 100dvh;
             overflow-x: hidden;
             position: relative;
         }
@@ -126,8 +138,8 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 70px;
-            padding: 0 24px;
+            height: calc(70px + var(--safe-area-top));
+            padding: var(--safe-area-top) calc(24px + var(--safe-area-right)) 0 calc(24px + var(--safe-area-left));
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -740,7 +752,7 @@
 
         /* Main Container */
         .container {
-            padding: 90px 24px 100px;
+            padding: calc(90px + var(--safe-area-top)) 24px calc(100px + var(--safe-area-bottom));
             max-width: 1400px;
             margin: 0 auto;
             position: relative;
@@ -1327,7 +1339,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 70px;
+            height: calc(70px + var(--safe-area-bottom));
+            padding-bottom: var(--safe-area-bottom);
             background: rgba(10, 14, 39, 0.95);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--glass-border);
@@ -1423,6 +1436,77 @@
             padding: 24px;
             margin-bottom: 32px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .settings-accordion-panel {
+            overflow: hidden;
+        }
+
+        .settings-accordion-trigger {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+            font: inherit;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .settings-accordion-trigger:focus-visible {
+            outline: 2px solid rgba(16, 185, 129, 0.55);
+            outline-offset: 4px;
+            border-radius: 10px;
+        }
+
+        .settings-accordion-trigger-label {
+            display: inline-flex;
+            align-items: center;
+            min-width: 0;
+            color: inherit;
+        }
+
+        .settings-accordion-trigger-icon {
+            flex-shrink: 0;
+            color: rgba(16, 185, 129, 0.95);
+            font-size: 24px;
+            line-height: 1;
+            transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .settings-accordion-body {
+            height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-3px);
+            transition: height 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease, transform 0.22s ease, margin-top 0.22s ease;
+            margin-top: 0;
+            contain: layout paint;
+            will-change: height, opacity, transform;
+        }
+
+        .settings-accordion-panel.is-open .settings-accordion-body {
+            opacity: 1;
+            transform: translateY(0);
+            margin-top: 12px;
+        }
+
+        .settings-accordion-panel.is-open .settings-accordion-trigger-icon {
+            transform: rotate(45deg);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .settings-accordion-trigger-icon,
+            .settings-accordion-body {
+                transition: none !important;
+            }
         }
 
         /* Collapsible Add Form */
@@ -1784,6 +1868,21 @@
             z-index: 9999;
         }
 
+        #loadingScreen,
+        #loginScreen {
+            width: 100%;
+            height: 100dvh !important;
+            min-height: 100dvh !important;
+        }
+
+        @supports not (height: 100dvh) {
+            #loadingScreen,
+            #loginScreen {
+                height: 100vh !important;
+                min-height: 100vh !important;
+            }
+        }
+
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -2072,6 +2171,69 @@
             align-items: center;
             justify-content: center;
             z-index: 9998;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+        }
+
+        #loginScreen > div {
+            min-height: calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom)) !important;
+            padding-top: max(24px, calc(40px + var(--safe-area-top))) !important;
+            padding-bottom: max(24px, calc(40px + var(--safe-area-bottom))) !important;
+            box-sizing: border-box;
+        }
+
+        .login-hero-content {
+            padding: 40px 20px;
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 56px;
+            animation: slideInLeft 0.8s ease-out;
+            justify-content: flex-start;
+            width: max-content;
+            max-width: 100%;
+        }
+
+        .login-brand-icon {
+            width: 66px;
+            height: 66px;
+            flex: 0 0 66px;
+            display: inline-flex;
+        }
+
+        .login-brand-svg {
+            width: 66px;
+            height: 66px;
+        }
+
+        .login-brand-text {
+            min-width: 0;
+        }
+
+        .login-brand-title {
+            color: #fff;
+            font-size: 26px;
+            line-height: 1.05;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-brand-tagline {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .login-card {
@@ -2114,7 +2276,7 @@
             .desktop-nav-links { display: none; }
 
             .container {
-                padding: 72px 16px 90px !important;
+                padding: calc(72px + var(--safe-area-top)) 16px calc(90px + var(--safe-area-bottom)) !important;
             }
 
             .section h1 {
@@ -2216,9 +2378,12 @@
                 font-size: 12px;
             }
 
-            .fab { bottom: 80px; }
+            .fab { bottom: calc(80px + var(--safe-area-bottom)); }
 
-            .top-nav { padding: 0 12px; height: 54px; }
+            .top-nav {
+                padding: var(--safe-area-top) calc(12px + var(--safe-area-right)) 0 calc(12px + var(--safe-area-left));
+                height: calc(54px + var(--safe-area-top));
+            }
             .logo { font-size: 17px; gap: 6px; }
             .logo-icon svg { width: 24px; height: 24px; }
 
@@ -2354,7 +2519,7 @@
             @media (max-width: 968px) {
                 #loginScreen > div > div {
                     grid-template-columns: 1fr !important;
-                    gap: 40px !important;
+                    gap: 26px !important;
                 }
 
                 #loginScreen h1 {
@@ -2369,19 +2534,59 @@
 
             @media (max-width: 640px) {
                 #loginScreen > div {
-                    padding: 30px 15px !important;
+                    padding: max(8px, calc(10px + var(--safe-area-top))) max(10px, calc(10px + var(--safe-area-right))) max(12px, calc(14px + var(--safe-area-bottom))) max(10px, calc(10px + var(--safe-area-left))) !important;
+                    align-items: flex-start !important;
                 }
 
                 #loginScreen h1 {
                     font-size: 32px !important;
                 }
 
+                #loginScreen > div > div {
+                    gap: 18px !important;
+                }
+
                 #loginScreen > div > div > div:first-child {
-                    padding: 20px 10px !important;
+                    padding: 0 !important;
+                }
+
+                .login-brand {
+                    margin-bottom: 18px !important;
+                    gap: 10px !important;
+                }
+
+                .login-brand-icon,
+                .login-brand-svg {
+                    width: 86px !important;
+                    height: 86px !important;
+                }
+
+                .login-brand-icon {
+                    flex: 0 0 86px !important;
+                }
+
+                .login-brand-title {
+                    font-size: 36px !important;
+                    letter-spacing: 0.8px !important;
+                }
+
+                .login-brand-tagline {
+                    font-size: 13px !important;
+                    letter-spacing: 2.6px !important;
+                }
+
+                #loginScreen > div > div > div:first-child > p {
+                    margin-bottom: 18px !important;
+                    font-size: 14px !important;
+                    line-height: 1.45 !important;
+                }
+
+                #loginScreen > div > div > div:first-child > div:last-child {
+                    display: none !important;
                 }
 
                 #loginScreen > div > div > div:last-child > div {
-                    padding: 35px 25px !important;
+                    padding: 28px 20px !important;
                 }
             }
 
